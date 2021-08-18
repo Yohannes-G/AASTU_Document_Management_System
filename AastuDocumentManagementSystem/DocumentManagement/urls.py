@@ -1,14 +1,10 @@
 from django.urls import path
-from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 from django.conf.urls import include
-from .views import UserViewSet
 from . import views
-
-router = routers.DefaultRouter()
-router.register('users', UserViewSet)
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-	path('',views.index, name='index'),
-	path('', include(router.urls))
+	path('login/',views.login, name='login'),
+	path('signup/',views.signup, name='signup'),
+	path('logout/',views.logout, name='logout')
 ]

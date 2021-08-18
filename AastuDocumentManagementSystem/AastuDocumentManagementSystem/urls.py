@@ -21,8 +21,4 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dms-app/', include('DocumentManagement.urls')),
-    path('auth/', obtain_auth_token),
-    path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls'))
-
 ]
