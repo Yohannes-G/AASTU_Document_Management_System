@@ -31,22 +31,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #Django Apps
+    # Django Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    #Third Party Apps
+
+    # Third Party Apps
     'rest_framework',
     'rest_framework.authtoken',
 
-    #authentication apps
+    # authentication apps
 
-    #Local Apps
-    'DocumentManagement',
+    # Local Apps
+    'DocumentManagement.apps.DocumentmanagementConfig',
 
     #
 ]
@@ -89,7 +89,6 @@ WSGI_APPLICATION = 'AastuDocumentManagementSystem.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -101,6 +100,14 @@ DATABASES = {
     }
 }
 
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
