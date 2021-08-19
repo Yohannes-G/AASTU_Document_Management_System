@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # Django Apps
+    'DocumentManagement.apps.DocumentmanagementConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,8 +47,6 @@ INSTALLED_APPS = [
     # authentication apps
 
     # Local Apps
-    'DocumentManagement.apps.DocumentmanagementConfig',
-
     #
 ]
 
