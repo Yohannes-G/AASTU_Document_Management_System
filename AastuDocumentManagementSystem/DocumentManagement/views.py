@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import ConfirmationForm, NewPasswordForm, ResetForm
+from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
+                    SignUPForm)
 from .models import ConfirmationCode
 from .models import User as U
 
@@ -13,67 +14,81 @@ def index(request):
 
 
 def signup(request):
+    error = ''
+    form = SignUPForm()
     if request.method == "POST":
-        if request.POST['password1'] == request.POST['password2']:
-            try:
-                User.objects.get(username=request.POST['username'])
-                return render(request, 'sign-up.html', {'error': 'Username is already taken!'})
-            except User.DoesNotExist:
-                user = User.objects.create_user(
-                    request.POST['username'], password=request.POST['password1'])
-                auth.login(request, user)
-                return redirect('/dms-app/index')
+        form = SignUPForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if cd['password'] == cd['conf_password']:
+                try:
+                    User.objects.get(username=cd['username'])
+                    error = 'Username is already taken!'
+                except User.DoesNotExist:
+                    User.objects.create_user(
+                        cd['username'], password=cd['password'])
+                    return redirect('login')
+            else:
+                error = 'Password does not match!'
         else:
-            return render(request, 'sign-up.html', {'error': 'Password does not match!'})
-    else:
-        return render(request, 'sign-up.html')
+            error = 'Please enter valid information'
+    return render(request, 'sign-up.html', {'forms': form, 'error': error})
 
 
 def login(request):
+    error = ''
+    form = SignInForm()
     if request.method == 'POST':
-        print("-------------------")
-        print(request.POST['password1'])
-        user = auth.authenticate(
-            username=request.POST['username'], password=request.POST['password1'])
-        if user is not None:
-            auth.login(request, user)
-            return redirect('/dms-app/index')
+        form = SignInForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = auth.authenticate(
+                username=cd['email'], password=cd['password'])
+            if user is not None:
+                auth.login(request, user)
+                return redirect('index')
+            else:
+                error = 'Username or password is incorrect!'
         else:
-            return render(request, 'sign-in.html', {'error': 'Username or password is incorrect!'})
-    else:
-        return render(request, 'sign-in.html')
+            error = 'Please enter valid information'
+    return render(request, 'sign-in.html', {'forms': form, 'error': error})
 
 
 def logout(request):
     if request.method == 'POST':
         auth.logout(request)
-    return redirect('/')
+    return redirect('index')
 
 
 def resetPassword(request):
+    error = ''
     form = ResetForm()
     if request.method == "POST":
         form = ResetForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            result = U.objects.filter(user_email=cd['user_email']).values()
+            result = U.objects.filter(user_email=cd['email'])
             if result:
-                if not checkEmailAvailability(cd['user_email']):
-                    # import random
-                    # body = str(random.random() * 10000)
-                    # sendEmail(to=cd['user_email'], subject="Reset Password", body=f'The confirmation code to reset your password is {body}')
-                    body = "4567"
+                if not checkEmailAvailability(cd['email']):
+                    import random
+                    body = str(int(random.random() * 10000))
+                    sendEmail(to=cd['email'], subject="Reset Password",
+                              body=f'The confirmation code to reset your password is {body}')
                     u = ConfirmationCode(user=result[0],
-                                         user_email=cd['user_email'],
+                                         user_email=cd['email'],
                                          confirmation_code=body)
                     u.save()
-
-                return redirect("confirmation", email=cd['user_email'])
-    return render(request, 'reset.html', {'form': form, 'value': "Reset"})
+                return redirect("confirmation", email=cd['email'])
+            else:
+                error = "You have no account with this email"
+        else:
+            error = "Please enter valid information"
+    return render(request, 'reset.html', {'forms': form, 'error': error})
 
 
 def confirmation(request, email):
     form = ConfirmationForm()
+    error = ''
     if request.method == "POST":
         form = ConfirmationForm(request.POST)
         if form.is_valid():
@@ -81,26 +96,32 @@ def confirmation(request, email):
             confirmation_code = checkEmailAvailability(email)
             if cd['confirmation'] == confirmation_code.confirmation_code:
                 return redirect('newPassword', email=email)
-    return render(request, 'reset.html', {'form': form, 'value': 'Confirm'})
+            else:
+                error = "Please enter the sent confirmation code"
+        else:
+            error = "Please enter valid information"
+    return render(request, 'reset.html', {'forms': form, 'error': error})
 
 
 def newPassword(request, email):
     form = NewPasswordForm()
-    msg = ''
+    error = ''
     if request.method == "POST":
         form = NewPasswordForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            if cd['user_password'] == cd['user_confirm_password']:
+            if cd['password'] == cd['conf_password']:
                 u = U.objects.get(user_email=email)
-                u.user_password = cd['user_password']
+                u.user_password = cd['password']
                 u.save()
                 ConfirmationCode.objects.get(
                     user_email=email).delete()
-                redirect('login')
+                return redirect('login')
             else:
-                msg = 'please make sure confirmation password is similar to new password'
-    return render(request, 'reset.html', {'form': form, 'value': "Submit", 'msg': msg})
+                error = "Password doesn't match"
+        else:
+            error = "Please enter valid information"
+    return render(request, 'reset.html', {'forms': form, 'error': error})
 
 
 def checkEmailAvailability(email):

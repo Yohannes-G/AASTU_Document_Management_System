@@ -4,11 +4,11 @@ from django.db import models
 # Create your models here.
 class User(models.Model):
     user_id = models.BigAutoField(primary_key=True)
+    user_username = models.CharField(max_length=50)
     user_first_name = models.CharField(max_length=50)
     user_last_name = models.CharField(max_length=50)
     user_email = models.EmailField()
     user_password = models.CharField(max_length=50)
-    user_confirm_password = models.CharField(max_length=50)
     user_sex = models.CharField(max_length=10)
 
 
