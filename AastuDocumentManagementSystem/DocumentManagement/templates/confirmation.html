@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}confirmation{% endblock title %}
+{% block content %}
+<form action="" method="post">
+    {{form.as_p}}
+    {% csrf_token %}
+    <input type="submit" value="Submit">
+</form>
+{% endblock content %}
