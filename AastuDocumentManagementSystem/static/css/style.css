@@ -4951,6 +4951,7 @@ span.badge1 {
 	padding: 0.3em 0em 0em 0em;
 }
 .log-input input[type="text"],
+.log-input input[type="email"],
 .log-input input[type="password"] {
 	font-size: 0.95em;
 	padding: 10px 15px 10px 37px;

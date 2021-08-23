@@ -61,6 +61,7 @@ SITE_ID = 1
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
+SESSION_SAVE_EVERY_REQUEST = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -180,4 +181,4 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication User
-#AUTH_USER_MODEL = 'DocumentManagement.User'
+AUTH_USER_MODEL = 'DocumentManagement.User'

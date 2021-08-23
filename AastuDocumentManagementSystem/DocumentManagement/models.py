@@ -1,15 +1,10 @@
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class User(models.Model):
-    user_id = models.BigAutoField(primary_key=True)
-    user_username = models.CharField(max_length=50)
-    user_first_name = models.CharField(max_length=50)
-    user_last_name = models.CharField(max_length=50)
-    user_email = models.EmailField()
-    user_password = models.CharField(max_length=50)
-    user_sex = models.CharField(max_length=10)
+class User(AbstractUser):
+    sex = models.CharField(max_length=10)
 
     #is_active = models.BooleanField(default=True)
     #staff = models.BooleanField(default=False) # a admin user; non super-user

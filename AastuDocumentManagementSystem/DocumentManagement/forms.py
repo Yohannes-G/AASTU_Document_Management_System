@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import User
 
@@ -10,6 +11,20 @@ def formGenerator(tpe, cls='', placeholder='', value=''):
         'placeholder': placeholder,
         'value': value
     }), label='')
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
 
 
 class SignInForm(forms.Form):
@@ -28,14 +43,14 @@ class SignUPForm(forms.Form):
         }, ), label=''
     )
     username = formGenerator('text', 'user', 'Username')
-    email = formGenerator('text', 'user', 'Email Address')
+    email = formGenerator('email', 'user', 'Email Address')
     password = formGenerator('password', 'lock', 'Password')
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
 
 
 class ResetForm(forms.Form):
-    email = formGenerator('text', 'user', 'Email Address')
+    email = formGenerator('email', 'user', 'Email Address')
     submit = formGenerator('submit', value="Reset")
 
 

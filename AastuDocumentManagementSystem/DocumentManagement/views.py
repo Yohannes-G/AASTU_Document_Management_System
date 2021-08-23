@@ -1,12 +1,19 @@
 from django.contrib import auth, messages
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
+<<<<<<< HEAD
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
                     SignUPForm, DocumentForm)
 from .models import ConfirmationCode, Document
 #from .models import User
+=======
+
+from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
+                    SignUPForm)
+from .models import ConfirmationCode, User
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
 
 def doc(request):
     form = DocumentForm()
@@ -20,6 +27,7 @@ def doc(request):
     return render(request, 'create-document.html', {'forms':form})
 
 def index(request):
+<<<<<<< HEAD
     error=''
     print(request.user.is_authenticated)
     if not request.user.is_authenticated:
@@ -30,6 +38,13 @@ def index(request):
         return render(request, 'index.html')
 
 #cd->clean data
+=======
+    if request.user.is_authenticated:
+        return render(request, 'index.html')
+    return redirect('signin')
+
+
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
 def signup(request):
     error = ''
     form = SignUPForm()
@@ -38,9 +53,9 @@ def signup(request):
         if form.is_valid():
             cd = form.cleaned_data
             if cd['password'] == cd['conf_password']:
-                try:
-                    User.objects.get(username=cd['username'])
+                if User.objects.filter(username=cd['username']):
                     error = 'Username is already taken!'
+<<<<<<< HEAD
                 except User.DoesNotExist:
                     del cd["conf_password"]
                     del cd["submit"]
@@ -49,6 +64,15 @@ def signup(request):
                     messages.info(request, f"You are Registered in as {username}.")
                     u.save()
                         #cd['user_username'], user_password=cd['user_password'])
+=======
+                elif User.objects.filter(email=cd["email"]):
+                    error = 'Email is already taken'
+                else:
+                    del cd['conf_password']
+                    del cd['submit']
+                    u = User.objects.create_user(**{i: cd[i] for i in cd})
+                    u.save()
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
                     return redirect('signin')
             else:
                 error = 'Password does not match!'
@@ -59,7 +83,10 @@ def signup(request):
     
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
 def signin(request):
     error = ''
     form = SignInForm()
@@ -67,6 +94,7 @@ def signin(request):
         form = SignInForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
+<<<<<<< HEAD
             username=request.POST["username"]
             password=request.POST["password"]
             print("Login:", username)
@@ -77,6 +105,12 @@ def signin(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"You are now logged in as {username}.")
+=======
+            user = auth.authenticate(
+                request, username=cd['email'], password=cd['password'])
+            if user:
+                auth.login(request, user)
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
                 return redirect('index')
             else:
                 error = 'Username or password is incorrect!'
@@ -87,8 +121,12 @@ def signin(request):
 
 def signout(request):
     auth.logout(request)
+<<<<<<< HEAD
     if not request.user.is_authenticated:
         return redirect('signin')
+=======
+    return redirect('signin')
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
 
 
 def resetPassword(request):
@@ -118,23 +156,27 @@ def resetPassword(request):
 
 
 def confirmation(request, email):
-    form = ConfirmationForm()
-    error = ''
-    if request.method == "POST":
-        form = ConfirmationForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            confirmation_code = checkEmailAvailability(email)
-            if cd['confirmation'] == confirmation_code.confirmation_code:
-                return redirect('newPassword', email=email)
+    confirmation_code = checkEmailAvailability(email)
+    if confirmation_code:
+        form = ConfirmationForm()
+        error = ''
+        if request.method == "POST":
+            form = ConfirmationForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                if cd['confirmation'] == confirmation_code.confirmation_code:
+                    return redirect('newPassword', email=email)
+                else:
+                    error = "Please enter the sent confirmation code"
             else:
-                error = "Please enter the sent confirmation code"
-        else:
-            error = "Please enter valid information"
-    return render(request, 'reset.html', {'forms': form, 'error': error})
+                error = "Please enter valid information"
+        return render(request, 'reset.html', {'forms': form, 'error': error})
+    else:
+        redirect('login')
 
 
 def newPassword(request, email):
+<<<<<<< HEAD
     form = NewPasswordForm()
     error = ''
     if request.method == "POST":
@@ -148,11 +190,30 @@ def newPassword(request, email):
                 ConfirmationCode.objects.get(
                     user_email=email).delete()
                 return redirect('login')
+=======
+    try:
+        confirm = ConfirmationCode.objects.get(
+            user_email=email)
+        form = NewPasswordForm()
+        error = ''
+        if request.method == "POST":
+            form = NewPasswordForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                if cd['password'] == cd['conf_password']:
+                    u = User.objects.get(user_email=email)
+                    u.user_password = cd['password']
+                    u.save()
+                    confirm.delete()
+                    return redirect('login')
+                else:
+                    error = "Password doesn't match"
+>>>>>>> 412892502e19a52ade9bff17c32593837b2ad86f
             else:
-                error = "Password doesn't match"
-        else:
-            error = "Please enter valid information"
-    return render(request, 'reset.html', {'forms': form, 'error': error})
+                error = "Please enter valid information"
+        return render(request, 'reset.html', {'forms': form, 'error': error})
+    except:
+        return redirect('login')
 
 
 def checkEmailAvailability(email):
