@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(models.Model):
@@ -10,6 +10,12 @@ class User(models.Model):
     user_email = models.EmailField()
     user_password = models.CharField(max_length=50)
     user_sex = models.CharField(max_length=10)
+
+    #is_active = models.BooleanField(default=True)
+    #staff = models.BooleanField(default=False) # a admin user; non super-user
+    #admin = models.BooleanField(default=False) # a superuser
+    def __str__(self):
+        return self.user_first_name
 
 
 class Role(models.Model):

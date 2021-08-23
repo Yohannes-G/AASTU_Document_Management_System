@@ -61,16 +61,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</head>
 
 	<body class="sticky-header left-side-collapsed" onload="initMap()">
-		<section>
+	 
 			<!-- left side start-->
 			<div class="left-side sticky-left-side">
 
 				<!--logo and iconic logo start-->
 				<div class="logo">
-					<h1><a href="index.html">Doc<span>Management</span></a></h1>
+					<h1><a href="{% url 'index' %}">Doc<span>Management</span></a></h1>
 				</div>
 				<div class="logo-icon text-center">
-					<a href="index.html"><i class="lnr lnr-home"></i> </a>
+					<a href="{% url 'index' %}"><i class="lnr lnr-home"></i> </a>
 				</div>
 				<!--logo and iconic logo end-->
 
@@ -78,7 +78,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 					<!--sidebar nav start-->
 					<ul class="nav nav-pills nav-stacked custom-nav">
-						<li class="active"><a href="index.html"><i
+						<li class="active"><a href="{% url 'index' %}"><i
 									class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
 						<li class="menu-list">
 							<a href="#"><i class="lnr lnr-cog"></i>
@@ -88,7 +88,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<li><a href="widgets.html">View Profile</a></li>
 							</ul>
 						</li>
-						<li><a href="forms.html"><i class="lnr lnr-spell-check"></i> <span>Documents</span></a></li>
+						<li><a href="{% url 'doc' %}"><i class="lnr lnr-spell-check"></i> <span>Documents</span></a></li>
 						<li><a href="tables.html"><i class="lnr lnr-menu"></i> <span>Media</span></a></li>
 						<li class="menu-list"><a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
 							<ul class="sub-menu-list">
@@ -106,7 +106,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<li><a href="media.html"><i class="lnr lnr-select"></i> <span>Media Css</span></a></li>
 						<li class="menu-list"><a href="#"><i class="lnr lnr-book"></i> <span>User</span></a>
 							<ul class="sub-menu-list">
-								<li><a href="{% url 'login' %}">Sign In</a> </li>
+								<li><a href="{% url 'signin' %}">Sign In</a> </li>
 								<li><a href="{% url 'signup' %}">Sign Up</a></li>
 								<li><a href="blank_page.html">Blank Page</a></li>
 							</ul>
@@ -118,7 +118,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!-- left side end-->
 
 			<!-- main content start-->
-			<div class="main-content">
+			 
 				<!-- header-starts -->
 				<div class="header-section">
 
@@ -185,9 +185,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 												</form>
 											</div>
 										</div>
+
 										<!-- search-scripts -->
-										<script src="js/classie.js"></script>
-										<script src="js/uisearch.js"></script>
+										<script src="{% static 'js/classie.js' %}"></script>
+										<script src="{% static 'js/uisearch.js' %}"></script>
 										<script>
 											new UISearch( document.getElementById( 'sb-search' ) );
 
@@ -314,7 +315,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 										<ul class="dropdown-menu drp-mnu">
 											<li> <a href="#"><i class="fa fa-cog"></i> Settings</a> </li>
 											<li> <a href="#"><i class="fa fa-user"></i>Profile</a> </li>
-											<li> <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
+											<li> <a href="{% url 'signout' %}"><i class="fa fa-sign-out"></i> Logout</a>
 											</li>
 										</ul>
 									</li>
@@ -340,13 +341,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</div>
 					<!--notification menu end -->
 
-					{% block content %}
-					{% endblock %}
+						{% block content %}
+						{% endblock %}
+					 
+					
 				</div>
-			</div>
+			 
 			<!-- main content end-->
 
-		</section>
+		 
 
 		<script src="{% static 'js/jquery.nicescroll.js' %}"></script>
 		<script src="{% static 'js/scripts.js' %}"></script>

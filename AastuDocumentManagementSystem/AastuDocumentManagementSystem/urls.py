@@ -21,4 +21,5 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('dms-app/', include('DocumentManagement.urls')),
+    #path('accounts/', include("django.contrib.auth.urls")),
 ]
