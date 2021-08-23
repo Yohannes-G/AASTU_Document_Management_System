@@ -1,16 +1,16 @@
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
 from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
                     SignUPForm)
-from .models import ConfirmationCode
-from .models import User as U
+from .models import ConfirmationCode, User
 
 
 def index(request):
-    return render(request, 'index.html')
+    if request.user.is_authenticated:
+        return render(request, 'index.html')
+    return redirect('signin')
 
 
 def signup(request):
@@ -21,13 +21,16 @@ def signup(request):
         if form.is_valid():
             cd = form.cleaned_data
             if cd['password'] == cd['conf_password']:
-                try:
-                    User.objects.get(username=cd['username'])
+                if User.objects.filter(username=cd['username']):
                     error = 'Username is already taken!'
-                except User.DoesNotExist:
-                    User.objects.create_user(
-                        cd['username'], password=cd['password'])
-                    return redirect('login')
+                elif User.objects.filter(email=cd["email"]):
+                    error = 'Email is already taken'
+                else:
+                    del cd['conf_password']
+                    del cd['submit']
+                    u = User.objects.create_user(**{i: cd[i] for i in cd})
+                    u.save()
+                    return redirect('signin')
             else:
                 error = 'Password does not match!'
         else:
@@ -35,7 +38,7 @@ def signup(request):
     return render(request, 'sign-up.html', {'forms': form, 'error': error})
 
 
-def login(request):
+def signin(request):
     error = ''
     form = SignInForm()
     if request.method == 'POST':
@@ -43,8 +46,8 @@ def login(request):
         if form.is_valid():
             cd = form.cleaned_data
             user = auth.authenticate(
-                username=cd['email'], password=cd['password'])
-            if user is not None:
+                request, username=cd['email'], password=cd['password'])
+            if user:
                 auth.login(request, user)
                 return redirect('index')
             else:
@@ -54,10 +57,9 @@ def login(request):
     return render(request, 'sign-in.html', {'forms': form, 'error': error})
 
 
-def logout(request):
-    if request.method == 'POST':
-        auth.logout(request)
-    return redirect('index')
+def signout(request):
+    auth.logout(request)
+    return redirect('signin')
 
 
 def resetPassword(request):
@@ -67,7 +69,7 @@ def resetPassword(request):
         form = ResetForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            result = U.objects.filter(user_email=cd['email'])
+            result = User.objects.filter(user_email=cd['email'])
             if result:
                 if not checkEmailAvailability(cd['email']):
                     import random
@@ -87,41 +89,48 @@ def resetPassword(request):
 
 
 def confirmation(request, email):
-    form = ConfirmationForm()
-    error = ''
-    if request.method == "POST":
-        form = ConfirmationForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            confirmation_code = checkEmailAvailability(email)
-            if cd['confirmation'] == confirmation_code.confirmation_code:
-                return redirect('newPassword', email=email)
+    confirmation_code = checkEmailAvailability(email)
+    if confirmation_code:
+        form = ConfirmationForm()
+        error = ''
+        if request.method == "POST":
+            form = ConfirmationForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                if cd['confirmation'] == confirmation_code.confirmation_code:
+                    return redirect('newPassword', email=email)
+                else:
+                    error = "Please enter the sent confirmation code"
             else:
-                error = "Please enter the sent confirmation code"
-        else:
-            error = "Please enter valid information"
-    return render(request, 'reset.html', {'forms': form, 'error': error})
+                error = "Please enter valid information"
+        return render(request, 'reset.html', {'forms': form, 'error': error})
+    else:
+        redirect('login')
 
 
 def newPassword(request, email):
-    form = NewPasswordForm()
-    error = ''
-    if request.method == "POST":
-        form = NewPasswordForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            if cd['password'] == cd['conf_password']:
-                u = U.objects.get(user_email=email)
-                u.user_password = cd['password']
-                u.save()
-                ConfirmationCode.objects.get(
-                    user_email=email).delete()
-                return redirect('login')
+    try:
+        confirm = ConfirmationCode.objects.get(
+            user_email=email)
+        form = NewPasswordForm()
+        error = ''
+        if request.method == "POST":
+            form = NewPasswordForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                if cd['password'] == cd['conf_password']:
+                    u = User.objects.get(user_email=email)
+                    u.user_password = cd['password']
+                    u.save()
+                    confirm.delete()
+                    return redirect('login')
+                else:
+                    error = "Password doesn't match"
             else:
-                error = "Password doesn't match"
-        else:
-            error = "Please enter valid information"
-    return render(request, 'reset.html', {'forms': form, 'error': error})
+                error = "Please enter valid information"
+        return render(request, 'reset.html', {'forms': form, 'error': error})
+    except:
+        return redirect('login')
 
 
 def checkEmailAvailability(email):
