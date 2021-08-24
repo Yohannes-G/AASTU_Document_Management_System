@@ -4442,7 +4442,9 @@ button.rew:hover {
 	color: #e8e8e8;
 }
 .login-form-info input[type="text"].men {
-	background: url(../images/n.png) no-repeat 10px 11px;
+	background: url(../images/n.png) no-
+
+	repeat 10px 11px;
 	display: block;
 }
 .login-form-info input[type="password"].lock {
@@ -4969,6 +4971,9 @@ span.badge1 {
 }
 .log-input input.lock {
 	background: url(../images/lock.png) no-repeat 8px 10px #fff;
+}
+.log-input input.email {
+	background: url(../images/email.png) no-repeat 8px 10px #fff;
 }
 .log-input-left {
 	float: left;

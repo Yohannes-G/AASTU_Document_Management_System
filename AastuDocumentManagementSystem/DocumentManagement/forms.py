@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
-
+from bootstrap_daterangepicker import widgets, fields
 from .models import User
 
 
@@ -43,7 +43,7 @@ class SignUPForm(forms.Form):
         }, ), label=''
     )
     username = formGenerator('text', 'user', 'Username')
-    email = formGenerator('email', 'user', 'Email Address')
+    email = formGenerator('email', 'email', 'Email Address')
     password = formGenerator('password', 'lock', 'Password')
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
@@ -78,5 +78,12 @@ class DocumentForm(forms.Form):
     }), label='')
 
     upload_file = forms.FileField()
+        # Date Picker Fields
+    date_single_with_format = fields.DateField(
+        input_formats=['%d/%m/%Y'],
+        widget=widgets.DatePickerWidget(
+            format='%d/%m/%Y'
+        )
+    )
 
     submit = formGenerator('submit', value="Send File")

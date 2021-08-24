@@ -10,7 +10,7 @@ class User(AbstractUser):
     #staff = models.BooleanField(default=False) # a admin user; non super-user
     #admin = models.BooleanField(default=False) # a superuser
     def __str__(self):
-        return self.user_first_name
+        return self.first_name
 
 
 class Role(models.Model):
