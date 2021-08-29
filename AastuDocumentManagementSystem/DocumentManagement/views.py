@@ -1,33 +1,37 @@
 from django.contrib import auth, messages
+# from django.contrib.auth import authenticate, login
 #from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib.auth import authenticate, login
-from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
-                    SignUPForm, DocumentForm)
-from .models import ConfirmationCode, Document,User
+
+from .forms import (ConfirmationForm, DocumentForm, NewPasswordForm, ResetForm,
+                    SignInForm, SignUPForm)
+from .models import ConfirmationCode, Document, User
 
 
 def doc(request):
     form = DocumentForm()
     if request.method == "POST":
         form = DocumentForm(request.POST)
+        print(form)
         if form.is_valid():
             cd = form.cleaned_data
-            doc = Document(**{i:cd[i] for i in cd})
+            print(cd)
+            doc = Document(**{i: cd[i] for i in cd})
             doc.save()
             return redirect('doc')
-    return render(request, 'create-document.html', {'forms':form})
+    return render(request, 'create-document.html', {'forms': form})
+
 
 def index(request):
-    error=''
-    print(request.user.is_authenticated)
+    error = ''
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-        
+
         #user = User.objects.get()
         return render(request, 'index.html')
+
 
 def signup(request):
     error = ''
@@ -54,6 +58,7 @@ def signup(request):
             error = 'Please enter valid information'
     return render(request, 'sign-up.html', {'forms': form, 'error': error})
 
+
 def signin(request):
     error = ''
     form = SignInForm()
@@ -65,7 +70,8 @@ def signin(request):
                 request, username=cd['username'], password=cd['password'])
             if user:
                 auth.login(request, user)
-                messages.info(request, f"You are now logged in as {cd['username']}.")
+                messages.info(
+                    request, f"You are now logged in as {cd['username']}.")
                 return redirect('index')
             else:
                 error = 'Username or password is incorrect!'
@@ -79,7 +85,6 @@ def signout(request):
     messages.info(request, f"You are now logged out.")
     if not request.user.is_authenticated:
         return redirect('signin')
- 
 
 
 def resetPassword(request):
@@ -182,4 +187,3 @@ def sendEmail(to, subject, body):
     except Exception as e:
         print(e)
     return redirect('/dms-app/signin')
- 

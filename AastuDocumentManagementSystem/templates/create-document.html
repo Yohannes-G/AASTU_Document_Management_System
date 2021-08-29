@@ -1,37 +1,34 @@
  {% extends 'base.html' %}
 
-{% block content %}
- 
- {% load static %} 
+ {% block content %}
 
-{% if error %}
-{{ error }}
+ {% load static %}
 
-<br/>
-<br/>
-{% endif %}
- 
+ {% if error %}
+ {{ error }}
+
+ <br />
+ <br />
+ {% endif %}
+
  <div class=" ">
  	<div id="page-wrapper">
-			<div class="graphs">
-				<h3 class="blank1">Create Document</h3>
-					<div class="tab-content">
-						<div class="tab-pane active custom_container" id="horizontal-form">
-							<form class="">
-								{% csrf_token %}
-								{% for form in forms %}
-								<div class="form-group">
- 									{{form}}
-								</div>
-								{% endfor %}
-							</form>
+ 		<div class="graphs">
+ 			<h3 class="blank1">Create Document</h3>
+ 			<div class="tab-content">
+ 				<form class="custom-form" , method="post" , enctype="multipart/form-data">
+ 					{% csrf_token %}
+ 					{% for form in forms %}
+ 					<div class="log-input">
+ 						{{form}}
+ 					</div>
+ 					{% endfor %}
+ 				</form>
+ 			</div>
+ 		</div>
 
-						</div>
-					</div>
-			</div>
-			 
 
- </div>
-			
-	 
-{% endblock %}
+ 	</div>
+
+
+ 	{% endblock %}

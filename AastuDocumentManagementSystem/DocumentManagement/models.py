@@ -1,14 +1,14 @@
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+
 
 # Create your models here.
 class User(AbstractUser):
     sex = models.CharField(max_length=10)
 
     #is_active = models.BooleanField(default=True)
-    #staff = models.BooleanField(default=False) # a admin user; non super-user
-    #admin = models.BooleanField(default=False) # a superuser
+    # staff = models.BooleanField(default=False) # a admin user; non super-user
+    # admin = models.BooleanField(default=False) # a superuser
     def __str__(self):
         return self.first_name
 
@@ -20,9 +20,22 @@ class Role(models.Model):
 
 
 class Document(models.Model):
+    department_choice = (
+        ('Colledge', ('Colledge')),
+        ('Directories', ('Directories')),
+        ('COE', ('COE'))
+    )
     doc_id = models.BigAutoField(primary_key=True)
-    doc_name = models.CharField(max_length=50)
-    doc_content = models.FileField(blank=True)
+    doc_title = models.CharField(max_length=50)
+    doc_desc = models.TextField(max_length=300)
+    doc_file = models.FileField(blank=True, upload_to='documents/')
+    doc_department = models.CharField(
+        max_length=20, choices=department_choice, default='Colledge')
+    doc_sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="Sender")
+    doc_receiver = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="Receiver")
+    doc_date = models.DateTimeField(auto_now_add=True)
 
 
 class Department(models.Model):
