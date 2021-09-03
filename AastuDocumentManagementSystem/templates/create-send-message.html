@@ -1,27 +1,23 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
- 
-{% load static %} 
 
-<div class="col-md-8 inbox_right">
-    <div class="Compose-Message">               
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Send Document
+{% load static %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Send Document
+    </div>
+    <div class="panel-body panel-body-com-m">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for form in forms %}
+            <div class="log-input">{{form}}
             </div>
-            <div class="panel-body panel-body-com-m">
-                <form action="" method="post">
-                    {% csrf_token %}
-                    {% for form in forms %}
-                    <div class="log-input">{{form}}
-                    </div>
-                    {% endfor %}
-                </form>
-            </div>
-         </div>
-      </div>
+            {% endfor %}
+        </form>
+    </div>
 </div>
 
 {% endblock %}

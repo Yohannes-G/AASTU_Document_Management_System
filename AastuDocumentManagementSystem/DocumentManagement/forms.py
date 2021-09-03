@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import Type, User
+from .models import Office, Type, User
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -106,6 +106,22 @@ class SendMessageForm(forms.Form):
         'placeholder': 'description',
     }), label='')
 
-    file = forms.FileField()
+    file = forms.FileField(required=False)
 
     submit = formGenerator('submit', value="Send File")
+
+
+# class ResetForm(forms.Form):
+#     email = formGenerator('email', 'email', 'Email Address')
+#     submit = formGenerator('submit', value="Reset")
+
+
+# class ConfirmationForm(forms.Form):
+#     confirmation = formGenerator('text', 'lock', 'Confirmation')
+#     submit = formGenerator('submit', value="Confirm")
+
+
+# class NewPasswordForm(forms.Form):
+#     password = formGenerator('password', 'lock', 'Password')
+#     conf_password = formGenerator('password', 'lock', 'Confirm Password')
+#     submit = formGenerator('submit', value="Submit")

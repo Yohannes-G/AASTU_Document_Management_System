@@ -1,7 +1,6 @@
 from django.conf.urls import include, url
 from django.urls import path
 
-from django.conf.urls import include
 from . import views
 
 # from django.contrib.auth import views as auth_views
@@ -17,10 +16,11 @@ urlpatterns = [
     path('createusers/', views.create_users, name='createusers'),
     path('createtypes/', views.create_types, name='createtypes'),
     path('displaytypes/', views.display_types, name='displaytypes'),
-    path('/createoffices/<int:type_id>', views.create_offices, name='createoffices'),
+    path('createoffices/<int:type_id>',
+         views.create_offices, name='createoffices'),
     path('displayoffices/', views.display_offices, name='displayoffices'),
     path('sendmessages/', views.send_messages, name='sendmessages'),
-    path('reset/', views.resetPassword, name='reset'),
-    path('confirmation/<str:email>/', views.confirmation, name='confirmation'), 
-    path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
+    # path('reset/', views.resetPassword, name='reset'),
+    # path('confirmation/<str:email>/', views.confirmation, name='confirmation'),
+    # path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
 ]
