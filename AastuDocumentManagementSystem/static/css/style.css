@@ -4972,9 +4972,9 @@ span.badge1 {
 .log-input input.lock {
 	background: url(../images/lock.png) no-repeat 8px 10px #fff;
 }
-.log-input input.email {
+/*.log-input input.email {
 	background: url(../images/email.png) no-repeat 8px 10px #fff;
-}
+}*/
 .log-input-left {
 	float: left;
 	width: 90%;

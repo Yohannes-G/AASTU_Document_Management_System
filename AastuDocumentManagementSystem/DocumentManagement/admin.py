@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import (ConfirmationCode, Department, Document, Folder, History,
-                     Media, Message, Notification, Role, User)
+from .models import (Office,SendMessage,ReceiveMessage, Notification,Type, User)
 
 
 # Register your models here.
@@ -11,16 +10,13 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = User
-    list_display = ['email', 'username']
-
+    list_display = [ 'id','username', 'type_name']
+class TypeAdmin(admin.ModelAdmin):
+    fields = ['type_name']
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Role)
-admin.site.register(Document)
-admin.site.register(Department)
-admin.site.register(Media)
-admin.site.register(History)
+admin.site.register(Type, TypeAdmin)
+admin.site.register(Office)
 admin.site.register(Notification)
-admin.site.register(Message)
-admin.site.register(Folder)
-admin.site.register(ConfirmationCode)
+admin.site.register(SendMessage)
+admin.site.register(ReceiveMessage)
