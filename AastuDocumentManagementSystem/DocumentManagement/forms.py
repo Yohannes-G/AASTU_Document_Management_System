@@ -1,8 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+<<<<<<< HEAD
+from bootstrap_daterangepicker import widgets, fields
+from .models import User, Type, Office
+=======
 
 # from bootstrap_daterangepicker import widgets, fields
 from .models import User
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -43,11 +48,62 @@ class SignUPForm(forms.Form):
             'class': 'form-control1',
         }, ), label=''
     )
-    username = formGenerator('text', 'user', 'Username')
-    email = formGenerator('email', 'email', 'Email Address')
-    password = formGenerator('password', 'lock', 'Password')
-    conf_password = formGenerator('password', 'lock', 'Confirm Password')
-    submit = formGenerator('submit', value="Submit")
+    type_name = forms.ChoiceField(
+        choices=(('President', 'President'), ('Vice President', 'Vice President')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    office = forms.ChoiceField(
+        choices=(('Electrical Engineering', 'Electrical Engineering'), (' Mechanical Engineering', 'Mechanical Engineering')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    submit = formGenerator('submit', value="Create User")
+
+class TypeForm(forms.Form):
+    type_name = formGenerator('text','user', 'type')
+    submit = formGenerator('submit', value='Create type')
+
+class OfficeForm(forms.Form):
+    type_name = forms.ModelChoiceField(queryset=Type.objects.all(), empty_label="Selected value")
+    office = formGenerator('text','user', 'office')
+    submit = formGenerator('submit', value='Create Office')
+
+class SendMessageForm(forms.Form):
+    type_name = forms.ChoiceField(
+        choices=(('President', 'President'), ('Vice President', 'Vice President')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    office = forms.ChoiceField(
+        choices=(('Electrical Engineering', 'Electrical Engineering'), (' Mechanical Engineering', 'Mechanical Engineering')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    cc_type_name = forms.ChoiceField(
+        choices=(('President', 'President'), ('Vice President', 'Vice President')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    cc_office = forms.ChoiceField(
+        choices=(('Electrical Engineering', 'Electrical Engineering'), (' Mechanical Engineering', 'Mechanical Engineering')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    description = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'user',
+        'placeholder': 'description',
+    }), label='')
+
+    file = forms.FileField()
+
+    submit = formGenerator('submit', value="Send File")
 
 
 class ResetForm(forms.Form):
@@ -64,6 +120,8 @@ class NewPasswordForm(forms.Form):
     password = formGenerator('password', 'lock', 'Password')
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
+<<<<<<< HEAD
+=======
 
 
 class DocumentForm(forms.Form):
@@ -91,3 +149,4 @@ class DocumentForm(forms.Form):
     # )
 
     submit = formGenerator('submit', value="Send File")
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216
