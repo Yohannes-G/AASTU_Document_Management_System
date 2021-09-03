@@ -1,18 +1,19 @@
  {% extends 'base.html' %}
 
-{% block content %}
- 
- {% load static %} 
+ {% block content %}
 
-{% if error %}
-{{ error }}
+ {% load static %}
 
-<br/>
-<br/>
-{% endif %}
- 
+ {% if error %}
+ {{ error }}
+
+ <br />
+ <br />
+ {% endif %}
+
  <div class=" ">
  	<div id="page-wrapper">
+<<<<<<< HEAD
 			<div class="graphs">
 				<h3 class="blank1">Create Document</h3>
 					<div class="tab-content">
@@ -35,3 +36,24 @@
 			 
 	 
 {% endblock %}
+=======
+ 		<div class="graphs">
+ 			<h3 class="blank1">Create Document</h3>
+ 			<div class="tab-content">
+ 				<form class="custom-form" , method="post" , enctype="multipart/form-data">
+ 					{% csrf_token %}
+ 					{% for form in forms %}
+ 					<div class="log-input">
+ 						{{form}}
+ 					</div>
+ 					{% endfor %}
+ 				</form>
+ 			</div>
+ 		</div>
+
+
+ 	</div>
+
+
+ 	{% endblock %}
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216

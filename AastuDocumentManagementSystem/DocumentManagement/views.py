@@ -1,7 +1,9 @@
 from django.contrib import auth, messages
+# from django.contrib.auth import authenticate, login
 #from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
+<<<<<<< HEAD
 from django.contrib.auth import authenticate, login
 from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
                     SignUPForm, TypeForm, OfficeForm, SendMessageForm)
@@ -76,6 +78,12 @@ def display_offices(request):
     office = Office.objects.all()
     print("Office:", Office.__dict__)
     return render(request, 'display-offices.html', {'offices': office})
+=======
+
+from .forms import (ConfirmationForm, DocumentForm, NewPasswordForm, ResetForm,
+                    SignInForm, SignUPForm)
+from .models import ConfirmationCode, Document, User
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 
 ################### User Management #############################
 def users(request):
@@ -89,6 +97,7 @@ def create_users(request):
     form = SignUPForm()
     print('Form:', request)
     if request.method == "POST":
+<<<<<<< HEAD
         form = SignUPForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -102,15 +111,27 @@ def create_users(request):
                 return redirect('signin')
         else:
             error = 'Please enter valid information'
+=======
+        form = DocumentForm(request.POST)
+        print(form)
+        if form.is_valid():
+            cd = form.cleaned_data
+            print(cd)
+            doc = Document(**{i: cd[i] for i in cd})
+            doc.save()
+            return redirect('doc')
+    return render(request, 'create-document.html', {'forms': form})
+
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 
     return render(request, 'create-users.html', {'forms': form})
 ############# Index User Dashboard###############################
 def index(request):
-    error=''
-    print(request.user.is_authenticated)
+    error = ''
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
+<<<<<<< HEAD
         
         print("User:",request.user.id)
         user = User.objects.get(id=request.user.id)
@@ -119,6 +140,13 @@ def index(request):
 
 
 ############ User Authentication Methods ########################
+=======
+
+        #user = User.objects.get()
+        return render(request, 'index.html')
+
+
+>>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 def signup(request):
     error = ''
     form = SignUPForm()
@@ -144,6 +172,7 @@ def signup(request):
             error = 'Please enter valid information'
     return render(request, 'sign-up.html', {'forms': form, 'error': error})
 
+
 def signin(request):
     error = ''
     form = SignInForm()
@@ -157,7 +186,8 @@ def signin(request):
             print("User:",user)
             if user:
                 auth.login(request, user)
-                messages.info(request, f"You are now logged in as {cd['username']}.")
+                messages.info(
+                    request, f"You are now logged in as {cd['username']}.")
                 return redirect('index')
             else:
                 error = 'Username or password is incorrect!'
@@ -171,7 +201,6 @@ def signout(request):
     messages.info(request, f"You are now logged out.")
     if not request.user.is_authenticated:
         return redirect('signin')
- 
 
 
 def resetPassword(request):
@@ -274,4 +303,3 @@ def sendEmail(to, subject, body):
     except Exception as e:
         print(e)
     return redirect('/dms-app/signin')
- 
