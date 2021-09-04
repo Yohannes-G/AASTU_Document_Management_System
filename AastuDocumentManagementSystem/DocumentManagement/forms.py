@@ -37,12 +37,6 @@ class SignInForm(forms.Form):
 class SignUPForm(forms.Form):
     first_name = formGenerator('text', 'user', 'First Name')
     last_name = formGenerator('text', 'user', 'Last Name')
-    sex = forms.ChoiceField(
-        choices=(('Male', 'Male'), ('Female', 'Female')),
-        widget=forms.Select(attrs={
-            'class': 'form-control1',
-        }, ), label=''
-    )
     type_name = forms.ChoiceField(
         choices=(('President', 'President'),
                  ('Vice President', 'Vice President')),

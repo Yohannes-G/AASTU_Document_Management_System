@@ -1,17 +1,12 @@
 import os
 
 from django.contrib import auth, messages
-from django.contrib.auth import authenticate, login
-from django.core.files.storage import FileSystemStorage
 from django.http import FileResponse
-# from django.contrib.auth import authenticate, login
-#from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
 from .forms import (OfficeForm, SendMessageForm, SignInForm, SignUPForm,
                     TypeForm)
-from .models import Office, SendMessage, Type, User
+from .models import Message, Office, Type, User
 
 
 ##########################PDF Rendering #########################
@@ -28,16 +23,21 @@ def send_messages(request):
         if form.is_valid():
             cd = form.cleaned_data
             category = cd['file'].content_type.split('/')[0].capitalize()
-            send = SendMessage(message_type_name=cd['type_name'],
-                               message_office=cd['office'],
-                               message_cc_type_name=cd['cc_type_name'],
-                               message_cc_office=cd['cc_office'],
-                               message_description=cd['description'],
-                               message_file=cd['file'],
-                               message_sender=request.user)
+            users = User.objects.filter(office__office_name=cd['office'])
+            send = Message(
+                message_description=cd['description'],
+                message_file=cd['file'],
+                message_sender=request.user)
             send.message_file.field.upload_to = f"{cd['office']}/{category}"
             send.save()
+            send.message_receiver.add(*users)
     return render(request, 'create-send-message.html', {'forms': form})
+
+
+################## Show Message ############################
+def show_message(request, message_id):
+    msg = Message.objects.get(message_id=message_id)
+    return render(request, 'show_message.html', {'msg': msg})
 
 
 ################### Create Roles #############################
@@ -103,38 +103,39 @@ def users(request):
 
 
 def create_users(request):
-    string = "."
+    error = ""
     form = SignUPForm()
-    print('Form:', request)
     if request.method == "POST":
         form = SignUPForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
             cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
             cd['password'] = cd['username']
+            cd['office'] = Office.objects.get(office_name=cd['office'])
             if User.objects.filter(username=cd['username']):
                 error = 'Username is already taken!'
             else:
                 del cd['submit']
+                del cd['type_name']
                 u = User.objects.create_user(**{i: cd[i] for i in cd})
+                u.save()
                 return redirect('signin')
         else:
             error = 'Please enter valid information'
 
-    return render(request, 'create-users.html', {'forms': form})
+    return render(request, 'create-users.html', {'forms': form, 'error': error})
 ############# Index User Dashboard###############################
 
 
 def index(request):
-    error = ''
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-
-        print("User:", request.user.id)
         user = User.objects.get(id=request.user.id)
-        print("User-1", user.__dict__)
-        return render(request, 'index.html', {'user': user})
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'count': count})
 
 
 ############ User Authentication Methods ########################
