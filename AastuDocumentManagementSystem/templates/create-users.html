@@ -1,18 +1,18 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
- 
-{% load static %} 
+
+{% load static %}
 
 <div class="col-md-8 inbox_right">
-    <div class="Compose-Message">               
+    <div class="Compose-Message">
         <div class="panel panel-default">
             <div class="panel-heading">
                 Create User
             </div>
+            <p>{{error}}</p>
             <div class="panel-body panel-body-com-m">
-                 
+
                 <form action="" method="post">
                     {% csrf_token %}
                     {% for form in forms %}
@@ -21,8 +21,8 @@
                     {% endfor %}
                 </form>
             </div>
-         </div>
-      </div>
+        </div>
+    </div>
 </div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript" >

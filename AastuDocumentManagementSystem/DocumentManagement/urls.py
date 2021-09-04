@@ -1,7 +1,8 @@
+from os import name
+
 from django.conf.urls import include, url
 from django.urls import path
 
-from django.conf.urls import include
 from . import views
 
 # from django.contrib.auth import views as auth_views
@@ -17,10 +18,17 @@ urlpatterns = [
     path('createusers/', views.create_users, name='createusers'),
     path('createtypes/', views.create_types, name='createtypes'),
     path('displaytypes/', views.display_types, name='displaytypes'),
+<<<<<<< HEAD
     path('<int:type_id>/createoffices/', views.create_offices, name='createoffices'),
     path('<int:type_id>/displayoffices/', views.display_offices, name='displayoffices'),
+=======
+    path('createoffices/<int:type_id>',
+         views.create_offices, name='createoffices'),
+    path('displayoffices/', views.display_offices, name='displayoffices'),
+>>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
     path('sendmessages/', views.send_messages, name='sendmessages'),
-    path('reset/', views.resetPassword, name='reset'),
-    path('confirmation/<str:email>/', views.confirmation, name='confirmation'), 
-    path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
+    path('showmessage/<int:message_id>', views.show_message, name='showmessage')
+    # path('reset/', views.resetPassword, name='reset'),
+    # path('confirmation/<str:email>/', views.confirmation, name='confirmation'),
+    # path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
 ]
