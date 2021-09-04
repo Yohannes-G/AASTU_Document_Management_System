@@ -32,14 +32,21 @@
 										<tr class="primary">
 											<th>#</th>
 											<th>Types</th>
+											<th>Offices</th>
 										</tr>
 									</thead>
+
 									{% for type in types  %}
 									<tbody>
 										 
 										<tr>
 											<td>{{ type.type_id }}</td>
 											<td>{{ type.type_name }}</td>
+											
+
+											<td><a href="{% url 'displayoffices' type.type_id %}"><button>Offices</button></a></td>
+											
+										
 										</tr>
 									</tbody>
 									{% endfor %}

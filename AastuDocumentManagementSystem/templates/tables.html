@@ -33,8 +33,11 @@
 											<th>Username</th>
 											<th>First Name</th>
 											<th>Last Name</th>
-											<th>Email</th>
+											<th>Sex</th>
 											<th>Admin</th>
+											<th>Type</th>
+											<th>Office</th>
+
 										</tr>
 									</thead>
 									{% for use in user  %}
@@ -44,7 +47,7 @@
 											<td>{{ use.username }}</td>
 											<td>{{ use.first_name }}</td>
 											<td>{{ use.last_name }}</td>
-											<td>{{ use.email }}</td>
+											<td>{{ use.sex }}</td>
 											<td>{{ use.is_staff }}</td>
 										</tr>
 									</tbody>

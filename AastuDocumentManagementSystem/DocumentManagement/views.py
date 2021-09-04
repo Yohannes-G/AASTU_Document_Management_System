@@ -1,9 +1,6 @@
 from django.contrib import auth, messages
-# from django.contrib.auth import authenticate, login
-#from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 from django.urls import reverse
-<<<<<<< HEAD
 from django.contrib.auth import authenticate, login
 from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
                     SignUPForm, TypeForm, OfficeForm, SendMessageForm)
@@ -46,14 +43,15 @@ def create_types(request):
     return render(request, 'create-role.html', {'forms': form})
 
 def display_types(request):
+    print('Request:', request.POST)
     types = Type.objects.all()
+    offices = Office.objects.all()
+    print("Offices:", offices.__dict__)
     print("Type:", types.__dict__)
-    return render(request, 'display-types.html', {'types':types})
+    return render(request, 'display-types.html', {'types':types })
 ################### Create Offices #############################
 def create_offices(request, type_id):
-
     form = OfficeForm()
-
     if request.method == 'POST':
         
         form = OfficeForm(request.POST)
@@ -64,26 +62,15 @@ def create_offices(request, type_id):
         if form.is_valid():
             print("Office")
             cd = form.cleaned_data
-            for t in cd:
-                print(t['type_name'])
-            if Type.objects.filter(type_name=cd):
-                type_id=Type.objects.all()
-                print("Office", type_id.__dict__)
-                office = Office.objects.create( office_type_name_id=1 ,office_name=cd['office'])
-                office.save()
+            office = Office.objects.create(office_type_name_id=type_id, office_name=cd['office'])
+            office.save()
 
-    return render(request, 'create-office.html', {'forms':form})
+    return render(request, 'create-office.html', {'forms':form, 'type_id':type_id})
 
-def display_offices(request):
-    office = Office.objects.all()
-    print("Office:", Office.__dict__)
-    return render(request, 'display-offices.html', {'offices': office})
-=======
+def display_offices(request, type_id):
+    office = Office.objects.filter(office_type_name_id=type_id)
 
-from .forms import (ConfirmationForm, DocumentForm, NewPasswordForm, ResetForm,
-                    SignInForm, SignUPForm)
-from .models import ConfirmationCode, Document, User
->>>>>>> 5c489433e0363825d570d4625d780fc87802b216
+    return render(request, 'display-offices.html', {'offices': office, 'type_id':type_id})
 
 ################### User Management #############################
 def users(request):
@@ -97,7 +84,6 @@ def create_users(request):
     form = SignUPForm()
     print('Form:', request)
     if request.method == "POST":
-<<<<<<< HEAD
         form = SignUPForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -111,18 +97,6 @@ def create_users(request):
                 return redirect('signin')
         else:
             error = 'Please enter valid information'
-=======
-        form = DocumentForm(request.POST)
-        print(form)
-        if form.is_valid():
-            cd = form.cleaned_data
-            print(cd)
-            doc = Document(**{i: cd[i] for i in cd})
-            doc.save()
-            return redirect('doc')
-    return render(request, 'create-document.html', {'forms': form})
-
->>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 
     return render(request, 'create-users.html', {'forms': form})
 ############# Index User Dashboard###############################
@@ -131,22 +105,11 @@ def index(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-<<<<<<< HEAD
-        
         print("User:",request.user.id)
         user = User.objects.get(id=request.user.id)
         print("User-1",user.__dict__)
         return render(request, 'index.html', {'user': user})
 
-
-############ User Authentication Methods ########################
-=======
-
-        #user = User.objects.get()
-        return render(request, 'index.html')
-
-
->>>>>>> 5c489433e0363825d570d4625d780fc87802b216
 def signup(request):
     error = ''
     form = SignUPForm()
