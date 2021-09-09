@@ -66,21 +66,7 @@ class OfficeForm(forms.Form):
     submit = formGenerator('submit', value='Create Office')
 
 
-class SendMessageForm(forms.Form):
-    type_name = forms.ChoiceField(
-        choices=(('President', 'President'),
-                 ('Vice President', 'Vice President')),
-        widget=forms.Select(attrs={
-            'class': 'form-control1',
-        }, ), label=''
-    )
-    office = forms.ChoiceField(
-        choices=(('Electrical Engineering', 'Electrical Engineering'),
-                 (' Mechanical Engineering', 'Mechanical Engineering')),
-        widget=forms.Select(attrs={
-            'class': 'form-control1',
-        }, ), label=''
-    )
+class ReplyMessageForm(forms.Form):
     cc_type_name = forms.ChoiceField(
         choices=(('President', 'President'),
                  ('Vice President', 'Vice President')),
@@ -100,9 +86,32 @@ class SendMessageForm(forms.Form):
         'placeholder': 'description',
     }), label='')
 
-    file = forms.FileField(required=False)
+    file = forms.FileField(required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'type': 'file',
+    }
+    ), label='')
 
     submit = formGenerator('submit', value="Send File")
+
+
+class SendMessageForm(ReplyMessageForm):
+    type_name = forms.ChoiceField(
+        choices=(('President', 'President'),
+                 ('Vice President', 'Vice President')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+    office = forms.ChoiceField(
+        choices=(('Electrical Engineering', 'Electrical Engineering'),
+                 (' Mechanical Engineering', 'Mechanical Engineering')),
+        widget=forms.Select(attrs={
+            'class': 'form-control1',
+        }, ), label=''
+    )
+
+    field_order = ['type_name', 'office']
 
 
 # class ResetForm(forms.Form):

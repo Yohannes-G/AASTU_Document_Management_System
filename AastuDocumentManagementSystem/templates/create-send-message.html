@@ -5,19 +5,31 @@
 {% load static %}
 
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-        Send Document
-    </div>
-    <div class="panel-body panel-body-com-m">
-        <form action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% for form in forms %}
-            <div class="log-input">{{form}}
+<div class="row custom-center">
+    <div class="col-sm-6">
+        <div class="custom-header">
+            Send Document
+        </div>
+        <div class="panel-body panel-body-com-m">
+            {% if type_name %}
+            <div class="custom-container">
+                <h4 class="reply">Reply to: </h4>
+                <div class="custom-receiver">
+                    <h3 class="type-name">{{type_name}}</h3>
+                    <h4 class="office">{{office}}</h4>
+                </div>
             </div>
-            {% endfor %}
-        </form>
+            {% endif %}
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for form in forms %}
+                <div class="log-input">{{form}}
+                </div>
+                {% endfor %}
+            </form>
+        </div>
     </div>
 </div>
+
 
 {% endblock %}

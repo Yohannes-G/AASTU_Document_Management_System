@@ -1,18 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<div class="sender">
-    <h2>From:</h2>
-    <h3>{{msg.message_sender.office.office_type_name}}</h3>
-    <h4>{{msg.message_sender.office}}</h4>
+<div class="custom-header">
+    <div class="header-from">
+        <h3 class="department-type">{{msg.message_sender.office.office_type_name}}</h3>
+        <h4 class="department-office">{{msg.message_sender.office}}</h4>
+    </div>
+    <div class="header-time">
+        <p>{{msg.message_time}}</p>
+    </div>
 </div>
-<div class="message">
-    <p>{{msg.message_description}}</p>
+<div class="custom-detail">
+    <div class="custom-description">
+        <p>{{msg.message_description}}</p>
+    </div>
+    <div class="custom-img">
+        <a href="{% get_media_prefix %}{{msg.message_file}}" target="_blank">
+            <img class="custom-inner-img" src="{% static 'images/pdf.png' %}" alt=""
+                data-pdf-thumbnail-file="{% get_media_prefix %}{{msg.message_file}}">
+        </a>
+    </div>
 </div>
-<p>{{msg.message_file}}</p>
-<div class="render">
-    <img src="{% static 'images/pdf.png' %}" alt=""
-        data-pdf-thumbnail-file="{% get_media_prefix %}{{msg.message_file}}">
+<div class="replay-btn">
+    <a href="{% url 'replymessage' msg.message_id %}"><button class="inner-replay-btn">Replay</button></a>
 </div>
-
 {% endblock content %}

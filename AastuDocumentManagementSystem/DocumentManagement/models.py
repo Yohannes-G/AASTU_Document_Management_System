@@ -32,11 +32,27 @@ class User(AbstractUser):
 class Message(models.Model):
     message_time = models.DateTimeField(auto_now_add=True)
     message_id = models.BigAutoField(primary_key=True)
-    # message_cc = models.BooleanField(max_length=50)
-    message_unread = models.BooleanField(default=True)
+    message_cc = models.BooleanField(default=False)
     message_description = models.TextField(max_length=256)
     message_file = models.FileField(
         blank=True)
     message_receiver = models.ManyToManyField(User, related_name='receiver')
     message_sender = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='sender')
+    message_unread = models.BooleanField(default=True)
+
+
+class ReplyMessage(models.Model):
+    reply_time = models.DateTimeField(auto_now_add=True)
+    reply_id = models.BigAutoField(primary_key=True)
+    reply_cc = models.BooleanField(default=False)
+    reply_description = models.TextField(max_length=256)
+    reply_file = models.FileField(
+        blank=True)
+    reply_receiver = models.ManyToManyField(
+        User, related_name='reply_receiver')
+    reply_sender = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reply_sender')
+    replyed_message = models.ForeignKey(
+        Message, on_delete=models.CASCADE, related_name='replyed_message')
+    reply_unread = models.BooleanField(default=True)

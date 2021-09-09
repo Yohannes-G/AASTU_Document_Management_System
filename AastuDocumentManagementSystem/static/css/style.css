@@ -7965,3 +7965,82 @@ input[type="submit"]:hover {
 	width: 70%;
 	margin: auto;
 }
+
+.custom-header {
+	margin-top: 1em;
+	padding: 1rem;
+	background-color: #f44336;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: #fff;
+}
+
+.custom-detail {
+	padding: 1rem;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.custom-img {
+	width: 50%;
+}
+
+.custom-description {
+	color: #097676;
+	padding: 1rem;
+}
+
+.custom-inner-img {
+	display: block;
+	width: 100%;
+	object-fit: contain;
+	border: 3px solid black;
+}
+
+.replay-btn {
+	display: flex;
+	justify-content: center;
+	padding: 1rem;
+}
+
+.inner-replay-btn {
+	padding: 0.7rem 1.2rem;
+	background: #f44336;
+	color: #fff;
+}
+
+.custom-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.type-name {
+	color: #5a30ce;
+}
+
+.office {
+	margin-bottom: 1rem;
+	color: #5a30ce;
+}
+.custom-container {
+	display: flex;
+	justify-content: space-evenly;
+}
+.reply {
+	color: #e02f2f;
+}
+
+.sender {
+	display: flex;
+	justify-content: space-between;
+}
+
+.custom-conversation {
+	width: 80%;
+	padding: 1rem;
+	margin: 1rem;
+	background-color: #943333;
+}

@@ -4,126 +4,223 @@ from django.contrib import auth, messages
 from django.http import FileResponse
 from django.shortcuts import redirect, render
 
-from .forms import (OfficeForm, SendMessageForm, SignInForm, SignUPForm,
-                    TypeForm)
-from .models import Message, Office, Type, User
-
+from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
+                    SignUPForm, TypeForm)
+from .models import Message, Office, ReplyMessage, Type, User
 
 ##########################PDF Rendering #########################
-def pdf_rendering(request):
+
+
+def pdf_rendering():
     filepath = os.path.join('static', 'ProposalWriting.pdf')
     return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+
+
 ################### Create Messages for user ####################
 
 
 def send_messages(request):
-    form = SendMessageForm()
-    if request.method == 'POST':
-        form = SendMessageForm(request.POST, request.FILES)
-        if form.is_valid():
-            cd = form.cleaned_data
-            category = cd['file'].content_type.split('/')[0].capitalize()
-            users = User.objects.filter(office__office_name=cd['office'])
-            send = Message(
-                message_description=cd['description'],
-                message_file=cd['file'],
-                message_sender=request.user)
-            send.message_file.field.upload_to = f"{cd['office']}/{category}"
-            send.save()
-            send.message_receiver.add(*users)
-    return render(request, 'create-send-message.html', {'forms': form})
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    else:
+        form = SendMessageForm()
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        if request.method == 'POST':
+            form = SendMessageForm(request.POST, request.FILES)
+            if form.is_valid():
+                cd = form.cleaned_data
+                category = cd['file'].content_type.split('/')[0].capitalize()
+                users = User.objects.filter(office__office_name=cd['office'])
+                carbon_copies = Office.objects.filter(
+                    office_name=cd['cc_office'])
+                users = users + carbon_copies
+                for user in users:
+                    send = Message(
+                        message_description=cd['description'],
+                        message_file=cd['file'],
+                        message_sender=request.user,
+                        message_receiver=user,
+                        message_carbon_copy=True if user in carbon_copies else False
+                    )
+                    send.message_file.field.upload_to = f"{cd['office']}/{user}/{category}"
+                    send.save()
+        return render(request, 'create-send-message.html',
+                      {'forms': form, 'notifications': notifications, 'count': count})
+
+################### Reply Message for received message #############
+
+
+def reply_message(request, message_id):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        msg = Message.objects.get(message_id=message_id)
+        type_name = request.user.office.office_type_name
+        office = request.user.office
+        form = ReplyMessageForm()
+        if request.method == 'POST':
+            form = ReplyMessageForm(request.POST, request.FILES)
+            if form.is_valid():
+                cd = form.cleaned_data
+                category = cd['file'].content_type.split('/')[0].capitalize()
+                users = User.objects.filter(office__office_name=cd['office'])
+                carbon_copies = Office.objects.filter(
+                    office_name=cd['cc_office'])
+                users = users + carbon_copies
+                for user in users:
+                    send = ReplyMessage(
+                        reply_description=cd['description'],
+                        reply_file=cd['file'],
+                        reply_sender=request.user,
+                        reply_receiver=user,
+                        reply_carbon_copy=True if user in carbon_copies else False,
+                        replyed_message=msg
+                    )
+                    send.reply_file.field.upload_to = f"{cd['office']}/{user}/{category}"
+                    send.save()
+        return render(request, 'create-send-message.html',
+                      {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'count': count})
 
 
 ################## Show Message ############################
 def show_message(request, message_id):
-    msg = Message.objects.get(message_id=message_id)
-    return render(request, 'show_message.html', {'msg': msg})
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        msg = Message.objects.get(message_id=message_id)
+        count = notifications.count()
+        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'count': count})
+
+
+################### Show all messages ########################
+def show_all_message(request):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        messages = request.user.receiver.all()
+        user = request.user
+        count = notifications.count()
+    return render(request, 'show_all_message.html', {'messages': messages, 'user': user, 'notifications': notifications, 'count': count})
 
 
 ################### Create Roles #############################
 def create_types(request):
-    form = TypeForm()
-    if request.method == 'POST':
-        form = TypeForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        form = TypeForm()
+        if request.method == 'POST':
+            form = TypeForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
 
-            role = Type.objects.create(type_name=cd['type_name'])
-            role.save()
+                role = Type.objects.create(type_name=cd['type_name'])
+                role.save()
 
-    return render(request, 'create-role.html', {'forms': form})
+    return render(request, 'create-role.html', {'forms': form, 'notifications': notifications, 'count': count})
 
 
 def display_types(request):
-    types = Type.objects.all()
-    print("Type:", types.__dict__)
-    return render(request, 'display-types.html', {'types': types})
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        types = Type.objects.all()
+        return render(request, 'display-types.html', {'types': types, 'notifications': notifications, 'count': count})
 ################### Create Offices #############################
 
 
 def create_offices(request, type_id):
 
-    form = OfficeForm()
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        form = OfficeForm()
 
-    if request.method == 'POST':
+        if request.method == 'POST':
 
-        form = OfficeForm(request.POST)
-        form1 = Type.objects.get(pk=type_id)
-        print('Form:', form.__dict__)
+            form = OfficeForm(request.POST)
+            form1 = Type.objects.get(pk=type_id)
+            if form.is_valid():
+                cd = form.cleaned_data
+                if Type.objects.filter(type_name=cd):
+                    type_id = Type.objects.all()
+                    office = Office.objects.create(
+                        office_type_name_id=1, office_name=cd['office'])
+                    office.save()
 
-        print('Form1:', form1)
-        if form.is_valid():
-            print("Office")
-            cd = form.cleaned_data
-            for t in cd:
-                print(t['type_name'])
-            if Type.objects.filter(type_name=cd):
-                type_id = Type.objects.all()
-                print("Office", type_id.__dict__)
-                office = Office.objects.create(
-                    office_type_name_id=1, office_name=cd['office'])
-                office.save()
-
-    return render(request, 'create-office.html', {'forms': form})
+        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count})
 
 
 def display_offices(request):
-    office = Office.objects.all()
-    print("Office:", Office.__dict__)
-    return render(request, 'display-offices.html', {'offices': office})
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        office = Office.objects.all()
+        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count})
 
 ################### User Management #############################
 
 
 def users(request):
-    user = User.objects.all()
-    print("User:", user.__dict__)
-
-    return render(request, 'tables.html', {'user': user})
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        user = User.objects.all()
+        return render(request, 'tables.html', {'user': user, 'notifications': notifications, 'count': count})
 
 
 def create_users(request):
-    error = ""
-    form = SignUPForm()
-    if request.method == "POST":
-        form = SignUPForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
-            cd['password'] = cd['username']
-            cd['office'] = Office.objects.get(office_name=cd['office'])
-            if User.objects.filter(username=cd['username']):
-                error = 'Username is already taken!'
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        error = ""
+        form = SignUPForm()
+        if request.method == "POST":
+            form = SignUPForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
+                cd['password'] = cd['username']
+                cd['office'] = Office.objects.get(office_name=cd['office'])
+                if User.objects.filter(username=cd['username']):
+                    error = 'Username is already taken!'
+                else:
+                    del cd['submit']
+                    del cd['type_name']
+                    u = User.objects.create_user(**{i: cd[i] for i in cd})
+                    u.save()
+                    return redirect('signin')
             else:
-                del cd['submit']
-                del cd['type_name']
-                u = User.objects.create_user(**{i: cd[i] for i in cd})
-                u.save()
-                return redirect('signin')
-        else:
-            error = 'Please enter valid information'
+                error = 'Please enter valid information'
 
-    return render(request, 'create-users.html', {'forms': form, 'error': error})
+        return render(request, 'create-users.html', {'forms': form, 'error': error, 'notifications': notifications, 'count': count})
 ############# Index User Dashboard###############################
 
 
@@ -170,12 +267,10 @@ def signin(request):
     form = SignInForm()
     if request.method == 'POST':
         form = SignInForm(request.POST)
-        print("Form:", form)
         if form.is_valid():
             cd = form.cleaned_data
             user = auth.authenticate(
                 request, username=cd['username'], password=cd['password'])
-            print("User:", user)
             if user:
                 auth.login(request, user)
                 messages.info(

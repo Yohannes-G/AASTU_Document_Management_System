@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}All message{% endblock title %}
+{% block content %}
+{% for message in messages %}
+{% if message.message_sender == user %}
+<a href="{% url 'showmessage' message.message_id %}">
+    <div class="custom-conversation">
+        <div class="sender">
+            <div class="sender-from">
+                <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
+                <h4 class="department-office">{{message.message_sender.office}}</h4>
+            </div>
+            <div class="header-time">
+                <p>{{message.message_time}}</p>
+            </div>
+        </div>
+        <div>
+            <p>{{message.message_description}}</p>
+        </div>
+    </div>
+</a>
+{% else %}
+<div class="custom-header receiver">
+    <div class="header-from">
+        <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
+        <h4 class="department-office">{{message.message_sender.office}}</h4>
+    </div>
+    <div class="header-time">
+        <p>{{message.message_time}}</p>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock content %}

@@ -22,7 +22,10 @@ urlpatterns = [
          views.create_offices, name='createoffices'),
     path('displayoffices/', views.display_offices, name='displayoffices'),
     path('sendmessages/', views.send_messages, name='sendmessages'),
-    path('showmessage/<int:message_id>', views.show_message, name='showmessage')
+    path('showmessage/<int:message_id>', views.show_message, name='showmessage'),
+    path('replymessage/<int:message_id>',
+         views.reply_message, name='replymessage'),
+    path('showallmessage/', views.show_all_message, name='showallmessage')
     # path('reset/', views.resetPassword, name='reset'),
     # path('confirmation/<str:email>/', views.confirmation, name='confirmation'),
     # path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
