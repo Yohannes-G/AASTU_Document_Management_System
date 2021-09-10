@@ -1,22 +1,75 @@
 import os
-
 from django.contrib import auth, messages
-<<<<<<< HEAD
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 from .forms import (ConfirmationForm, NewPasswordForm, ResetForm, SignInForm,
                     SignUPForm, TypeForm, OfficeForm, SendMessageForm)
-from .models import User, Type, Office,SendMessage
-=======
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
-from django.http import FileResponse
+from .models import User, Type, Office,Message
+from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import (OfficeForm, SendMessageForm, SignInForm, SignUPForm,
-                    TypeForm)
+                    TypeForm, AddressForm)
 from .models import Message, Office, Type, User
+import json
+from django.core import serializers
+######################## Drop Down ##############################
+def readJson(filename):
+        with open(filename, 'r') as fp:
+            return json.load(fp)
 
+def get_country():
+    """ GET COUNTRY SELECTION """
+    filepath = './static/data/countries_states_cities.json'
+    all_data = readJson(filepath)
+    all_countries = [('-----', '---Select a Country---')]
+    for x in all_data:
+        y = (x['name'], x['name'])
+        all_countries.append(y)
+        return all_countries
+
+def return_state_by_country(country):
+    """ GET STATE SELECTION BY COUNTRY INPUT """
+    filepath = './static/data/countries_states_cities.json'
+    all_data = readJson(filepath)
+    all_states = []
+     
+    for x in all_data:
+        if x['name'] == country:
+            if 'cities' in x:
+                for state in x['cities']:
+                    y = (state['name'], state['name'])
+                    all_states.append(state['name'])
+            else:
+                all_states.append(country)
+        return all_states
+
+def getProvince(request):
+    country = request.POST.get('country')
+    #print(country)
+    provinces = return_state_by_country(country)
+   # print(provinces)
+    return JsonResponse({'provinces': provinces})
+
+def processForm(request):
+    context = {}
+    print(request.method == 'POST')
+    if request.method == 'GET':
+       form  = AddressForm()
+       context['form'] = form
+       return render(request, 'address.html', context)    
+    
+    if request.method == 'POST':
+        form  = AddressForm(request.POST)
+        if form.is_valid():
+            selected_province = request.POST['state']
+            obj = form.save(commit=False)
+            obj.state = selected_province
+            obj.save()
+
+    return render(request, 'address.html')
+            #Complete the rest of the view function
 
 ##########################PDF Rendering #########################
 def pdf_rendering(request):
@@ -69,11 +122,7 @@ def display_types(request):
     offices = Office.objects.all()
     print("Offices:", offices.__dict__)
     print("Type:", types.__dict__)
-<<<<<<< HEAD
     return render(request, 'display-types.html', {'types':types })
-=======
-    return render(request, 'display-types.html', {'types': types})
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
 ################### Create Offices #############################
 
 
@@ -89,67 +138,115 @@ def create_offices(request, type_id):
         if form.is_valid():
             print("Office")
             cd = form.cleaned_data
-<<<<<<< HEAD
             office = Office.objects.create(office_type_name_id=type_id, office_name=cd['office'])
             office.save()
-
     return render(request, 'create-office.html', {'forms':form, 'type_id':type_id})
 
 def display_offices(request, type_id):
     office = Office.objects.filter(office_type_name_id=type_id)
-
     return render(request, 'display-offices.html', {'offices': office, 'type_id':type_id})
-=======
-            for t in cd:
-                print(t['type_name'])
-            if Type.objects.filter(type_name=cd):
-                type_id = Type.objects.all()
-                print("Office", type_id.__dict__)
-                office = Office.objects.create(
-                    office_type_name_id=1, office_name=cd['office'])
-                office.save()
-
-    return render(request, 'create-office.html', {'forms': form})
-
-
-def display_offices(request):
-    office = Office.objects.all()
-    print("Office:", Office.__dict__)
-    return render(request, 'display-offices.html', {'offices': office})
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
 
 ################### User Management #############################
+def get_type():
+    """ GET Type SELECTION """
+    all_countries = [('-----', '---Select a Type---')]
+    all_data = [type_name.type_name for type_name in Type.objects.all()]
+    #print("all_data", all_data)
+    for x in all_data:
+        y = (x, x)
+        all_countries.append(y)
+    return all_countries
 
+
+def return_office_by_type(type_name):
+    all_offices = []
+    all_data = [type_name.type_name for type_name in Type.objects.all()]
+    print(all_data)
+    #get the id of the comming type
+    typeId = Type.objects.get(type_name=type_name)
+    print("return:", typeId)
+
+    for x in all_data:
+        print(x)
+        if x == type_name:
+            office_list = Office.objects.filter(office_type_name_id=typeId.type_id)
+            print("office_list",office_list)
+            for office in office_list:
+                print("Office New:", office)
+                y = (office, office)
+                all_offices.append(office)
+                print("all_offices", all_offices)
+    return all_offices
+
+def getOffices(request):
+    office_type_name = request.POST.get('type_name')
+    #office_type_name = 'Director' 
+    print("getOffices: ",office_type_name)
+    offices = return_office_by_type(office_type_name)
+    office=[office.office_name for office in offices]
+    
+    return JsonResponse(office,  safe=False)
+
+# def processForm(request):
+#     context = {}
+#     #print(request.method == 'POST')
+#     if request.method == 'GET':
+#        form  = SignInForm()
+#        context['form'] = form
+#        return render(request, 'address.html', context)    
+    
+#     if request.method == 'POST':
+#         form  = AddressForm(request.POST)
+#         if form.is_valid():
+#             selected_province = request.POST['state']
+#             obj = form.save(commit=False)
+#             obj.state = selected_province
+#             obj.save()
+
+#     return render(request, 'address.html')
 
 def users(request):
     user = User.objects.all()
     print("User:", user.__dict__)
-
     return render(request, 'tables.html', {'user': user})
 
 
 def create_users(request):
-    error = ""
-    form = SignUPForm()
+    ty = Type.objects.all()
+    off = Office.objects.all()
+    print(request)
     if request.method == "POST":
         form = SignUPForm(request.POST)
+         
         if form.is_valid():
+            #--------------------------------------------------------------
+            off_id = Office.objects.get(office_name=request.POST['state'])
+            selected_office = request.POST['state'] 
+
             cd = form.cleaned_data
             cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
             cd['password'] = cd['username']
-            cd['office'] = Office.objects.get(office_name=cd['office'])
+            cd['office_id'] = off_id.office_id
+            #---------------------------------------------------------------
+         
+            del cd['submit']
+            del cd['type_name']
             if User.objects.filter(username=cd['username']):
                 error = 'Username is already taken!'
             else:
-                del cd['submit']
-                del cd['type_name']
+                print(cd)
                 u = User.objects.create_user(**{i: cd[i] for i in cd})
+                print("User:",u)
                 u.save()
                 return redirect('signin')
         else:
             error = 'Please enter valid information'
+    else:
+ 
+        form  = SignUPForm()
+  
 
-    return render(request, 'create-users.html', {'forms': form, 'error': error})
+    return render(request, 'create-users.html', {'forms': form, 'types':ty, 'offices':off})
 ############# Index User Dashboard###############################
 
 
@@ -157,21 +254,13 @@ def index(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-<<<<<<< HEAD
         print("User:",request.user.id)
-=======
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
         user = User.objects.get(id=request.user.id)
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
         return render(request, 'index.html', {'user': user, 'notifications': notifications, 'count': count})
 
-<<<<<<< HEAD
-=======
-
-############ User Authentication Methods ########################
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
 def signup(request):
     error = ''
     form = SignUPForm()

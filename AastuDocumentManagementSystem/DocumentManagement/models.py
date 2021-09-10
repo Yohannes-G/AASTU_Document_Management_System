@@ -1,22 +1,12 @@
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 
-
-# Create your models here.
-<<<<<<< HEAD
-class User(AbstractUser):
-    type_name = models.CharField(max_length=50)
-    office = models.CharField(max_length=50)
-
-    #is_active = models.BooleanField(default=True)
-    # staff = models.BooleanField(default=False) # a admin user; non super-user
-    # admin = models.BooleanField(default=False) # a superuser
+class Address(models.Model):
+    country = models.CharField(null=True, blank=True, max_length=100)
+    state = models.CharField(null=True, blank=True, max_length=100)    
     def __str__(self):
-        return self.first_name
+        return '{} {}'.format(self.country, self.state)
 
-
-=======
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
 class Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)
     type_name = models.CharField(max_length=50)
@@ -24,10 +14,6 @@ class Type(models.Model):
     def __str__(self):
         return self.type_name
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9723e0191e65e74b324798e7bdbc65858dda87ac
 class Office(models.Model):
     office_id = models.BigAutoField(primary_key=True)
     office_name = models.CharField(max_length=50)
