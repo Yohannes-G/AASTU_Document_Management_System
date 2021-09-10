@@ -23,7 +23,7 @@ urlpatterns = [
     path('createtypes/', views.create_types, name='createtypes'),
     path('displaytypes/', views.display_types, name='displaytypes'),
     path('<int:type_id>/createoffices/', views.create_offices, name='createoffices'),
-    path('<int:type_id>/displayoffices/', views.display_offices, name='displayoffices'),
+    path('displayoffices/<int:type_id>/', views.display_offices, name='displayoffices'),
     path('sendmessages/', views.send_messages, name='sendmessages'),
     path('showmessage/<int:message_id>', views.show_message, name='showmessage'),
     path('replymessage/<int:message_id>',

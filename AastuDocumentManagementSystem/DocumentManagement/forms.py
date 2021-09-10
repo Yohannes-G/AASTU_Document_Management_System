@@ -114,7 +114,7 @@ class NewPasswordForm(forms.Form):
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
 
-
+##################################################################################
 def readJson(filename):
     with open(filename, 'r') as fp:
         return json.load(fp)

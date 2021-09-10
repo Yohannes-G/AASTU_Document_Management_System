@@ -1,8 +1,8 @@
- {% extends 'base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
  
- {% load static %} 
+{% load static %} 
 
 {% if error %}
 {{ error }}
@@ -49,6 +49,8 @@
 											<td>{{ use.last_name }}</td>
 											<td>{{ use.sex }}</td>
 											<td>{{ use.is_staff }}</td>
+											<td>{{ use.office.office_type_name }}</td>
+											<td>{{ use.office }}</td>
 										</tr>
 									</tbody>
 									{% endfor %}

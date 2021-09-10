@@ -97,6 +97,7 @@ def send_messages(request):
             form = SendMessageForm(request.POST, request.FILES)
             if form.is_valid():
                 cd = form.cleaned_data
+                print("Hello:", cd['file'])
                 category = cd['file'].content_type.split('/')[0].capitalize()
                 users = User.objects.filter(office__office_name=cd['office'])
                 carbon_copies = Office.objects.filter(
@@ -232,10 +233,10 @@ def create_offices(request, type_id):
                         office_type_name_id=1, office_name=cd['office'])
                     office.save()
 
-        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count})
+        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
 
 
-def display_offices(request):
+def display_offices(request, type_id):
     if not request.user.is_staff:
         return redirect('signin')
     else:
@@ -243,7 +244,7 @@ def display_offices(request):
             message_unread=True)
         count = notifications.count()
         office = Office.objects.all()
-        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count})
+        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id':type_id})
 
 ################### User Management #############################
 
@@ -321,6 +322,9 @@ def users(request):
 
 
 def create_users(request):
+    ty = Type.objects.all()
+    off = Office.objects.all()
+
     if not request.user.is_staff:
         return redirect('signin')
     else:
@@ -328,14 +332,21 @@ def create_users(request):
             message_unread=True)
         count = notifications.count()
         error = ""
+
         form = SignUPForm()
         if request.method == "POST":
             form = SignUPForm(request.POST)
             if form.is_valid():
+
+                #--------------------------------------------------------------
+                off_id = Office.objects.get(office_name=request.POST['state'])
+                selected_office = request.POST['state'] 
+                
                 cd = form.cleaned_data
                 cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
                 cd['password'] = cd['username']
-                cd['office'] = Office.objects.get(office_name=cd['office'])
+                cd['office_id'] = off_id.office_id
+                #---------------------------------------------------------------
                 if User.objects.filter(username=cd['username']):
                     error = 'Username is already taken!'
                 else:
@@ -415,105 +426,3 @@ def signout(request):
     messages.info(request, f"You are now logged out.")
     if not request.user.is_authenticated:
         return redirect('signin')
-
-
-# def resetPassword(request):
-#     error = ''
-#     form = ResetForm()
-#     if request.method == "POST":
-#         form = ResetForm(request.POST)
-#         if form.is_valid():
-#             cd = form.cleaned_data
-#             result = User.objects.filter(email=cd['email'])
-#             if result:
-#                 if not checkEmailAvailability(cd['email']):
-#                     import random
-#                     body = str(int(random.randint(1000, 9999)))
-#                     sendEmail(to=cd['email'], subject="Reset Password",
-#                               body=f'The confirmation code to reset your password is {body}')
-#                     u = ConfirmationCode(user=result[0],
-#                                          user_email=cd['email'],
-#                                          confirmation_code=body)
-#                     u.save()
-
-#                 return redirect("confirmation", email=cd['email'])
-#             else:
-#                 error = "You have no account with this email"
-#         else:
-#             error = "Please enter valid information"
-#     return render(request, 'reset.html', {'forms': form, 'error': error})
-
-
-# def confirmation(request, email):
-#     confirmation_code = checkEmailAvailability(email)
-#     if confirmation_code:
-#         form = ConfirmationForm()
-#         error = ''
-#         if request.method == "POST":
-#             form = ConfirmationForm(request.POST)
-#             if form.is_valid():
-#                 cd = form.cleaned_data
-#                 if cd['confirmation'] == confirmation_code.confirmation_code:
-#                     return redirect('newPassword', email=email)
-#                 else:
-#                     error = "Please enter the sent confirmation code"
-#             else:
-#                 error = "Please enter valid information"
-#         return render(request, 'reset.html', {'forms': form, 'error': error})
-#     else:
-#         return redirect('signin')
-
-
-# def newPassword(request, email):
-
-#     try:
-#         confirm = ConfirmationCode.objects.get(
-#             user_email=email)
-#         form = NewPasswordForm()
-#         error = ''
-#         if request.method == "POST":
-#             form = NewPasswordForm(request.POST)
-#             if form.is_valid():
-#                 cd = form.cleaned_data
-#                 if cd['password'] == cd['conf_password']:
-#                     u = User.objects.get(email=email)
-#                     u.user_password = cd['password']
-#                     u.save()
-#                     confirm.delete()
-#                     return redirect('signin')
-#                 else:
-#                     error = "Password doesn't match"
-#             else:
-#                 error = "Please enter valid information"
-#         return render(request, 'reset.html', {'forms': form, 'error': error})
-#     except:
-#         return redirect('signin')
-
-
-# def checkEmailAvailability(email):
-#     try:
-#         confirmation_code = ConfirmationCode.objects.get(user_email=email)
-#         return confirmation_code
-#     except:
-#         return False
-
-
-# def sendEmail(to, subject, body):
-#     import smtplib
-#     from email.message import EmailMessage
-#     msg = EmailMessage()
-#     gmail_user = 'aastudocumentationsystem@gmail.com'
-#     gmail_password = 'aastudocumentation123'
-#     msg['From'] = gmail_user
-#     msg['to'] = to
-#     msg['subject'] = subject
-#     msg.set_content(body)
-#     try:
-#         smtp_server = smtplib.SMTP_SSL(
-#             'smtp.gmail.com', 465)
-#         smtp_server.login(gmail_user, gmail_password)
-#         smtp_server.send_message(msg)
-#         smtp_server.quit()
-#     except Exception as e:
-#         print(e)
-#     return redirect('/dms-app/signin')
