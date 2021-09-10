@@ -2,77 +2,16 @@ import json
 import os
 
 from django.contrib import auth, messages
-from django.contrib.auth import authenticate, login
-from django.core import serializers
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse
 
-from .forms import (AddressForm, OfficeForm, ReplyMessageForm, SendMessageForm,
-                    SignInForm, SignUPForm, TypeForm)
+from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
+                    SignUPForm, TypeForm)
 from .models import Message, Office, ReplyMessage, Type, User
 
-
 ######################## Drop Down ##############################
-def readJson(filename):
-    with open(filename, 'r') as fp:
-        return json.load(fp)
 
-
-def get_country():
-    """ GET COUNTRY SELECTION """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-    all_countries = [('-----', '---Select a Country---')]
-    for x in all_data:
-        y = (x['name'], x['name'])
-        all_countries.append(y)
-        return all_countries
-
-
-def return_state_by_country(country):
-    """ GET STATE SELECTION BY COUNTRY INPUT """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-    all_states = []
-
-    for x in all_data:
-        if x['name'] == country:
-            if 'cities' in x:
-                for state in x['cities']:
-                    y = (state['name'], state['name'])
-                    all_states.append(state['name'])
-            else:
-                all_states.append(country)
-        return all_states
-
-
-def getProvince(request):
-    country = request.POST.get('country')
-    # print(country)
-    provinces = return_state_by_country(country)
-   # print(provinces)
-    return JsonResponse({'provinces': provinces})
-
-
-def processForm(request):
-    context = {}
-    print(request.method == 'POST')
-    if request.method == 'GET':
-        form = AddressForm()
-        context['form'] = form
-        return render(request, 'address.html', context)
-
-    if request.method == 'POST':
-        form = AddressForm(request.POST)
-        if form.is_valid():
-            selected_province = request.POST['state']
-            obj = form.save(commit=False)
-            obj.state = selected_province
-            obj.save()
-
-    return render(request, 'address.html')
-    # Complete the rest of the view function
+# Complete the rest of the view function
 
 ##########################PDF Rendering #########################
 
@@ -96,12 +35,23 @@ def send_messages(request):
         if request.method == 'POST':
             form = SendMessageForm(request.POST, request.FILES)
             if form.is_valid():
+                print(request.FILES)
                 cd = form.cleaned_data
+<<<<<<< HEAD
                 print("Hello:", cd['file'])
                 category = cd['file'].content_type.split('/')[0].capitalize()
                 users = User.objects.filter(office__office_name=cd['office'])
                 carbon_copies = Office.objects.filter(
                     office_name=cd['cc_office'])
+=======
+                print(cd)
+                category = request.FILES['file'].content_type.split(
+                    '/')[0].capitalize()
+                users = list(User.objects.filter(
+                    office__office_name=cd['office']))
+                carbon_copies = list(Office.objects.filter(
+                    office_name=cd['cc_office']))
+>>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
@@ -220,20 +170,20 @@ def create_offices(request, type_id):
             message_unread=True)
         count = notifications.count()
         form = OfficeForm()
-
+        type_name = Type.objects.get(type_id=type_id)
         if request.method == 'POST':
-
             form = OfficeForm(request.POST)
-            form1 = Type.objects.get(pk=type_id)
             if form.is_valid():
                 cd = form.cleaned_data
-                if Type.objects.filter(type_name=cd):
-                    type_id = Type.objects.all()
-                    office = Office.objects.create(
-                        office_type_name_id=1, office_name=cd['office'])
-                    office.save()
+                office = Office.objects.create(
+                    office_type_name_id=type_id, office_name=cd['office'])
+                office.save()
 
+<<<<<<< HEAD
         return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
+=======
+        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_name': type_name})
+>>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
 
 def display_offices(request, type_id):
@@ -243,8 +193,13 @@ def display_offices(request, type_id):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
+<<<<<<< HEAD
         office = Office.objects.all()
         return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id':type_id})
+=======
+        office = Office.objects.filter(office_type_name_id=type_id)
+        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
+>>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
 ################### User Management #############################
 
@@ -322,8 +277,11 @@ def users(request):
 
 
 def create_users(request):
+<<<<<<< HEAD
     ty = Type.objects.all()
     off = Office.objects.all()
+=======
+>>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
     if not request.user.is_staff:
         return redirect('signin')
@@ -343,6 +301,7 @@ def create_users(request):
                 selected_office = request.POST['state'] 
                 
                 cd = form.cleaned_data
+                print(cd)
                 cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
                 cd['password'] = cd['username']
                 cd['office_id'] = off_id.office_id
@@ -354,7 +313,7 @@ def create_users(request):
                     del cd['type_name']
                     u = User.objects.create_user(**{i: cd[i] for i in cd})
                     u.save()
-                    return redirect('signin')
+                    return redirect('createusers')
             else:
                 error = 'Please enter valid information'
 

@@ -1,10 +1,10 @@
-from .models import Address
 import json
+
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import Office, Type, User
+from .models import Address, Office, Type, User
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -42,11 +42,6 @@ class TypeForm(forms.Form):
 
 
 class OfficeForm(forms.Form):
-    type_name = forms.ModelChoiceField(queryset=Type.objects.all(),
-                                       widget=forms.Select(
-                                           attrs={'class': 'form-control1', }, ),
-                                       empty_label="Select Type")
-
     office = formGenerator('text', 'user', 'office')
     submit = formGenerator('submit', value='Create Office')
 
@@ -114,6 +109,7 @@ class NewPasswordForm(forms.Form):
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
 
+<<<<<<< HEAD
 ##################################################################################
 def readJson(filename):
     with open(filename, 'r') as fp:
@@ -163,6 +159,9 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['country']
+=======
+
+>>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 ####################################################
 
 

@@ -73,7 +73,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</ul>
 				</li>
 				<li><a href="{% url 'displaytypes' %}"><i class="lnr lnr-pencil"></i> <span>Roles</span></a></li>
-				
+
 				{% endif %}
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-cog"></i>
@@ -93,8 +93,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<li><a href="codes.html"><i class="lnr lnr-pencil"></i> <span>Notification</span></a></li>
 			</ul>
 			<!--sidebar nav end-->
-		</div>
-		</div>
 		</div>
 		<!-- left side end-->
 
@@ -215,9 +213,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<li class="dropdown profile_details_drop">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 									<div class="profile_img">
-										<span style="background:url(images/1.jpg) no-repeat center"> </span>
+										{% comment %} <span style="background:url(images/1.jpg) no-repeat center">
+										</span> {% endcomment %}
 										<div class="user-name">
-											<p>{{ user.first_name }}<span>Administrator</span></p>
+											<p>{{ user.first_name }}<span></span></p>
 										</div>
 										<i class="lnr lnr-chevron-down"></i>
 										<i class="lnr lnr-chevron-up"></i>

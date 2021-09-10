@@ -1,11 +1,14 @@
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 
+
 class Address(models.Model):
     country = models.CharField(null=True, blank=True, max_length=100)
-    state = models.CharField(null=True, blank=True, max_length=100)    
+    state = models.CharField(null=True, blank=True, max_length=100)
+
     def __str__(self):
         return '{} {}'.format(self.country, self.state)
+
 
 class Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)
@@ -13,6 +16,7 @@ class Type(models.Model):
 
     def __str__(self):
         return self.type_name
+
 
 class Office(models.Model):
     office_id = models.BigAutoField(primary_key=True)
@@ -39,7 +43,8 @@ class Message(models.Model):
     message_description = models.TextField(max_length=256)
     message_file = models.FileField(
         blank=True)
-    message_receiver = models.ManyToManyField(User, related_name='receiver')
+    message_receiver = models.ForeignKey(
+        User, related_name='receiver', on_delete=models.CASCADE)
     message_sender = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='sender')
     message_unread = models.BooleanField(default=True)
@@ -52,8 +57,8 @@ class ReplyMessage(models.Model):
     reply_description = models.TextField(max_length=256)
     reply_file = models.FileField(
         blank=True)
-    reply_receiver = models.ManyToManyField(
-        User, related_name='reply_receiver')
+    reply_receiver = models.ForeignKey(
+        User, related_name='reply_receiver', on_delete=models.CASCADE)
     reply_sender = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reply_sender')
     replyed_message = models.ForeignKey(
