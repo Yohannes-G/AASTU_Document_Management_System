@@ -37,19 +37,20 @@ def send_messages(request):
             if form.is_valid():
                 print(request.FILES)
                 cd = form.cleaned_data
-                print("Hello:", cd['file'])
-                category = cd['file'].content_type.split('/')[0].capitalize()
-                users = User.objects.filter(office__office_name=cd['office'])
-                carbon_copies = Office.objects.filter(
-                    office_name=cd['cc_office'])
+                category = request.FILES['file'].content_type.split(
+                    '/')[-1].capitalize()
+                users = list(User.objects.filter(
+                    office__office_name=cd['office']))
+                carbon_copies = list(User.objects.filter(
+                    office__office_name=cd['cc_office']))
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
                         message_description=cd['description'],
-                        message_file=cd['file'],
+                        message_file=request.FILES['file'],
                         message_sender=request.user,
                         message_receiver=user,
-                        message_carbon_copy=True if user in carbon_copies else False
+                        message_cc=True if user in carbon_copies else False
                     )
                     send.message_file.field.upload_to = f"{cd['office']}/{user}/{category}"
                     send.save()
