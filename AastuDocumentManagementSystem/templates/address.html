@@ -1,0 +1,67 @@
+<form class="" action="" method="post">
+      
+        {% csrf_token %}
+        {% for error in errors  %}
+          <div class="alert alert-danger mb-4" role="alert">
+                  <strong>{{ error }}</strong>
+          </div>
+        {% endfor %}
+
+      <div class="row">
+            <div class="col-lg-6">
+              <div class="mb-4">
+                 {{ form.country}}
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="mb-4">
+                <div class="form-group">
+                   <label >Select a Province/State</label>
+                   <select id="id_province" class="form-control" name="state">
+                     <option value="-----">Select Province/State</option>
+                   </select>
+                 </div>
+              </div>
+            </div>
+      </div>
+  </form>
+
+ 
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+
+  <script src="//code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script>
+          $("#id_country").change(function () {
+              
+            
+
+              var countryId = $(this).val();
+
+              $.ajax({
+              
+                type: "POST",
+                url: "{% url 'get-province' %}",
+                data: {
+                  'csrfmiddlewaretoken': '{{ csrf_token }}',
+                  'country': countryId
+                },
+
+                success: function (response) {
+                  console.log(response.provinces);
+              
+                  let html_data = '<option value="-----">Select Province/State</option>';
+                  
+                  console.log(response)
+                  response.provinces.forEach(function (response) {
+                      html_data += `<option value="${response}">${response}</option>`
+                  });
+              
+                  $("#id_province").html(html_data);
+                }
+              });
+            });
+  </script>
