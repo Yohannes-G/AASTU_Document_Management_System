@@ -20,15 +20,10 @@ urlpatterns = [
     path('get-offices/', views.getOffices, name='get-offices'),
     path('createtypes/', views.create_types, name='createtypes'),
     path('displaytypes/', views.display_types, name='displaytypes'),
-<<<<<<< HEAD
-    path('<int:type_id>/createoffices/', views.create_offices, name='createoffices'),
-    path('displayoffices/<int:type_id>/', views.display_offices, name='displayoffices'),
-=======
     path('createoffices/<int:type_id>/',
          views.create_offices, name='createoffices'),
     path('displayoffices/<int:type_id>/',
          views.display_offices, name='displayoffices'),
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
     path('sendmessages/', views.send_messages, name='sendmessages'),
     path('showmessage/<int:message_id>/',
          views.show_message, name='showmessage'),

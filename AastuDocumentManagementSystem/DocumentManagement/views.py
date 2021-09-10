@@ -37,21 +37,11 @@ def send_messages(request):
             if form.is_valid():
                 print(request.FILES)
                 cd = form.cleaned_data
-<<<<<<< HEAD
                 print("Hello:", cd['file'])
                 category = cd['file'].content_type.split('/')[0].capitalize()
                 users = User.objects.filter(office__office_name=cd['office'])
                 carbon_copies = Office.objects.filter(
                     office_name=cd['cc_office'])
-=======
-                print(cd)
-                category = request.FILES['file'].content_type.split(
-                    '/')[0].capitalize()
-                users = list(User.objects.filter(
-                    office__office_name=cd['office']))
-                carbon_copies = list(Office.objects.filter(
-                    office_name=cd['cc_office']))
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
@@ -179,11 +169,7 @@ def create_offices(request, type_id):
                     office_type_name_id=type_id, office_name=cd['office'])
                 office.save()
 
-<<<<<<< HEAD
-        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
-=======
         return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_name': type_name})
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
 
 def display_offices(request, type_id):
@@ -193,13 +179,8 @@ def display_offices(request, type_id):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
-<<<<<<< HEAD
         office = Office.objects.all()
-        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id':type_id})
-=======
-        office = Office.objects.filter(office_type_name_id=type_id)
         return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
 ################### User Management #############################
 
@@ -277,11 +258,8 @@ def users(request):
 
 
 def create_users(request):
-<<<<<<< HEAD
     ty = Type.objects.all()
     off = Office.objects.all()
-=======
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
     if not request.user.is_staff:
         return redirect('signin')
@@ -296,16 +274,16 @@ def create_users(request):
             form = SignUPForm(request.POST)
             if form.is_valid():
 
-                #--------------------------------------------------------------
+                # --------------------------------------------------------------
                 off_id = Office.objects.get(office_name=request.POST['state'])
-                selected_office = request.POST['state'] 
-                
+                selected_office = request.POST['state']
+
                 cd = form.cleaned_data
                 print(cd)
                 cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
                 cd['password'] = cd['username']
                 cd['office_id'] = off_id.office_id
-                #---------------------------------------------------------------
+                # ---------------------------------------------------------------
                 if User.objects.filter(username=cd['username']):
                     error = 'Username is already taken!'
                 else:
