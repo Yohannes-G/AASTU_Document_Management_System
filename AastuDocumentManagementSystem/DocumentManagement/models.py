@@ -1,15 +1,18 @@
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 
+class Address(models.Model):
+    country = models.CharField(null=True, blank=True, max_length=100)
+    state = models.CharField(null=True, blank=True, max_length=100)    
+    def __str__(self):
+        return '{} {}'.format(self.country, self.state)
 
-# Create your models here.
 class Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)
     type_name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.type_name
-
 
 class Office(models.Model):
     office_id = models.BigAutoField(primary_key=True)
