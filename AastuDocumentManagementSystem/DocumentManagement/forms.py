@@ -1,10 +1,10 @@
-from .models import Address
 import json
+
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import Office, Type, User
+from .models import Address, Office, Type, User
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -42,11 +42,6 @@ class TypeForm(forms.Form):
 
 
 class OfficeForm(forms.Form):
-    type_name = forms.ModelChoiceField(queryset=Type.objects.all(),
-                                       widget=forms.Select(
-                                           attrs={'class': 'form-control1', }, ),
-                                       empty_label="Select Type")
-
     office = formGenerator('text', 'user', 'office')
     submit = formGenerator('submit', value='Create Office')
 
@@ -115,54 +110,6 @@ class NewPasswordForm(forms.Form):
     submit = formGenerator('submit', value="Submit")
 
 
-def readJson(filename):
-    with open(filename, 'r') as fp:
-        return json.load(fp)
-
-
-def get_country():
-    """ GET COUNTRY SELECTION """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-    all_countries = [('-----', '---Select a Country---')]
-    for x in all_data:
-        y = (x['name'], x['name'])
-        # print(y)
-        all_countries.append(y)
-    return all_countries
-
-
-def return_state_by_country(country):
-    """ GET STATE SELECTION BY COUNTRY INPUT """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-
-    all_states = []
-
-    for x in all_data:
-        print(x)
-        if x['name'] == country:
-            if 'states' in x:
-                for state in x['states']:
-                    y = (state['name'], state['name'])
-                    all_states.append(state['name'])
-            else:
-                all_states.append(country)
-    return all_states
-
-
-class AddressForm(forms.ModelForm):
-    country = forms.ChoiceField(
-        choices=get_country(),
-        required=False,
-        label='Company Country Location',
-        widget=forms.Select(
-            attrs={'class': 'form-control', 'id': 'id_country'}),
-    )
-
-    class Meta:
-        model = Address
-        fields = ['country']
 ####################################################
 
 
