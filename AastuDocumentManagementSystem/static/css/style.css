@@ -789,11 +789,11 @@ ul.dropdown-menu.drp-mnu li {
 	color: #fff;
 	background: #6b9d31;
 }
-.profile_img i {
+/* .profile_img i {
 	float: right;
 	margin: 0.5em 0 0;
 	color: #00bcd4;
-}
+} */
 .custom-nav .sub-menu-list > li .fa {
 	font-size: 12px;
 	opacity: 0.5;
@@ -1840,7 +1840,7 @@ ul.dropdown-menu.drp-mnu li a i {
 	line-height: 17px;
 	height: 20px;
 }
-.profile_img span {
+/* .profile_img span {
 	float: left;
 	display: block;
 	width: 40px;
@@ -1853,33 +1853,33 @@ ul.dropdown-menu.drp-mnu li a i {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
-}
+} */
 .span_4 {
 	padding: 0;
 }
-.user-name {
+/* .user-name {
 	float: left;
 	margin-top: 8px;
 	margin-left: 5px;
-	height: 35px;
-	width: 45%;
-}
+	height: 35px; 
+	 width: 45%;
+} */
 .profile_details ul li {
 	list-style-type: none;
 	width: 87%;
 }
-.user-name p {
+/* .user-name p {
 	font-size: 14px;
 	color: #f44336;
-	line-height: 1em;
+	line-height: 1em; 
 	font-weight: 700;
-}
-.user-name p span {
+} */
+/* .user-name p span {
 	font-size: 10px;
 	font-style: italic;
 	color: #424f63;
 	font-weight: normal;
-}
+} */
 /**** icon dropdown ******/
 .wrapper-dropdown-4 i.dropdown-icon {
 	width: 20px;
@@ -7556,10 +7556,10 @@ p.creating {
 	.no-js .sb-search {
 		min-width: 115px;
 	}
-	.profile_img span {
+	/* .profile_img span {
 		width: 30px;
 		height: 30px;
-	}
+	} */
 	.user-name {
 		width: 55%;
 		margin-top: 2px;
@@ -8038,9 +8038,48 @@ input[type="submit"]:hover {
 	justify-content: space-between;
 }
 
+.receiver {
+	display: flex;
+	justify-content: space-between;
+}
+
 .custom-conversation {
 	width: 80%;
 	padding: 1rem;
 	margin: 1rem;
 	background-color: #943333;
+}
+
+.receiver-custom {
+	margin: 1rem 1rem 1rem auto;
+	background-color: #007bb5;
+	color: #222;
+}
+
+.scrollable-menu {
+	max-height: 200px;
+	width: 100%;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+.scrollable-menu li:hover {
+	background-color: #aaaaaa;
+}
+
+.custom-position {
+	margin-left: 0.5rem;
+}
+
+.profile_img {
+	display: flex;
+	align-items: center;
+}
+
+.user-name {
+	color: #f44336;
+}
+
+.login_box {
+	height: 100%;
 }

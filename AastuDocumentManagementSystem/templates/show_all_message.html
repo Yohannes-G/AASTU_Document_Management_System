@@ -7,6 +7,23 @@
     <div class="custom-conversation">
         <div class="sender">
             <div class="sender-from">
+                <h3 class="department-type">{{message.message_receiver.office.office_type_name}}</h3>
+                <h4 class="department-office">{{message.message_receiver.office}}</h4>
+            </div>
+            <div class="header-time">
+                <p>{{message.message_time}}</p>
+            </div>
+        </div>
+        <div>
+            <p>{{message.message_description}}</p>
+        </div>
+    </div>
+</a>
+{% else %}
+<a href="{% url 'showmessage' message.message_id %}">
+    <div class="custom-conversation receiver-custom">
+        <div class="receiver">
+            <div class="receiver-from">
                 <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
                 <h4 class="department-office">{{message.message_sender.office}}</h4>
             </div>
@@ -19,16 +36,6 @@
         </div>
     </div>
 </a>
-{% else %}
-<div class="custom-header receiver">
-    <div class="header-from">
-        <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
-        <h4 class="department-office">{{message.message_sender.office}}</h4>
-    </div>
-    <div class="header-time">
-        <p>{{message.message_time}}</p>
-    </div>
-</div>
 {% endif %}
 {% endfor %}
 {% endblock content %}

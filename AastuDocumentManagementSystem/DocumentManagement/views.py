@@ -35,7 +35,6 @@ def send_messages(request):
         if request.method == 'POST':
             form = SendMessageForm(request.POST, request.FILES)
             if form.is_valid():
-                print(request.FILES)
                 cd = form.cleaned_data
                 category = request.FILES['file'].content_type.split(
                     '/')[-1].capitalize()
@@ -52,7 +51,7 @@ def send_messages(request):
                         message_receiver=user,
                         message_cc=True if user in carbon_copies else False
                     )
-                    send.message_file.field.upload_to = f"{cd['office']}/{user}/{category}"
+                    send.message_file.field.upload_to = f"{cd['office']}/{user.username}/{category}"
                     send.save()
         return render(request, 'create-send-message.html',
                       {'forms': form, 'notifications': notifications, 'count': count})
