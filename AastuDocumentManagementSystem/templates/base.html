@@ -125,15 +125,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											<h3>You have {{count}} new messages</h3>
 										</div>
 									</li>
-									{% for notification in notifications %}
-									<li><a href="{% url 'showmessage' notification.message_id %}">
-											<div class="notification_desc">
-												<p>{{notification.message_description}}</p>
-												<p><span>{{notification.message_time|timesince}}</span></p>
-											</div>
-											<div class="clearfix"></div>
-										</a></li>
-									{% endfor %}
+									<ul class="scrollable-menu">
+										{% for notification in notifications %}
+										<li><a href="{% url 'showmessage' notification.message_id %}">
+												<div class="notification_desc">
+													<p>{{notification.message_description}}</p>
+													<p><span>{{notification.message_time|timesince}}</span></p>
+												</div>
+												<div class="clearfix"></div>
+											</a></li>
+										{% endfor %}
+									</ul>
 									<li>
 										<div class="notification_bottom">
 											<a href="{% url 'showallmessage' %}">See all messages</a>
@@ -213,13 +215,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<li class="dropdown profile_details_drop">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 									<div class="profile_img">
-										{% comment %} <span style="background:url(images/1.jpg) no-repeat center">
-										</span> {% endcomment %}
 										<div class="user-name">
-											<p>{{ user.first_name }}<span></span></p>
+											<p>{{ user.first_name }}</p>
 										</div>
-										<i class="lnr lnr-chevron-down"></i>
-										<i class="lnr lnr-chevron-up"></i>
+										<div class="custom-position">
+											<i class="lnr lnr-chevron-down"></i>
+											<i class="lnr lnr-chevron-up"></i>
+										</div>
 										<div class="clearfix"></div>
 									</div>
 								</a>

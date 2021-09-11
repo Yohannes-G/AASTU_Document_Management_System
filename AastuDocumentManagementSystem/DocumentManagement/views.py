@@ -35,26 +35,33 @@ def send_messages(request):
         if request.method == 'POST':
             form = SendMessageForm(request.POST, request.FILES)
             if form.is_valid():
-                print(request.FILES)
                 cd = form.cleaned_data
+<<<<<<< HEAD
 
                 print(cd)
+=======
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
                 category = request.FILES['file'].content_type.split(
-                    '/')[0].capitalize()
+                    '/')[-1].capitalize()
                 users = list(User.objects.filter(
                     office__office_name=cd['office']))
+<<<<<<< HEAD
                 carbon_copies = list(Office.objects.filter(
                     office_name=cd['cc_office']))
+=======
+                carbon_copies = list(User.objects.filter(
+                    office__office_name=cd['cc_office']))
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
                         message_description=cd['description'],
-                        message_file=cd['file'],
+                        message_file=request.FILES['file'],
                         message_sender=request.user,
                         message_receiver=user,
-                        message_carbon_copy=True if user in carbon_copies else False
+                        message_cc=True if user in carbon_copies else False
                     )
-                    send.message_file.field.upload_to = f"{cd['office']}/{user}/{category}"
+                    send.message_file.field.upload_to = f"{cd['office']}/{user.username}/{category}"
                     send.save()
         return render(request, 'create-send-message.html',
                       {'forms': form, 'notifications': notifications, 'count': count})
@@ -171,7 +178,13 @@ def create_offices(request, type_id):
                 office = Office.objects.create(
                     office_type_name_id=type_id, office_name=cd['office'])
                 office.save()
+<<<<<<< HEAD
         return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
+=======
+
+        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_name': type_name})
+
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
 
 def display_offices(request, type_id):
     if not request.user.is_staff:
@@ -180,10 +193,15 @@ def display_offices(request, type_id):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
+<<<<<<< HEAD
 
         office = Office.objects.filter(office_type_name_id=type_id)
         return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
 
+=======
+        office = Office.objects.all()
+        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
 
 ################### User Management #############################
 
@@ -257,16 +275,21 @@ def create_users(request):
         if request.method == "POST":
             form = SignUPForm(request.POST)
             if form.is_valid():
+<<<<<<< HEAD
                 #--------------------------------------------------------------
+=======
+
+                # --------------------------------------------------------------
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
                 off_id = Office.objects.get(office_name=request.POST['state'])
-                selected_office = request.POST['state'] 
-                
+                selected_office = request.POST['state']
+
                 cd = form.cleaned_data
                 print(cd)
                 cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
                 cd['password'] = cd['username']
                 cd['office_id'] = off_id.office_id
-                #---------------------------------------------------------------
+                # ---------------------------------------------------------------
                 if User.objects.filter(username=cd['username']):
                     error = 'Username is already taken!'
                 else:

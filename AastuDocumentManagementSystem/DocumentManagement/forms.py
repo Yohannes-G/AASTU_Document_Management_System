@@ -1,5 +1,3 @@
-import json
-
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
@@ -109,6 +107,11 @@ class NewPasswordForm(forms.Form):
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
 
+<<<<<<< HEAD
+=======
+####################################################
+
+>>>>>>> fc262ea038ba36a46cc0b7a416142558f249bd0b
 
 def get_type():
     """ GET Type SELECTION """
