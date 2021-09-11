@@ -109,61 +109,6 @@ class NewPasswordForm(forms.Form):
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
     submit = formGenerator('submit', value="Submit")
 
-<<<<<<< HEAD
-##################################################################################
-def readJson(filename):
-    with open(filename, 'r') as fp:
-        return json.load(fp)
-
-
-def get_country():
-    """ GET COUNTRY SELECTION """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-    all_countries = [('-----', '---Select a Country---')]
-    for x in all_data:
-        y = (x['name'], x['name'])
-        # print(y)
-        all_countries.append(y)
-    return all_countries
-
-
-def return_state_by_country(country):
-    """ GET STATE SELECTION BY COUNTRY INPUT """
-    filepath = './static/data/countries_states_cities.json'
-    all_data = readJson(filepath)
-
-    all_states = []
-
-    for x in all_data:
-        print(x)
-        if x['name'] == country:
-            if 'states' in x:
-                for state in x['states']:
-                    y = (state['name'], state['name'])
-                    all_states.append(state['name'])
-            else:
-                all_states.append(country)
-    return all_states
-
-
-class AddressForm(forms.ModelForm):
-    country = forms.ChoiceField(
-        choices=get_country(),
-        required=False,
-        label='Company Country Location',
-        widget=forms.Select(
-            attrs={'class': 'form-control', 'id': 'id_country'}),
-    )
-
-    class Meta:
-        model = Address
-        fields = ['country']
-=======
-
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
-####################################################
-
 
 def get_type():
     """ GET Type SELECTION """

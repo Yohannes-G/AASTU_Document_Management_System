@@ -37,13 +37,7 @@ def send_messages(request):
             if form.is_valid():
                 print(request.FILES)
                 cd = form.cleaned_data
-<<<<<<< HEAD
-                print("Hello:", cd['file'])
-                category = cd['file'].content_type.split('/')[0].capitalize()
-                users = User.objects.filter(office__office_name=cd['office'])
-                carbon_copies = Office.objects.filter(
-                    office_name=cd['cc_office'])
-=======
+
                 print(cd)
                 category = request.FILES['file'].content_type.split(
                     '/')[0].capitalize()
@@ -51,7 +45,6 @@ def send_messages(request):
                     office__office_name=cd['office']))
                 carbon_copies = list(Office.objects.filter(
                     office_name=cd['cc_office']))
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
@@ -178,13 +171,7 @@ def create_offices(request, type_id):
                 office = Office.objects.create(
                     office_type_name_id=type_id, office_name=cd['office'])
                 office.save()
-
-<<<<<<< HEAD
         return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
-=======
-        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_name': type_name})
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
-
 
 def display_offices(request, type_id):
     if not request.user.is_staff:
@@ -193,13 +180,10 @@ def display_offices(request, type_id):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
-<<<<<<< HEAD
-        office = Office.objects.all()
-        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id':type_id})
-=======
+
         office = Office.objects.filter(office_type_name_id=type_id)
         return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
+
 
 ################### User Management #############################
 
@@ -246,25 +230,6 @@ def getOffices(request):
 
     return JsonResponse(office,  safe=False)
 
-# def processForm(request):
-#     context = {}
-#     #print(request.method == 'POST')
-#     if request.method == 'GET':
-#        form  = SignInForm()
-#        context['form'] = form
-#        return render(request, 'address.html', context)
-
-#     if request.method == 'POST':
-#         form  = AddressForm(request.POST)
-#         if form.is_valid():
-#             selected_province = request.POST['state']
-#             obj = form.save(commit=False)
-#             obj.state = selected_province
-#             obj.save()
-
-#     return render(request, 'address.html')
-
-
 def users(request):
     if not request.user.is_staff:
         return redirect('signin')
@@ -277,11 +242,8 @@ def users(request):
 
 
 def create_users(request):
-<<<<<<< HEAD
     ty = Type.objects.all()
     off = Office.objects.all()
-=======
->>>>>>> 1df17daf0ffa54a2780fcf15565c7e225daf6fef
 
     if not request.user.is_staff:
         return redirect('signin')
@@ -295,7 +257,6 @@ def create_users(request):
         if request.method == "POST":
             form = SignUPForm(request.POST)
             if form.is_valid():
-
                 #--------------------------------------------------------------
                 off_id = Office.objects.get(office_name=request.POST['state'])
                 selected_office = request.POST['state'] 
