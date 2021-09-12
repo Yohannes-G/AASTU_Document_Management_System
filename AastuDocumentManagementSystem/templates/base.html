@@ -4,56 +4,84 @@ Author URL: http://w3layouts.com
 License: Creative Commons Attribution 3.0 Unported
 License URL: http://creativecommons.org/licenses/by/3.0/
 -->
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-
 	<head>
-		{% comment %} <title>
+		{% comment %}
+		<title>
 			Easy Admin Panel an Admin Panel Category Flat Bootstrap Responsive Website
 			Template | Sign In :: w3layouts
-		</title> {% endcomment %}
+		</title>
+		{% endcomment %}
 		<title>{% block title %}{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="keywords" content="Easy Admin Panel Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+		<meta
+			name="keywords"
+			content="Easy Admin Panel Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design"
+		/>
 		{% load static %}
 		<!-- Bootstrap Core CSS -->
-		<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+		<link
+			href="{% static 'css/bootstrap.min.css' %}"
+			rel="stylesheet"
+			type="text/css"
+		/>
 		<!-- Custom CSS -->
-		<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
+		<link
+			href="{% static 'css/style.css' %}"
+			rel="stylesheet"
+			type="text/css"
+		/>
 		<!-- Graph CSS -->
 		<link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" />
 		<!-- jQuery -->
 		<!-- lined-icons -->
-		<link rel="stylesheet" href="{% static 'css/icon-font.min.css' %}" type="text/css" />
+		<link
+			rel="stylesheet"
+			href="{% static 'css/icon-font.min.css' %}"
+			type="text/css"
+		/>
 		<!-- //lined-icons -->
 		<!-- chart -->
 		<script src="{% static 'js/Chart.js' %}"></script>
 		<!-- //chart -->
 		<!--animate-->
-		<link href="{% static 'css/animate.css' %}" rel="stylesheet" type="text/css" media="all" />
+		<link
+			href="{% static 'css/animate.css' %}"
+			rel="stylesheet"
+			type="text/css"
+			media="all"
+		/>
 		<script src="{% static 'js/wow.min.js' %}"></script>
 		<!--//end-animate-->
 		<!----webfonts--->
 		{% comment %}
-		<link href="//fonts.googleapis.com/css?family=Cabin:400,400italic,500,500italic,600,600italic,700,700italic"
-			rel="stylesheet" type="text/css" /> {% endcomment %}
+		<link
+			href="//fonts.googleapis.com/css?family=Cabin:400,400italic,500,500italic,600,600italic,700,700italic"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		{% endcomment %}
 		<!---//webfonts--->
 		<!-- Meters graphs -->
 		<script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
 		<!-- Placed js at the end of the document so the pages load faster -->
-		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
+		<script
+			src="{% static 'js/pdfThumbnails.js' %}"
+			data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"
+		></script>
 	</head>
 
 	<body class="sticky-header left-side-collapsed">
-
 		<!-- left side start-->
 		<div class="left-side sticky-left-side">
-
 			<!--logo and iconic logo start-->
 			<div class="logo">
-				<h1><a href="{% url 'index' %}">Doc<span>Management</span></a></h1>
+				<h1>
+					<a href="{% url 'index' %}">Doc<span>Management</span></a>
+				</h1>
 			</div>
 			<div class="logo-icon text-center">
 				<a href="{% url 'index' %}"><i class="lnr lnr-home"></i> </a>
@@ -62,35 +90,49 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 			<!--sidebar nav start-->
 			<ul class="nav nav-pills nav-stacked custom-nav">
-				<li class="active"><a href="{% url 'index' %}"><i
-							class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
+				<li class="active">
+					<a href="{% url 'index' %}"
+						><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a
+					>
+				</li>
 				{% if user.is_staff %}
-				<li class="menu-list"><a href="#"><i class="lnr lnr-book"></i> <span>User Management</span></a>
+				<li class="menu-list">
+					<a href="#"
+						><i class="lnr lnr-book"></i> <span>User Management</span></a
+					>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'createusers' %}">Create User</a> </li>
+						<li><a href="{% url 'createusers' %}">Create User</a></li>
 						<li><a href="#">Update User</a></li>
 						<li><a href="{% url 'user' %}">View Users</a></li>
 					</ul>
 				</li>
-				<li><a href="{% url 'displaytypes' %}"><i class="lnr lnr-pencil"></i> <span>Roles</span></a></li>
+				<li>
+					<a href="{% url 'displaytypes' %}"
+						><i class="lnr lnr-pencil"></i> <span>Roles</span></a
+					>
+				</li>
 
 				{% endif %}
 				<li class="menu-list">
-					<a href="#"><i class="lnr lnr-cog"></i>
-						<span>User Profile</span></a>
+					<a href="#"><i class="lnr lnr-cog"></i> <span>User Profile</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="grids.html">Setting</a> </li>
+						<li><a href="grids.html">Setting</a></li>
 						<li><a href="widgets.html">Edit Profile</a></li>
 					</ul>
 				</li>
 
-				<li class="menu-list"><a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
+				<li class="menu-list">
+					<a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'sendmessages' %}">Send Message</a> </li>
+						<li><a href="{% url 'sendmessages' %}">Send Message</a></li>
 						<li><a href="{% url 'sendmessages' %}">Send Email</a></li>
 					</ul>
 				</li>
-				<li><a href="codes.html"><i class="lnr lnr-pencil"></i> <span>Notification</span></a></li>
+				<li>
+					<a href="codes.html"
+						><i class="lnr lnr-pencil"></i> <span>Notification</span></a
+					>
+				</li>
 			</ul>
 			<!--sidebar nav end-->
 		</div>
@@ -100,150 +142,122 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		<!-- header-starts -->
 		<div class="header-section">
-
 			<!--toggle button start-->
-			<a class="toggle-btn  menu-collapsed"><i class="fa fa-bars"></i></a>
-			<!--toggle button end-->
+			<div class="left-nav-bar">
+				<div class="toggle-container">
+					<a class="toggle-btn menu-collapsed"><i class="fa fa-bars"></i></a>
+				</div>
+				<!--toggle button end-->
+				<div class="dropdown">
+					<a
+						href="#"
+						class="dropdown-toggle"
+						data-toggle="dropdown"
+						aria-expanded="false"
+					>
+						<div class="badge-container">
+							{% if count %}
+							<div class="badge-number"><p>{{count}}</p></div>
+							{% else %} {% endif %}
+							<div class="badge-icon">
+								<i class="fa fa-envelope"></i>
+							</div>
+						</div>
+					</a>
+					{% if count %}
+					<ul class="dropdown-menu">
+						<li>
+							<div class="notification_header">
+								<h3>You have {{count}} new messages</h3>
+							</div>
+						</li>
+						<ul class="scrollable-menu">
+							{% for notification in notifications %}
+							<li>
+								<a href="{% url 'showmessage' notification.message_id %}">
+									<div class="notification_desc">
+										<p>{{notification.message_description}}</p>
+										<p>
+											<span>{{notification.message_time|timesince}}</span>
+										</p>
+									</div>
+									<div class="clearfix"></div>
+								</a>
+							</li>
+							{% endfor %}
+						</ul>
+						<li>
+							<div class="notification_bottom">
+								<a href="{% url 'showallmessage' %}">See all messages</a>
+							</div>
+						</li>
+					</ul>
+					{% else %} {% endif %}
+				</div>
+				{% comment %}
+				<div id="sb-search" class="sb-search">
+					<form>
+						<input
+							class="sb-search-input"
+							placeholder="Enter your search term..."
+							type="search"
+							id="search"
+						/>
+						<input class="sb-search-submit" type="submit" value="" />
+						<span class="sb-icon-search"> </span>
+					</form>
+				</div>
+				<!-- search-scripts -->
+				<script src="{% static 'js/classie.js' %}"></script>
+				<script src="{% static 'js/uisearch.js' %}"></script>
+				<script>
+					new UISearch(document.getElementById("sb-search"));
+				</script>
+				{% endcomment %}
+				<!-- //search-scripts -->
+			</div>
 
 			<!--notification menu start -->
-			<div class="menu-right">
-				<div class="user-panel-top">
-					<div class="profile_details_left">
-						<ul class="nofitications-dropdown">
-							<li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
-										class="fa fa-envelope"></i>
-									{% if count %}
-									<span class="badge">{{count}}</span>
-									{% else %}
-									{% endif %}
-								</a>
-								{% if count %}
-								<ul class="dropdown-menu">
-									<li>
-										<div class="notification_header">
-											<h3>You have {{count}} new messages</h3>
-										</div>
-									</li>
-									<ul class="scrollable-menu">
-										{% for notification in notifications %}
-										<li><a href="{% url 'showmessage' notification.message_id %}">
-												<div class="notification_desc">
-													<p>{{notification.message_description}}</p>
-													<p><span>{{notification.message_time|timesince}}</span></p>
-												</div>
-												<div class="clearfix"></div>
-											</a></li>
-										{% endfor %}
-									</ul>
-									<li>
-										<div class="notification_bottom">
-											<a href="{% url 'showallmessage' %}">See all messages</a>
-										</div>
-									</li>
-								</ul>
-								{% else %}
-								{% endif %}
-							</li>
-							<li class="login_box" id="loginContainer">
-								<div class="search-box">
-									<div id="sb-search" class="sb-search">
-										<form>
-											<input class="sb-search-input" placeholder="Enter your search term..."
-												type="search" id="search">
-											<input class="sb-search-submit" type="submit" value="">
-											<span class="sb-icon-search"> </span>
-										</form>
+			<div class="dropdown">
+				<div class="profile_details">
+					<ul>
+						<li class="dropdown profile_details_drop">
+							<a
+								href="#"
+								class="dropdown-toggle"
+								data-toggle="dropdown"
+								aria-expanded="false"
+							>
+								<div class="profile_img">
+									<div class="user-name">
+										<p>{{ user.first_name }}</p>
+									</div>
+									<div class="custom-position">
+										<i class="lnr lnr-chevron-down"></i>
+										<i class="lnr lnr-chevron-up"></i>
 									</div>
 								</div>
-
-								<!-- search-scripts -->
-								<script src="{% static 'js/classie.js' %}"></script>
-								<script src="{% static 'js/uisearch.js' %}"></script>
-								<script>
-									new UISearch( document.getElementById( 'sb-search' ) );
-
-								</script>
-								<!-- //search-scripts -->
-							</li>
-							{% comment %} <li class="dropdown">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i
-										class="fa fa-bell"></i><span class="badge blue">3</span></a>
-								<ul class="dropdown-menu">
-									<li>
-										<div class="notification_header">
-											<h3>You have 3 new notification</h3>
-										</div>
-									</li>
-									<li><a href="#">
-											<div class="user_img"><img src="{% static 'images/1.png' %}" alt=""></div>
-											<div class="notification_desc">
-												<p>Lorem ipsum dolor sit amet</p>
-												<p><span>1 hour ago</span></p>
-											</div>
-											<div class="clearfix"></div>
-										</a></li>
-									<li class="odd"><a href="#">
-											<div class="user_img"><img src="{% static 'images/1.png' %}" alt=""></div>
-											<div class="notification_desc">
-												<p>Lorem ipsum dolor sit amet </p>
-												<p><span>1 hour ago</span></p>
-											</div>
-											<div class="clearfix"></div>
-										</a></li>
-									<li><a href="#">
-											<div class="user_img"><img src="{% static 'images/1.png' %}" alt=""></div>
-											<div class="notification_desc">
-												<p>Lorem ipsum dolor sit amet </p>
-												<p><span>1 hour ago</span></p>
-											</div>
-											<div class="clearfix"></div>
-										</a></li>
-									<li>
-										<div class="notification_bottom">
-											<a href="#">See all notification</a>
-										</div>
-									</li>
-								</ul>
-							</li> {% endcomment %}
-
-
-						</ul>
-					</div>
-					<div class="profile_details">
-						<ul>
-							<li class="dropdown profile_details_drop">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-									<div class="profile_img">
-										<div class="user-name">
-											<p>{{ user.first_name }}</p>
-										</div>
-										<div class="custom-position">
-											<i class="lnr lnr-chevron-down"></i>
-											<i class="lnr lnr-chevron-up"></i>
-										</div>
-										<div class="clearfix"></div>
-									</div>
-								</a>
-								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="#"><i class="fa fa-cog"></i> Settings</a> </li>
-									<li> <a href="#"><i class="fa fa-user"></i>Profile</a> </li>
-									<li> <a href="{% url 'signout' %}"><i class="fa fa-sign-out"></i> Logout</a>
-									</li>
-								</ul>
-							</li>
-							<div class="clearfix"> </div>
-						</ul>
-					</div>
-					<div class="clearfix"></div>
+							</a>
+							<ul class="dropdown-menu drp-mnu">
+								<li>
+									<a href="#"><i class="fa fa-cog"></i> Settings</a>
+								</li>
+								<li>
+									<a href="#"><i class="fa fa-user"></i>Profile</a>
+								</li>
+								<li>
+									<a href="{% url 'signout' %}"
+										><i class="fa fa-sign-out"></i> Logout</a
+									>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</div>
 		<div class="main-content">
-			<div class="container">
-				{% block content %}
-				{% endblock %}
-			</div>
+			<div class="container">{% block content %} {% endblock %}</div>
 		</div>
 
 		<script src="{% static 'js/jquery.nicescroll.js' %}"></script>
@@ -251,5 +265,4 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!-- Bootstrap Core JavaScript -->
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 	</body>
-
 </html>

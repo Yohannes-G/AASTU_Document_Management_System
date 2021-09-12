@@ -997,6 +997,10 @@ ul.nav li a span {
 -----------------------------*/
 
 .header-section {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem;
+	align-items: center;
 	background: #fff;
 	box-shadow: 1px 0 3px rgba(0, 0, 0, 0.15);
 	-webkit-box-shadow: 1px 0 3px rgba(0, 0, 0, 0.15);
@@ -1004,21 +1008,15 @@ ul.nav li a span {
 	-o-box-shadow: 1px 0 3px rgba(0, 0, 0, 0.15);
 }
 
-.header-section::after {
-	clear: both;
-	display: block;
-	content: "";
-}
-
 .toggle-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	font-size: 15px;
-	padding: 10px 0 0;
 	width: 40px;
 	height: 40px;
-	margin: 0.4em 0 0 2em;
 	text-align: center;
 	cursor: pointer;
-	float: left;
 	color: #fff;
 	background: #f44336;
 	border: none;
@@ -1087,7 +1085,7 @@ ul.nav li a span {
 }
 
 .sticky-header .main-content {
-	padding-top: 50px;
+	padding-top: 100px;
 }
 .sticky-header .menu-right {
 	margin-right: 0;
@@ -1222,9 +1220,9 @@ ul.dropdown-menu li {
 	box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.47);
 }
 .search_box {
+	display: flex;
 	background: #fff;
 	border: 1px solid #f0f0f0;
-	position: relative;
 }
 .search_box input[type="text"] {
 	border: 1px solid #fff;
@@ -1337,20 +1335,7 @@ i.fa.fa-tasks {
 }
 /***** Messages *************/
 /*start search*/
-.sb-search {
-	position: absolute;
-	left: 115px;
-	width: 0%;
-	min-width: 30px;
-	margin: 0;
-	height: 30px;
-	overflow: hidden;
-	-webkit-transition: width 0.3s;
-	-moz-transition: width 0.3s;
-	transition: width 0.3s;
-	-webkit-backface-visibility: hidden;
-	background: none;
-}
+
 .sb-search-input {
 	position: absolute;
 	top: 0px;
@@ -1459,6 +1444,7 @@ i.fa.fa-tasks {
 	opacity: 1;
 }
 ul.dropdown-menu {
+	list-style-type: none;
 	padding: 0;
 	min-width: 250px;
 	top: 108%;
@@ -8041,6 +8027,7 @@ input[type="submit"]:hover {
 .receiver {
 	display: flex;
 	justify-content: space-between;
+	color: #222;
 }
 
 .custom-conversation {
@@ -8057,6 +8044,8 @@ input[type="submit"]:hover {
 }
 
 .scrollable-menu {
+	list-style-type: none;
+	padding: 0;
 	max-height: 200px;
 	width: 100%;
 	overflow: hidden;
@@ -8080,6 +8069,59 @@ input[type="submit"]:hover {
 	color: #f44336;
 }
 
-.login_box {
-	height: 100%;
+.left-nav-bar {
+	display: flex;
+	align-items: center;
+}
+
+.toggle-container {
+	margin-right: 3rem;
+}
+
+.dropdown-toggle {
+	display: flex;
+}
+
+.badge-container {
+	display: flex;
+}
+
+.badge-number {
+	position: relative;
+	left: 7px;
+	bottom: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-ms-border-radius: 50%;
+	-o-border-radius: 50%;
+	background-color: green;
+	font-size: x-small;
+	color: white;
+	align-self: flex-start;
+}
+
+.badge-icon {
+	align-self: flex-end;
+}
+
+.flex{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.flex-left {
+	margin-right: 5px;
+}
+
+.space-around {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 }
