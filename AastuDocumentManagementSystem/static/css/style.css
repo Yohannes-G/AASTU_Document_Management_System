@@ -316,30 +316,13 @@ h5 {
 	display: none;
 }
 
-@-webkit-keyframes move {
-	0% {
-		background-position: 0 0;
-	}
-	100% {
-		background-position: 50px 50px;
-	}
-}
-
-@-moz-keyframes move {
-	0% {
-		background-position: 0 0;
-	}
-	100% {
-		background-position: 50px 50px;
-	}
-}
-
 .red > span {
 	background-color: #65cea7;
 }
 
 .nostripes > span > span,
 .nostripes > span:after {
+	animation: none;
 	-webkit-animation: none;
 	-moz-animation: none;
 	background-image: none;
@@ -728,9 +711,6 @@ div#page-wrapper {
 
 .custom-nav > li.nav-active > ul {
 	display: block;
-}
-
-.custom-nav > li.nav-active > a:hover {
 }
 
 .custom-nav > li.active > a,
@@ -1193,10 +1173,11 @@ ul.dropdown-menu li {
 	height: 24px;
 	background: url(../images/sprite.png) no-repeat -35px -10px;
 	display: block;
-	-webkit-transition: all 0.2s ease-out;
-	-moz-transition: all 0.2s ease-out;
-	-ms-transition: all 0.2s ease-out;
-	-o-transition: all 0.2s ease-out;
+	transition: all 0.2 ease-out;
+	-webkit-transition: all 0.2 ease-out;
+	-moz-transition: all 0.2 ease-out;
+	-ms-transition: all 0.2 ease-out;
+	-o-transition: all 0.2 ease-out;
 	cursor: pointer;
 }
 /* Login Box */
@@ -2075,8 +2056,7 @@ canvas.overlay {
 	margin: 0 0 0.5em;
 	font-size: 14px;
 }
-.switch-right-grid ul li span {
-}
+
 .switch-right-grid p {
 	color: #999;
 	font-size: 13px;
@@ -2733,8 +2713,7 @@ i.dollar1 {
 .widget1 {
 	margin-right: 1.5%;
 }
-.widget {
-}
+
 .world-map {
 	width: 64%;
 	float: left;
@@ -3050,8 +3029,7 @@ button.note-color-btn {
 .progress-bar-inverse {
 	background-color: #757575;
 }
-.page_1 {
-}
+
 .pagination > .active > a,
 .pagination > .active > span,
 .pagination > .active > a:hover,
@@ -3163,7 +3141,7 @@ h2.modal-title {
 	display: block;
 	margin-bottom: 0;
 	font-weight: 400;
-	vertical-align: middle;
+	align-items: center;
 	cursor: pointer;
 }
 .help-block {
@@ -4755,7 +4733,7 @@ li.nbs-flexisel-item:nth-child(1) {
 }
 .nbs-flexisel-item > img {
 	cursor: pointer;
-	positon: relative;
+	position: relative;
 }
 .biseller-info {
 	margin: 1em 0 0 0;
