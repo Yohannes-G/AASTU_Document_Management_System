@@ -1,77 +1,40 @@
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
 <!DOCTYPE html>
 <html>
+
 	<head>
-		{% comment %}
-		<title>
-			Easy Admin Panel an Admin Panel Category Flat Bootstrap Responsive Website
-			Template | Sign In :: w3layouts
-		</title>
-		{% endcomment %}
 		<title>{% block title %}{% endblock title %}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta
-			name="keywords"
-			content="Easy Admin Panel Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design"
-		/>
+		<meta name="keywords" content="Easy Admin Panel Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 		{% load static %}
 		<!-- Bootstrap Core CSS -->
-		<link
-			href="{% static 'css/bootstrap.min.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
+		<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 		<!-- Custom CSS -->
-		<link
-			href="{% static 'css/style.css' %}"
-			rel="stylesheet"
-			type="text/css"
-		/>
+		<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
 		<!-- Graph CSS -->
 		<link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" />
 		<!-- jQuery -->
 		<!-- lined-icons -->
-		<link
-			rel="stylesheet"
-			href="{% static 'css/icon-font.min.css' %}"
-			type="text/css"
-		/>
+		<link rel="stylesheet" href="{% static 'css/icon-font.min.css' %}" type="text/css" />
 		<!-- //lined-icons -->
 		<!-- chart -->
 		<script src="{% static 'js/Chart.js' %}"></script>
 		<!-- //chart -->
 		<!--animate-->
-		<link
-			href="{% static 'css/animate.css' %}"
-			rel="stylesheet"
-			type="text/css"
-			media="all"
-		/>
+		<link href="{% static 'css/animate.css' %}" rel="stylesheet" type="text/css" media="all" />
 		<script src="{% static 'js/wow.min.js' %}"></script>
 		<!--//end-animate-->
 		<!----webfonts--->
 		{% comment %}
-		<link
-			href="//fonts.googleapis.com/css?family=Cabin:400,400italic,500,500italic,600,600italic,700,700italic"
-			rel="stylesheet"
-			type="text/css"
-		/>
+		<link href="//fonts.googleapis.com/css?family=Cabin:400,400italic,500,500italic,600,600italic,700,700italic"
+			rel="stylesheet" type="text/css" />
 		{% endcomment %}
 		<!---//webfonts--->
 		<!-- Meters graphs -->
 		<script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
 		<!-- Placed js at the end of the document so the pages load faster -->
-		<script
-			src="{% static 'js/pdfThumbnails.js' %}"
-			data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"
-		></script>
+		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
 	</head>
 
 	<body class="sticky-header left-side-collapsed">
@@ -91,15 +54,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!--sidebar nav start-->
 			<ul class="nav nav-pills nav-stacked custom-nav">
 				<li class="active">
-					<a href="{% url 'index' %}"
-						><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a
-					>
+					<a href="{% url 'index' %}"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a>
 				</li>
 				{% if user.is_staff %}
 				<li class="menu-list">
-					<a href="#"
-						><i class="lnr lnr-book"></i> <span>User Management</span></a
-					>
+					<a href="#"><i class="lnr lnr-book"></i> <span>User Management</span></a>
 					<ul class="sub-menu-list">
 						<li><a href="{% url 'createusers' %}">Create User</a></li>
 						<li><a href="#">Update User</a></li>
@@ -107,9 +66,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</ul>
 				</li>
 				<li>
-					<a href="{% url 'displaytypes' %}"
-						><i class="lnr lnr-pencil"></i> <span>Roles</span></a
-					>
+					<a href="{% url 'displaytypes' %}"><i class="lnr lnr-pencil"></i> <span>Roles</span></a>
 				</li>
 
 				{% endif %}
@@ -129,9 +86,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</ul>
 				</li>
 				<li>
-					<a href="codes.html"
-						><i class="lnr lnr-pencil"></i> <span>Notification</span></a
-					>
+					<a href="codes.html"><i class="lnr lnr-pencil"></i> <span>Notification</span></a>
 				</li>
 			</ul>
 			<!--sidebar nav end-->
@@ -149,15 +104,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</div>
 				<!--toggle button end-->
 				<div class="dropdown">
-					<a
-						href="#"
-						class="dropdown-toggle"
-						data-toggle="dropdown"
-						aria-expanded="false"
-					>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 						<div class="badge-container">
 							{% if count %}
-							<div class="badge-number"><p>{{count}}</p></div>
+							<div class="badge-number">
+								<p>{{count}}</p>
+							</div>
 							{% else %} {% endif %}
 							<div class="badge-icon">
 								<i class="fa fa-envelope"></i>
@@ -197,12 +149,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				{% comment %}
 				<div id="sb-search" class="sb-search">
 					<form>
-						<input
-							class="sb-search-input"
-							placeholder="Enter your search term..."
-							type="search"
-							id="search"
-						/>
+						<input class="sb-search-input" placeholder="Enter your search term..." type="search"
+							id="search" />
 						<input class="sb-search-submit" type="submit" value="" />
 						<span class="sb-icon-search"> </span>
 					</form>
@@ -211,7 +159,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<script src="{% static 'js/classie.js' %}"></script>
 				<script src="{% static 'js/uisearch.js' %}"></script>
 				<script>
-					new UISearch(document.getElementById("sb-search"));
+					new UISearch( document.getElementById( "sb-search" ) );
+
 				</script>
 				{% endcomment %}
 				<!-- //search-scripts -->
@@ -222,12 +171,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="profile_details">
 					<ul>
 						<li class="dropdown profile_details_drop">
-							<a
-								href="#"
-								class="dropdown-toggle"
-								data-toggle="dropdown"
-								aria-expanded="false"
-							>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 								<div class="profile_img">
 									<div class="user-name">
 										<p>{{ user.first_name }}</p>
@@ -246,9 +190,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<a href="#"><i class="fa fa-user"></i>Profile</a>
 								</li>
 								<li>
-									<a href="{% url 'signout' %}"
-										><i class="fa fa-sign-out"></i> Logout</a
-									>
+									<a href="{% url 'signout' %}"><i class="fa fa-sign-out"></i> Logout</a>
 								</li>
 							</ul>
 						</li>
@@ -265,4 +207,5 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!-- Bootstrap Core JavaScript -->
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 	</body>
+
 </html>
