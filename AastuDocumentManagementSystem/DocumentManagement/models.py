@@ -64,3 +64,9 @@ class ReplyMessage(models.Model):
     replyed_message = models.ForeignKey(
         Message, on_delete=models.CASCADE, related_name='replyed_message')
     reply_unread = models.BooleanField(default=True)
+
+
+
+class Profile(models.Model):
+    profile_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='images/')

@@ -1,41 +1,100 @@
 {% extends 'base.html' %}
 {% block title %}All message{% endblock title %}
 {% block content %}
-{% for message in messages %}
-{% if message.message_sender == user %}
-<a href="{% url 'showmessage' message.message_id %}">
-    <div class="custom-conversation">
-        <div class="sender">
-            <div class="sender-from">
-                <h3 class="department-type">{{message.message_receiver.office.office_type_name}}</h3>
-                <h4 class="department-office">{{message.message_receiver.office}}</h4>
+
+<!-- {% for message in messages %}
+    {% if message.message_sender == user %}
+    <a href="{% url 'showmessage' message.message_id %}">
+        <div class="custom-conversation">
+            <div class="sender">
+                <div class="sender-from">
+                    <h3 class="department-type">{{message.message_receiver.office.office_type_name}}</h3>
+                    <h4 class="department-office">{{message.message_receiver.office}}</h4>
+                </div>
+                <div class="header-time">
+                    <p>{{message.message_time}}</p>
+                </div>
             </div>
-            <div class="header-time">
-                <p>{{message.message_time}}</p>
-            </div>
-        </div>
-        <div>
-            <p>{{message.message_description}}</p>
-        </div>
-    </div>
-</a>
-{% else %}
-<a href="{% url 'showmessage' message.message_id %}">
-    <div class="custom-conversation receiver-custom">
-        <div class="receiver">
-            <div class="receiver-from">
-                <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
-                <h4 class="department-office">{{message.message_sender.office}}</h4>
-            </div>
-            <div class="header-time">
-                <p>{{message.message_time}}</p>
+            <div>
+                <p>{{message.message_description}}</p>
             </div>
         </div>
-        <div>
-            <p>{{message.message_description}}</p>
+    </a>
+    {% else %}
+    <a href="{% url 'showmessage' message.message_id %}">
+        <div class="custom-conversation receiver-custom">
+            <div class="receiver">
+                <div class="receiver-from">
+                    <h3 class="department-type">{{message.message_sender.office.office_type_name}}</h3>
+                    <h4 class="department-office">{{message.message_sender.office}}</h4>
+                </div>
+                <div class="header-time">
+                    <p>{{message.message_time}}</p>
+                </div>
+            </div>
+            <div>
+                <p>{{message.message_description}}</p>
+            </div>
         </div>
-    </div>
-</a>
+    </a>
 {% endif %}
+{% endfor %} -->
+{% for message in messages %}
+    {% if message.message_sender == user %}
+     
+        <div class="widget_bottom" style="margin:10px">
+            <div class="" id="collapseOne">
+                <div class="banner-bottom-video-grid-left">
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                              <h4 class="panel-title asd">
+                                <a class="pa_italic" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                  <span class="lnr lnr-chevron-down"></span><i class="lnr lnr-chevron-up"></i><label>{{message.message_description}}   {{message.message_time}} </label>
+                                </a>
+                              </h4>
+                            </div>
+
+ 
+                              <div class="panel-body panel_text">
+                                <a href="{% url 'showmessage' message.message_id %}">
+                                    <div>
+                                      <div>{{message.message_sender.office.office_type_name}}</div>
+                                      <div>{{message.message_sender.office}}</div>  
+                                    </div>
+                                </a>
+                              </div>
+                             
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endfor %}
+
+<!-- <div class="widget_bottom">
+                        <div class="col-md-6 widget_bottom_left">
+                            <div class="banner-bottom-video-grid-left">
+                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                      <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="headingOne">
+                                          <h4 class="panel-title asd">
+                                            <a class="pa_italic" role="button" data-toggle="collapse" data-parent="#accordion"   aria-expanded="true" aria-controls="collapseOne">
+                                              <span class="lnr lnr-chevron-down"></span><i class="lnr lnr-chevron-up"></i><label>assumenda est cliche reprehenderit</label>
+                                            </a>
+                                          </h4>
+                                        </div>
+                                        
+                                          <div class="panel-body panel_text">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+                                          </div>
+                                         
+                                      </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
 {% endblock content %}
