@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block title %}All message{% endblock title %}
 {% block content %}
@@ -98,3 +99,113 @@
                             </div>
                         </div> -->
 {% endblock content %}
+=======
+{% extends 'base.html' %} {% block title %}All message{% endblock title %}
+{%block content %} 
+<div class="filter-container space-around">
+<div class="type-filter">
+<h4>Type Filter</h4>
+<div class="dropdown">
+<button class="btn btn-primary dropdown-toggle" type="button" id="about-us" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="flex">
+<div class="flex-left"><p>All</p></div>
+<div class="flex-right"><p><span class="caret"></span></p></div>
+</div>
+</button>
+<ul class="dropdown-menu" aria-labelledby="about-us">
+<li><a href="#">Our Story</a></li>
+<li><a href="#">Our Team</a></li>
+<li><a href="#">Contact Us</a></li>
+</ul>
+</div>
+</div>
+<div class="office-filter">
+<h4>Office Filter</h4>
+<div class="dropdown">
+<button class="btn btn-primary dropdown-toggle" type="button" id="about-us" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="flex">
+<div class="flex-left"><p>All</p></div>
+<div class="flex-right"><p><span class="caret"></span></p></div>
+</div>
+</button>
+<ul class="dropdown-menu" aria-labelledby="about-us">
+<li><a href="#">Our Story</a></li>
+<li><a href="#">Our Team</a></li>
+<li><a href="#">Contact Us</a></li>
+</ul>
+</div>
+</div>
+<div class="action-filter">
+<h4>Action Filter</h4>
+<div class="dropdown">
+<button class="btn btn-primary dropdown-toggle" type="button" id="about-us" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="flex">
+<div class="flex-left"><p>All</p></div>
+<div class="flex-right"><p><span class="caret"></span></p></div>
+</div>
+</button>
+<ul class="dropdown-menu" aria-labelledby="about-us">
+<li><a href="#">Our Story</a></li>
+<li><a href="#">Our Team</a></li>
+<li><a href="#">Contact Us</a></li>
+</ul>
+</div>
+</div>
+<div class="date-filter">
+<h4>Date Filter</h4>
+<div class="dropdown">
+<button class="btn btn-primary dropdown-toggle" type="button" id="about-us" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="flex">
+<div class="flex-left"><p>All</p></div>
+<div class="flex-right"><p><span class="caret"></span></p></div>
+</div>
+</button>
+<ul class="dropdown-menu" aria-labelledby="about-us">
+<li><a href="#">Our Story</a></li>
+<li><a href="#">Our Team</a></li>
+<li><a href="#">Contact Us</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+{% for message in messages %} {% if user == message.message_sender%}
+<div class="custom-conversation">
+	<a href="{% url 'showmessage' message.message_id %}">
+		<div class="sender">
+			<div class="sender-from">
+				<h3 class="department-type">
+					{{message.message_receiver.office.office_type_name}}
+				</h3>
+				<h4 class="department-office">{{message.message_receiver.office}}</h4>
+			</div>
+			<div class="header-time">
+				<p>{{message.message_time}}</p>
+			</div>
+		</div>
+		<div>
+			<p>{{message.message_description}}</p>
+		</div>
+	</a>
+</div>
+{% else %}
+<div class="custom-conversation receiver-custom">
+	<a href="{% url 'showmessage' message.message_id %}">
+		<div class="receiver">
+			<div class="receiver-from">
+				<h3 class="department-type">
+					{{message.message_sender.office.office_type_name}}
+				</h3>
+				<h4 class="department-office">{{message.message_sender.office}}</h4>
+			</div>
+			<div class="header-time">
+				<p>{{message.message_time}}</p>
+			</div>
+		</div>
+		<div>
+			<p>{{message.message_description}}</p>
+		</div>
+	</a>
+</div>
+{% endif %} {% endfor %} {% endblock content %}
+>>>>>>> c7bde0b2c25224dd32a90eb7f44b5acddaaffaa5

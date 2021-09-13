@@ -103,6 +103,7 @@ def send_messages(request):
                     )
                     send.message_file.field.upload_to = f"{selected_office}/{user.username}/{category}"
                     send.save()
+                return redirect('sendmessages')
         return render(request, 'create-send-message.html',
                       {'forms': form, 'notifications': notifications, 'count': count})
 
@@ -125,22 +126,32 @@ def reply_message(request, message_id):
             selected_cc_office = request.POST['cc_state']
             if form.is_valid():
                 cd = form.cleaned_data
+<<<<<<< HEAD
                 category = cd['file'].content_type.split('/')[0].capitalize()
                 users = User.objects.filter(office__office_name=cd['office'])
                 carbon_copies = Office.objects.filter(
                     office_name=selected_cc_office)
+=======
+                category = request.FILES['file'].content_type.split(
+                    '/')[-1].capitalize()
+                users = list(User.objects.filter(
+                    office__office_name=office))
+                carbon_copies = list(User.objects.filter(
+                    office__office_name=cd['cc_office']))
+>>>>>>> c7bde0b2c25224dd32a90eb7f44b5acddaaffaa5
                 users = users + carbon_copies
                 for user in users:
                     send = ReplyMessage(
                         reply_description=cd['description'],
-                        reply_file=cd['file'],
+                        reply_file=request.FILES['file'],
                         reply_sender=request.user,
                         reply_receiver=user,
-                        reply_carbon_copy=True if user in carbon_copies else False,
+                        reply_cc=True if user in carbon_copies else False,
                         replyed_message=msg
                     )
-                    send.reply_file.field.upload_to = f"{cd['office']}/{user}/{category}"
+                    send.reply_file.field.upload_to = f"{office}/{user.username}/{category}"
                     send.save()
+                return redirect('showallmessage')
         return render(request, 'create-send-message.html',
                       {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'count': count})
 
