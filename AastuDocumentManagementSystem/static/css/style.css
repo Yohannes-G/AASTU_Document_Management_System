@@ -322,8 +322,8 @@ h5 {
 
 .nostripes > span > span,
 .nostripes > span:after {
-	animation: none;
-	-webkit-animation: none;
+	animation: all 1s ease-out;
+	-webkit-animation: all 1s ease-out;
 	-moz-animation: none;
 	background-image: none;
 }
@@ -1173,11 +1173,11 @@ ul.dropdown-menu li {
 	height: 24px;
 	background: url(../images/sprite.png) no-repeat -35px -10px;
 	display: block;
-	transition: all 0.2 ease-out;
-	-webkit-transition: all 0.2 ease-out;
-	-moz-transition: all 0.2 ease-out;
-	-ms-transition: all 0.2 ease-out;
-	-o-transition: all 0.2 ease-out;
+	transition: all 0.2s ease-out;
+	-webkit-transition: all 0.2s ease-out;
+	-moz-transition: all 0.2s ease-out;
+	-ms-transition: all 0.2s ease-out;
+	-o-transition: all 0.2s ease-out;
 	cursor: pointer;
 }
 /* Login Box */
@@ -3141,7 +3141,7 @@ h2.modal-title {
 	display: block;
 	margin-bottom: 0;
 	font-weight: 400;
-	align-items: center;
+	align-items: middle;
 	cursor: pointer;
 }
 .help-block {
@@ -8088,7 +8088,7 @@ input[type="submit"]:hover {
 	align-self: flex-end;
 }
 
-.flex{
+.flex {
 	display: flex;
 	align-items: center;
 	justify-content: center;
