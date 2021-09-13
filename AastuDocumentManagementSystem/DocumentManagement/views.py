@@ -126,19 +126,12 @@ def reply_message(request, message_id):
             selected_cc_office = request.POST['cc_state']
             if form.is_valid():
                 cd = form.cleaned_data
-<<<<<<< HEAD
-                category = cd['file'].content_type.split('/')[0].capitalize()
-                users = User.objects.filter(office__office_name=cd['office'])
-                carbon_copies = Office.objects.filter(
-                    office_name=selected_cc_office)
-=======
                 category = request.FILES['file'].content_type.split(
                     '/')[-1].capitalize()
                 users = list(User.objects.filter(
                     office__office_name=office))
                 carbon_copies = list(User.objects.filter(
-                    office__office_name=cd['cc_office']))
->>>>>>> c7bde0b2c25224dd32a90eb7f44b5acddaaffaa5
+                    office__office_name=selected_cc_office))
                 users = users + carbon_copies
                 for user in users:
                     send = ReplyMessage(
