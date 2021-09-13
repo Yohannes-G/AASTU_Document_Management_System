@@ -34,7 +34,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!-- Meters graphs -->
 		<script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
 		<!-- Placed js at the end of the document so the pages load faster -->
+
 		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
+
+
+		<!-- for user profile styles -->
+		<link type="text/css"
+			href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/@fortawesome/fontawesome-free/css/all.min.css"
+			rel="stylesheet">
+
+		<!-- Notyf -->
+		<link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/notyf/notyf.min.css"
+			rel="stylesheet">
+
+		<!-- Volt CSS -->
+		<link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/css/volt.css" rel="stylesheet">
+
+
 	</head>
 
 	<body class="sticky-header left-side-collapsed">
@@ -73,7 +89,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-cog"></i> <span>User Profile</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="grids.html">Setting</a></li>
+						<li><a href="{% url 'userprofile' %}">Setting</a> </li>
 						<li><a href="widgets.html">Edit Profile</a></li>
 					</ul>
 				</li>

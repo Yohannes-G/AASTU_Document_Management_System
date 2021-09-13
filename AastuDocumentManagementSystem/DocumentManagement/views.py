@@ -6,22 +6,65 @@ from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
-                    SignUPForm, TypeForm)
-from .models import Message, Office, ReplyMessage, Type, User
+                    SignUPForm, TypeForm, ProfileForm)
+from .models import Message, Office, ReplyMessage, Type, User, Profile
 
 ######################## Drop Down ##############################
 
-# Complete the rest of the view function
+# Functions for drop down menu
 
-##########################PDF Rendering #########################
+def get_type():
+    """ GET Type SELECTION """
+    all_countries = [('-----', '---Select a Type---')]
+    all_data = [type_name.type_name for type_name in Type.objects.all()]
+    #print("all_data", all_data)
+    for x in all_data:
+        y = (x, x)
+        all_countries.append(y)
+    return all_countries
 
 
-def pdf_rendering():
-    filepath = os.path.join('static', 'ProposalWriting.pdf')
-    return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+def return_office_by_type(type_name):
+    all_offices = []
+    all_data = [type_name.type_name for type_name in Type.objects.all()]
+    print(all_data)
+    # get the id of the comming type
+    typeId = Type.objects.get(type_name=type_name)
+    #print("return:", typeId)
+
+    for x in all_data:
+       # print(x)
+        if x == type_name:
+            office_list = Office.objects.filter(
+                office_type_name_id=typeId.type_id)
+            #print("office_list", office_list)
+            for office in office_list:
+                #print("Office New:", office)
+                y = (office, office)
+                all_offices.append(office)
+                #print("all_offices", all_offices)
+    return all_offices
 
 
-################### Create Messages for user ####################
+def getOffices(request):
+    office_type_name = request.POST.get('type_name')
+    #office_type_name = 'Director'
+    #print("getOffices: ", office_type_name)
+    offices = return_office_by_type(office_type_name)
+    office = [office.office_name for office in offices]
+
+    return JsonResponse(office,  safe=False)
+
+
+# ##########################PDF Rendering #########################
+
+
+# def pdf_rendering():
+#     filepath = os.path.join('static', 'ProposalWriting.pdf')
+#     return FileResponse(open(filepath, 'rb'), content_type='application/pdf')
+
+
+################### Create Messages for User ####################
 
 
 def send_messages(request):
@@ -34,14 +77,21 @@ def send_messages(request):
         count = notifications.count()
         if request.method == 'POST':
             form = SendMessageForm(request.POST, request.FILES)
+            selected_office = request.POST['state']
+            selected_cc_office = request.POST['cc_state']
+
+            print("messages: ", selected_office)
+            print("messages: ", selected_cc_office)
+
             if form.is_valid():
                 cd = form.cleaned_data
+                print("messages: ", cd)
                 category = request.FILES['file'].content_type.split(
                     '/')[-1].capitalize()
                 users = list(User.objects.filter(
-                    office__office_name=cd['office']))
+                    office__office_name=selected_office))
                 carbon_copies = list(User.objects.filter(
-                    office__office_name=cd['cc_office']))
+                    office__office_name=selected_cc_office))
                 users = users + carbon_copies
                 for user in users:
                     send = Message(
@@ -51,7 +101,7 @@ def send_messages(request):
                         message_receiver=user,
                         message_cc=True if user in carbon_copies else False
                     )
-                    send.message_file.field.upload_to = f"{cd['office']}/{user.username}/{category}"
+                    send.message_file.field.upload_to = f"{selected_office}/{user.username}/{category}"
                     send.save()
                 return redirect('sendmessages')
         return render(request, 'create-send-message.html',
@@ -73,6 +123,7 @@ def reply_message(request, message_id):
         form = ReplyMessageForm()
         if request.method == 'POST':
             form = ReplyMessageForm(request.POST, request.FILES)
+            selected_cc_office = request.POST['cc_state']
             if form.is_valid():
                 cd = form.cleaned_data
                 category = request.FILES['file'].content_type.split(
@@ -80,7 +131,7 @@ def reply_message(request, message_id):
                 users = list(User.objects.filter(
                     office__office_name=office))
                 carbon_copies = list(User.objects.filter(
-                    office__office_name=cd['cc_office']))
+                    office__office_name=selected_cc_office))
                 users = users + carbon_copies
                 for user in users:
                     send = ReplyMessage(
@@ -170,11 +221,10 @@ def create_offices(request, type_id):
             if form.is_valid():
                 cd = form.cleaned_data
                 office = Office.objects.create(
-                    office_type_name_id=type_id, office_name=cd['office'])
+                    office_type_name_id=type_id, 
+                    office_name=cd['office'])
                 office.save()
-
-        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_name': type_name})
-
+        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
 
 def display_offices(request, type_id):
     if not request.user.is_staff:
@@ -187,68 +237,31 @@ def display_offices(request, type_id):
         return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
 
 ################### User Management #############################
+def create_user_profile(request):
+    error=' '
+    form = ProfileForm()
+    user = User.objects.get(username=request.user.username)
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            cd = form.cleaned_data
+            print("Profile:", cd)
+            print("User:", request.user.last_name)
+            #request.user.username = cd['username']
+            request.user.first_name = cd['edit_first_name']
+            #request.user.last_name = cd['edit_last_name']
+            # if cd['new_password'] == cd['confirm_password']:
+            #     request.user.password = cd['new_password']
+            # else:
+            #     error = 'Please enter the correct password!'
+            print("User:", request.user.first_name)
+            profile = Profile.objects.create(
+                    profile_user = user.id,
+                    profile_image = cd['profile_image']
+                )
+            profile.save()
 
-
-def get_type():
-    """ GET Type SELECTION """
-    all_countries = [('-----', '---Select a Type---')]
-    all_data = [type_name.type_name for type_name in Type.objects.all()]
-    #print("all_data", all_data)
-    for x in all_data:
-        y = (x, x)
-        all_countries.append(y)
-    return all_countries
-
-
-def return_office_by_type(type_name):
-    all_offices = []
-    all_data = [type_name.type_name for type_name in Type.objects.all()]
-    print(all_data)
-    # get the id of the comming type
-    typeId = Type.objects.get(type_name=type_name)
-    print("return:", typeId)
-
-    for x in all_data:
-        print(x)
-        if x == type_name:
-            office_list = Office.objects.filter(
-                office_type_name_id=typeId.type_id)
-            print("office_list", office_list)
-            for office in office_list:
-                print("Office New:", office)
-                y = (office, office)
-                all_offices.append(office)
-                print("all_offices", all_offices)
-    return all_offices
-
-
-def getOffices(request):
-    office_type_name = request.POST.get('type_name')
-    #office_type_name = 'Director'
-    print("getOffices: ", office_type_name)
-    offices = return_office_by_type(office_type_name)
-    office = [office.office_name for office in offices]
-
-    return JsonResponse(office,  safe=False)
-
-# def processForm(request):
-#     context = {}
-#     #print(request.method == 'POST')
-#     if request.method == 'GET':
-#        form  = SignInForm()
-#        context['form'] = form
-#        return render(request, 'address.html', context)
-
-#     if request.method == 'POST':
-#         form  = AddressForm(request.POST)
-#         if form.is_valid():
-#             selected_province = request.POST['state']
-#             obj = form.save(commit=False)
-#             obj.state = selected_province
-#             obj.save()
-
-#     return render(request, 'address.html')
-
+    return render(request, 'create-user-profile.html', {'forms':form, 'error':error, 'user':user})
 
 def users(request):
     if not request.user.is_staff:
@@ -277,13 +290,12 @@ def create_users(request):
         if request.method == "POST":
             form = SignUPForm(request.POST)
             if form.is_valid():
-
-                # --------------------------------------------------------------
+                #--------------------------------------------------------------
                 off_id = Office.objects.get(office_name=request.POST['state'])
                 selected_office = request.POST['state']
 
                 cd = form.cleaned_data
-                print(cd)
+               # print("This office: ",cd)
                 cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
                 cd['password'] = cd['username']
                 cd['office_id'] = off_id.office_id

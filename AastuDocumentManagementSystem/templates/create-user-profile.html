@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+
+     
+    <div class=" " style="margin:10px">
+        <div class="row">
+            <div class="col-12">
+                <main class="content">
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12 col-xl-8">
+                                 <div class="card border-light text-center p-0">
+                                {% for form in forms %}
+                                    <div class="log-input">
+                                        {{form}}
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-4">
+                                <div class="row">
+                                    <div class="col-12 mb-4">
+                                        <div class="card border-light text-center p-0">
+                                            <div class="profile-cover rounded-top"
+                                                  ></div>
+                                            <div class="card-body pb-5">
+                                                <img src="https://appsrv1-147a1.kxcdn.com/volt-dashboard/img/team/profile-picture-3.jpg"
+                                                     class="user-avatar large-avatar rounded-circle mx-auto mt-n7 mb-4"
+                                                     alt="Neil Portrait">
+                                                <h4 class="h3">test</h4>
+                                                <h4 class="font-weight-normal">kikiw w</h4>
+                                                <h5 class="font-weight-normal">
+                                                    test@appseed.us
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </main>
+
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
