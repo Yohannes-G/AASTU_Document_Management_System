@@ -8013,7 +8013,7 @@ input[type="submit"]:hover {
 }
 
 .receiver-custom {
-	margin: 0 0 0 0 auto;
+	margin: 0 0 0 auto;
 }
 
 .scrollable-menu {
@@ -8113,6 +8113,14 @@ input[type="submit"]:hover {
 	display: flex;
 }
 
-.full-width{
+.full-width {
 	width: 100%;
+}
+
+.margin-r-1 {
+	margin-right: 1rem;
+}
+
+.reply {
+	padding: 1rem;
 }

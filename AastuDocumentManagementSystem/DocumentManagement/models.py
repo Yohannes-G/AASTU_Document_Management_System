@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser, User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -28,12 +28,6 @@ class Office(models.Model):
         return self.office_name
 
 
-class CC_Office(models.Model):
-    office = models.ForeignKey(
-        Office, on_delete=models.CASCADE, related_name='cc_office')
-    unread = models.BooleanField(default=False)
-
-
 class User(AbstractUser):
     office = models.ForeignKey(
         Office, on_delete=models.CASCADE, related_name='office')
@@ -42,34 +36,44 @@ class User(AbstractUser):
         return self.first_name
 
 
+class CC_User(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='cc_user')
+    unread = models.BooleanField(default=True)
+
+
+class ReceiverUser(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='receiver_user')
+    unread = models.BooleanField(default=True)
+
+
 class Message(models.Model):
     message_time = models.DateTimeField(auto_now_add=True)
     message_id = models.BigAutoField(primary_key=True)
-    message_cc = models.ManyToManyField(CC_Office, related_name='message_cc')
+    message_cc = models.ManyToManyField(CC_User, related_name='message_cc')
     message_description = models.TextField(max_length=256)
     message_file = models.FileField(
         blank=True)
-    message_receiver = models.ForeignKey(
-        User, related_name='receiver', on_delete=models.CASCADE)
     message_sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='sender')
-    message_unread = models.BooleanField(default=True)
+        User, related_name='sender', on_delete=models.CASCADE)
+    message_receiver = models.ManyToManyField(
+        ReceiverUser, related_name='receiver')
 
 
 class ReplyMessage(models.Model):
     reply_time = models.DateTimeField(auto_now_add=True)
     reply_id = models.BigAutoField(primary_key=True)
-    reply_cc = models.ManyToManyField(CC_Office, related_name='reply_cc')
+    reply_cc = models.ManyToManyField(CC_User, related_name='reply_cc')
     reply_description = models.TextField(max_length=256)
     reply_file = models.FileField(
         blank=True)
-    reply_receiver = models.ForeignKey(
-        User, related_name='reply_receiver', on_delete=models.CASCADE)
     reply_sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reply_sender')
+        User, related_name='reply_sender', on_delete=models.CASCADE)
+    reply_receiver = models.ManyToManyField(
+        ReceiverUser, related_name='reply_receiver')
     replyed_message = models.ForeignKey(
         Message, on_delete=models.CASCADE, related_name='replyed_message')
-    reply_unread = models.BooleanField(default=True)
 
 
 class Profile(models.Model):

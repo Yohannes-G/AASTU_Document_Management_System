@@ -13,6 +13,7 @@ def formGenerator(tpe, cls='', placeholder='', value=''):
         'value': value
     }), label='')
 
+
 def get_type():
     """ GET Type SELECTION """
     all_countries = [('-----', '---Select a Type---')]
@@ -56,10 +57,10 @@ class OfficeForm(forms.Form):
 
 class ReplyMessageForm(forms.Form):
     cc_type_name = forms.ChoiceField(choices=get_type(),
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_cc_type'})
-                                  )
-    
+                                     widget=forms.Select(
+        attrs={'class': 'form-control', 'id': 'id_cc_type'})
+    )
+
     # cc_office = forms.ChoiceField(
     #     choices=(('Electrical Engineering', 'Electrical Engineering'),
     #              (' Mechanical Engineering', 'Mechanical Engineering')),
@@ -87,14 +88,14 @@ class SendMessageForm(forms.Form):
                                       attrs={'class': 'form-control', 'id': 'id_type'})
                                   )
     cc_type_name = forms.ChoiceField(choices=get_type(),
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_cc_type'})
-                                  )
+                                     widget=forms.Select(
+        attrs={'class': 'form-control', 'id': 'id_cc_type'})
+    )
     description = forms.CharField(widget=forms.Textarea(attrs={
         'class': 'user',
         'placeholder': 'description',
     }), label='')
-    
+
     file = forms.FileField(required=False, widget=forms.TextInput(attrs={
         'class': 'form-control',
         'type': 'file',
@@ -103,8 +104,8 @@ class SendMessageForm(forms.Form):
 
     submit = formGenerator('submit', value="Send File")
 
-
     field_order = ['type_name', 'office']
+
 
 class ResetForm(forms.Form):
     email = formGenerator('email', 'email', 'Email Address')
@@ -134,6 +135,7 @@ class SignUPForm(forms.Form, forms.ModelForm):
     class Meta:
         model = User
         fields = ['type_name']
+
 
 class ProfileForm(forms.Form, forms.ModelForm):
     edit_first_name = formGenerator('text', 'user', 'First Name')

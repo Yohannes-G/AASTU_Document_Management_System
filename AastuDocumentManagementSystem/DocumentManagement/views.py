@@ -1,17 +1,50 @@
 import os
 from itertools import chain
 
-from django.contrib import auth, messages
+from django.contrib import auth
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
                     SignUPForm, TypeForm)
-from .models import Message, Office, ReplyMessage, Type, User
+from .models import (CC_User, Message, Office, ReceiverUser, ReplyMessage,
+                     Type, User)
 
 ######################## Drop Down ##############################
 
 # Complete the rest of the view function
+
+
+########################### Get All Message #####################
+def detailed_messages(messages):
+    lst = []
+    for message in messages:
+        try:
+            for receiver in message.receiver.all():
+                lst.append(receiver)
+        except:
+            pass
+        try:
+            for receiver in message.reply_receiver.all():
+                lst.append(receiver)
+        except:
+            pass
+        try:
+            for receiver in message.message_cc.all():
+                lst.append(receiver)
+        except:
+            pass
+    return lst
+
+
+########################### Get Message notification #############
+
+def message_notification(request):
+    notifications = detailed_messages(
+        request.user.cc_user.filter(unread=True))
+    messages = detailed_messages(
+        request.user.receiver_user.filter(unread=True))
+    return {'notifications': notifications, 'messages': messages}
 
 ##########################PDF Rendering #########################
 
@@ -29,43 +62,46 @@ def send_messages(request):
         return redirect('signin')
     else:
         form = SendMessageForm()
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
         if request.method == 'POST':
             form = SendMessageForm(request.POST, request.FILES)
             if form.is_valid():
                 cd = form.cleaned_data
                 category = request.FILES['file'].content_type.split(
                     '/')[-1].capitalize()
-                selected_office = request.POST['state']
-                selected_cc_office = request.POST['cc_state']
-                users = list(User.objects.filter(
-                    office__office_name=selected_office))
-                carbon_copies = list(User.objects.filter(
-                    office__office_name=selected_cc_office))
-                users = users + carbon_copies
+                selected_office = request.POST['cc_state']
+                selected_cc_office = request.POST['state']
+                users = User.objects.filter(
+                    office__office_name=selected_office)
+                receivers = []
                 for user in users:
-                    send = Message(
-                        message_description=cd['description'],
-                        message_file=request.FILES['file'],
-                        message_sender=request.user,
-                        message_receiver=user,
-                        message_cc=True if user in carbon_copies else False
-                    )
-                    send.message_file.field.upload_to = f"{selected_office}/{user.username}/{category}"
-                    send.save()
+                    receiver = ReceiverUser.objects.create(user=user)
+                    receiver.save()
+                    receivers.append(receiver)
+                carbon_copies = User.objects.filter(
+                    office__office_name=selected_cc_office)
+                cc_users = []
+                for carbon_copy in carbon_copies:
+                    receiver = CC_User.objects.create(user=carbon_copy)
+                    receiver.save()
+                    cc_users.append(receiver)
+
+                send = Message(
+                    message_description=cd['description'],
+                    message_file=request.FILES['file'],
+                    message_sender=request.user,
+                )
+                send.message_file.field.upload_to = f"{selected_office}/{request.user.username}/{category}"
+                send.save()
+                send.message_receiver.add(*receivers)
+                send.message_cc.add(*cc_users)
                 return redirect('sendmessages')
         return render(request, 'create-send-message.html',
-                      {'forms': form, 'notifications': notifications, 'messages': messages})
+                      {'forms': form,
+                       'notifications': notifications, 'messages': messages
+                       })
 
 ################### Reply Message for received message #############
 
@@ -74,17 +110,9 @@ def reply_message(request, message_id):
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
         msg = Message.objects.get(message_id=message_id)
         type_name = request.user.office.office_type_name
         office = request.user.office
@@ -96,22 +124,31 @@ def reply_message(request, message_id):
                 category = request.FILES['file'].content_type.split(
                     '/')[-1].capitalize()
                 selected_cc_office = request.POST['cc_state']
-                users = list(User.objects.filter(
-                    office__office_name=office))
-                carbon_copies = list(User.objects.filter(
-                    office__office_name=selected_cc_office))
-                users = users + carbon_copies
+                users = User.objects.filter(
+                    office__office_name=office)
+                receivers = []
                 for user in users:
-                    send = ReplyMessage(
-                        reply_description=cd['description'],
-                        reply_file=request.FILES['file'],
-                        reply_sender=request.user,
-                        reply_receiver=user,
-                        reply_cc=True if user in carbon_copies else False,
-                        replyed_message=msg
-                    )
-                    send.reply_file.field.upload_to = f"{office}/{user.username}/{category}"
-                    send.save()
+                    receiver = ReceiverUser.objects.create(user=user)
+                    receiver.save()
+                    receivers.append(receiver)
+                carbon_copies = User.objects.filter(
+                    office__office_name=selected_cc_office)
+                cc_users = []
+                for carbon_copy in carbon_copies:
+                    receiver = CC_User.objects.create(user=carbon_copy)
+                    receiver.save()
+                    cc_users.append(receiver)
+
+                send = ReplyMessage(
+                    reply_description=cd['description'],
+                    reply_file=request.FILES['file'],
+                    reply_sender=request.user,
+                    replyed_message=msg
+                )
+                send.reply_file.field.upload_to = f"{office}/{request.user.username}/{category}"
+                send.save()
+                send.reply_receiver.add(*receivers)
+                send.reply_cc.add(*cc_users)
                 return redirect('showallmessage')
         return render(request, 'create-send-message.html',
                       {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'messages': messages})
@@ -123,18 +160,14 @@ def show_message(request, message_id):
         return redirect('signin')
     else:
         msg = Message.objects.get(message_id=message_id)
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
-        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'messages': messages})
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
+        print("Filteration", msg.message_cc.filter(user=request.user))
+        carbon_copy = bool(msg.message_cc.filter(user=request.user))
+        return render(request, 'show_message.html', {'msg': msg,
+                                                     'notifications': notifications, 'messages': messages, 'carbon_copy': carbon_copy
+                                                     })
 
 
 ################## Show Reply ############################
@@ -143,40 +176,49 @@ def show_reply(request, reply_id):
         return redirect('signin')
     else:
         msg = ReplyMessage.objects.get(reply_id=reply_id)
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
         return render(request, 'show_reply.html', {'msg': msg, 'notifications': notifications, 'messages': messages})
 
 ################### Show all messages ########################
+
+
+def send_message(request):
+    send_messages = list(request.user.sender.all())
+    reply_send_messages = list(request.user.reply_sender.all())
+    return list(chain(send_messages, reply_send_messages))
 
 
 def show_all_message(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
-        all_messages = request.user.receiver.all()
+        receive_msgs = request.user.receiver_user.all()
+        receive_msgs = list(detailed_messages(receive_msgs))
+        send_msgs = send_message(request)
         user = request.user
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
-    return render(request, 'show_all_message.html', {'all_messages': all_messages, 'user': user, 'notifications': notifications, 'messages': messages})
+        all_messages = list(chain(send_msgs, receive_msgs))
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
+    return render(request, 'show_all_message.html', {'all_messages': all_messages, 'user': user,
+                                                     'notifications': notifications, 'messages': messages
+                                                     })
+
+
+def show_all_notifications(request):
+    if not request.user.is_authenticated:
+        return redirect('signin')
+    else:
+        all_messages = detailed_messages(request.user.cc_user.all())
+        user = request.user
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
+    return render(request, 'show_all_notifications.html', {'all_messages': all_messages, 'user': user,
+                                                           'notifications': notifications, 'messages': messages
+                                                           })
 
 
 ################### Create Roles #############################
@@ -254,7 +296,8 @@ def display_offices(request, type_id):
         return render(request, 'display-offices.html', {
             # 'offices': office,
             # 'notifications': notifications,
-            'messages': messages, 'type_id': type_id})
+            # 'messages': messages,
+            'type_id': type_id})
 
 ################### User Management #############################
 
@@ -337,9 +380,6 @@ def create_users(request):
     if not request.user.is_staff:
         return redirect('signin')
     else:
-        # notifications = request.user.receiver.filter(
-        #     message_unread=True)
-        # count = notifications.count()
         error = ""
 
         form = SignUPForm()
@@ -379,18 +419,12 @@ def index(request):
         return redirect('signin')
     else:
         user = User.objects.get(id=request.user.id)
-        message_notification = request.user.receiver.filter(
-            message_unread=True)
-        reply_message_notification = request.user.reply_receiver.filter(
-            reply_unread=True
-        )
-        reply_notifications = reply_message_notification.filter(reply_cc=True)
-        reply_messages = reply_message_notification.filter(reply_cc=False)
-        notifications = message_notification.filter(message_cc=True)
-        messages = message_notification.filter(message_cc=False)
-        notifications = list(chain(notifications, reply_notifications))
-        messages = list(chain(messages, reply_messages))
-        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'messages': messages})
+        msg_ntf = message_notification(request)
+        notifications = msg_ntf['notifications']
+        messages = msg_ntf['messages']
+        return render(request, 'index.html', {'user': user,
+                                              'notifications': notifications, 'messages': messages
+                                              })
 
 
 def signup(request):
@@ -430,8 +464,8 @@ def signin(request):
                 request, username=cd['username'], password=cd['password'])
             if user:
                 auth.login(request, user)
-                messages.info(
-                    request, f"You are now logged in as {cd['username']}.")
+                # messages.info(
+                #     request, f"You are now logged in as {cd['username']}.")
                 return redirect('index')
             else:
                 error = 'Username or password is incorrect!'
@@ -442,6 +476,6 @@ def signin(request):
 
 def signout(request):
     auth.logout(request)
-    messages.info(request, f"You are now logged out.")
+    # messages.info(request, f"You are now logged out.")
     if not request.user.is_authenticated:
         return redirect('signin')

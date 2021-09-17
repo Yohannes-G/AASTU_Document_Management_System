@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}All message{% endblock title %}
+{% block content %}
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {% for message in all_messages %}
+    <div class="panel panel-default custom-conversation">
+        <div class="panel-heading" role="tab" id="heading{{message.message_id}}">
+            <h4 class="panel-title asd full-width">
+                <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+                    data-parent="#accordion" href="#collapse{{message.message_id}}" aria-expanded="true"
+                    aria-controls="collapse{{message.message_id}}">
+                    <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+                    <div class="space-between full-width">
+                        <div class="custom-flex">
+                            {{message.message_description|truncatechars:50}}</div>
+                        <div>{{message.message_time}}</div>
+                    </div>
+                </a>
+            </h4>
+        </div>
+        <div id="collapse{{message.message_id}}" class="panel-collapse collapse" role="tabpanel"
+            aria-labelledby="heading{{message.message_id}}">
+            <a href="{% url 'showmessage' message.message_id %}">
+                <div class="panel-body panel_text">
+                    <p><span>From: </span>
+                        {{message.message_sender.office}}:
+                        {{message.message_sender}}</p>
+                    <p><span>To: </span>
+                        {% for receiver in message.message_receiver.all %}
+                        <span>
+                            {% ifchanged receiver.user.office %}
+                            {{receiver.user.office}}:
+                            {% endifchanged %}
+                            {{receiver.user}}</span>,
+                        {% endfor %}
+                    </p>
+                    <p><span>Description: </span>{{message.message_description}}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content%}

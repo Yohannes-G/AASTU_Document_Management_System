@@ -1,6 +1,3 @@
-from os import name
-
-from django.conf.urls import include, url
 from django.urls import path
 
 from . import views
@@ -30,6 +27,8 @@ urlpatterns = [
          views.show_message, name='showmessage'),
     path('showreply/<int:reply_id>/',
          views.show_reply, name='showreply'),
+    path('showallnotification/',
+         views.show_all_notifications, name='showallnotification'),
     path('replymessage/<int:message_id>/',
          views.reply_message, name='replymessage'),
     path('showallmessage/', views.show_all_message, name='showallmessage')
