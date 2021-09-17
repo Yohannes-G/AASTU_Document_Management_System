@@ -2,11 +2,9 @@
 
 {% block content %}
 
-{% load static %}
+{% for notification in notifications %}
 
-{% if error %}
-{{ error }}
-
-{% endif %}
+<p>{{notification.reply_id}}</p>
+{% endfor %}
 
 {% endblock %}

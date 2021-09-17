@@ -17,7 +17,7 @@ urlpatterns = [
     path('signout/', views.signout, name='signout'),
     path('user/', views.users, name='user'),
     path('createusers/', views.create_users, name='createusers'),
-    path('userprofile/', views.create_user_profile, name='userprofile'),
+    #     path('userprofile/', views.create_user_profile, name='userprofile'),
     path('get-offices/', views.getOffices, name='get-offices'),
     path('createtypes/', views.create_types, name='createtypes'),
     path('displaytypes/', views.display_types, name='displaytypes'),
@@ -28,6 +28,8 @@ urlpatterns = [
     path('sendmessages/', views.send_messages, name='sendmessages'),
     path('showmessage/<int:message_id>/',
          views.show_message, name='showmessage'),
+    path('showreply/<int:reply_id>/',
+         views.show_reply, name='showreply'),
     path('replymessage/<int:message_id>/',
          views.reply_message, name='replymessage'),
     path('showallmessage/', views.show_all_message, name='showallmessage')

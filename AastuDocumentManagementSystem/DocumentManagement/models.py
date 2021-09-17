@@ -28,6 +28,12 @@ class Office(models.Model):
         return self.office_name
 
 
+class CC_Office(models.Model):
+    office = models.ForeignKey(
+        Office, on_delete=models.CASCADE, related_name='cc_office')
+    unread = models.BooleanField(default=False)
+
+
 class User(AbstractUser):
     office = models.ForeignKey(
         Office, on_delete=models.CASCADE, related_name='office')
@@ -39,7 +45,7 @@ class User(AbstractUser):
 class Message(models.Model):
     message_time = models.DateTimeField(auto_now_add=True)
     message_id = models.BigAutoField(primary_key=True)
-    message_cc = models.BooleanField(default=False)
+    message_cc = models.ManyToManyField(CC_Office, related_name='message_cc')
     message_description = models.TextField(max_length=256)
     message_file = models.FileField(
         blank=True)
@@ -53,7 +59,7 @@ class Message(models.Model):
 class ReplyMessage(models.Model):
     reply_time = models.DateTimeField(auto_now_add=True)
     reply_id = models.BigAutoField(primary_key=True)
-    reply_cc = models.BooleanField(default=False)
+    reply_cc = models.ManyToManyField(CC_Office, related_name='reply_cc')
     reply_description = models.TextField(max_length=256)
     reply_file = models.FileField(
         blank=True)
@@ -64,7 +70,6 @@ class ReplyMessage(models.Model):
     replyed_message = models.ForeignKey(
         Message, on_delete=models.CASCADE, related_name='replyed_message')
     reply_unread = models.BooleanField(default=True)
-
 
 
 class Profile(models.Model):

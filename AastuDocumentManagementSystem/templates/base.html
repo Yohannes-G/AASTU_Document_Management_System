@@ -39,6 +39,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 
 		<!-- for user profile styles -->
+		{% comment %}
 		<link type="text/css"
 			href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/@fortawesome/fontawesome-free/css/all.min.css"
 			rel="stylesheet">
@@ -49,6 +50,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		<!-- Volt CSS -->
 		<link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/css/volt.css" rel="stylesheet">
+		{% endcomment %}
 
 
 	</head>
@@ -86,13 +88,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</li>
 
 				{% endif %}
-				<li class="menu-list">
+				{% comment %} <li class="menu-list">
 					<a href="#"><i class="lnr lnr-cog"></i> <span>User Profile</span></a>
 					<ul class="sub-menu-list">
 						<li><a href="{% url 'userprofile' %}">Setting</a> </li>
 						<li><a href="widgets.html">Edit Profile</a></li>
 					</ul>
-				</li>
+				</li> {% endcomment %}
 
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
@@ -119,32 +121,114 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<a class="toggle-btn menu-collapsed"><i class="fa fa-bars"></i></a>
 				</div>
 				<!--toggle button end-->
-				<div class="dropdown">
+
+				{% comment %} new message{% endcomment %}
+				<div class="dropdown message">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<div class="john-container">
-							{% if count %}
-							<div class="john-number">
-								<p>{{count}}</p>
+						<div class="badge-container">
+							{% if messages %}
+							<div class="badge-number">
+								<p>{{messages|length}}</p>
 							</div>
 							{% else %} {% endif %}
-							<div class="john-icon">
+							<div class="badge-icon">
 								<i class="fa fa-envelope"></i>
 							</div>
 						</div>
 					</a>
-					{% if count %}
 					<ul class="dropdown-menu">
 						<li>
 							<div class="notification_header">
-								<h3>You have {{count}} new messages</h3>
+								<h3>You have {{messages|length}} new message{{messages|pluralize}}</h3>
 							</div>
 						</li>
+						{% if messages %}
+						<ul class="scrollable-menu">
+							{% for message in messages %}
+							{% if message.reply_id %}
+							<li>
+								<a href="{% url 'showreply' message.reply_id %}">
+									<div class="notification_desc">
+										<div class="space-between">
+											<p>{{message.reply_description|truncatechars:20}}</p>
+											<p>Replyed</p>
+										</div>
+										<p>
+											<span>{{message.reply_time|timesince}}</span>
+										</p>
+									</div>
+									<div class="clearfix"></div>
+								</a>
+							</li>
+							{% else %}
+							<li>
+								<a href="{% url 'showmessage' message.message_id %}">
+									<div class="notification_desc">
+										<p>{{message.message_description|truncatechars:20}}</p>
+										<p>
+											<span>{{message.message_time|timesince}}</span>
+										</p>
+									</div>
+									<div class="clearfix"></div>
+								</a>
+							</li>
+							{% endif %}
+							{% endfor %}
+						</ul>
+						{% else %} {% endif %}
+						<li>
+							<div class="notification_bottom">
+								<a href="{% url 'showallmessage' %}">See all messages</a>
+							</div>
+						</li>
+					</ul>
+
+				</div>
+				{% comment %} new notification {% endcomment %}
+				<div class="dropdown notification">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+						<div class="badge-container">
+							{% if notifications %}
+							<div class="badge-number">
+								<p>{{notifications|length}}</p>
+							</div>
+							{% else %} {% endif %}
+							<div class="badge-icon">
+								<i class="fa fa-bell"></i>
+							</div>
+						</div>
+					</a>
+					<ul class="dropdown-menu">
+						<li>
+							<div class="notification_header">
+								<h3>You have {{notifications|length}} new notification{{notifications|pluralize}}
+								</h3>
+							</div>
+						</li>
+						{% if notifications %}
 						<ul class="scrollable-menu">
 							{% for notification in notifications %}
+							{% if notification.reply_id %}
+							<li>
+								<a href="{% url 'showreply' notification.reply_id %}">
+									<div class="notification_desc">
+										<div class="space-between">
+											<p>{{notification.reply_description|truncatechars:20}}</p>
+											<p>Replyed</p>
+										</div>
+										<p>
+											<span>{{notification.reply_time|timesince}}</span>
+										</p>
+
+									</div>
+									<div class="clearfix"></div>
+								</a>
+							</li>
+							{% else %}
 							<li>
 								<a href="{% url 'showmessage' notification.message_id %}">
 									<div class="notification_desc">
-										<p>{{notification.message_description}}</p>
+										<p>{{notification.message_description|truncatechars:20}}</p>
 										<p>
 											<span>{{notification.message_time|timesince}}</span>
 										</p>
@@ -152,6 +236,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<div class="clearfix"></div>
 								</a>
 							</li>
+							{% endif %}
 							{% endfor %}
 						</ul>
 						<li>
@@ -215,7 +300,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 		</div>
 		<div class="main-content">
-			<div class="container">{% block content %} {% endblock %}</div>
+			<div class="container">{% block content %}
+				{% endblock %}</div>
 		</div>
 
 		<script src="{% static 'js/jquery.nicescroll.js' %}"></script>
