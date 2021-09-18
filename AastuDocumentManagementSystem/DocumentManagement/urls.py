@@ -1,6 +1,3 @@
-from os import name
-
-from django.conf.urls import include, url
 from django.urls import path
 
 from . import views
@@ -11,7 +8,6 @@ urlpatterns = [
     #path('accounts/', include("django.contrib.auth.urls")),
 
     path('index/', views.index, name='index'),
-    # path('pdf/', views.pdf_rendering, name='pdf'),
     path('', views.signin, name='signin'),
     path('signup/', views.signup, name='signup'),
     path('signout/', views.signout, name='signout'),
@@ -34,9 +30,9 @@ urlpatterns = [
     path('editoffices/<int:office_id>/', views.edit_offices, name='editoffices'),
     path('sendmessages/', views.send_messages, name='sendmessages'),
     path('showmessage/<int:message_id>/',views.show_message, name='showmessage'),
-    path('replymessage/<int:message_id>/', views.reply_message, name='replymessage'),
+    path('showreply/<int:reply_id>/',views.show_reply, name='showreply'),
+    path('showallnotification/',views.show_all_notifications, name='showallnotification'),
+    path('replymessage/<int:message_id>/',views.reply_message, name='replymessage'),
     path('showallmessage/', views.show_all_message, name='showallmessage')
-    # path('reset/', views.resetPassword, name='reset'),
-    # path('confirmation/<str:email>/', views.confirmation, name='confirmation'),
-    # path('newPassword/<str:email>/', views.newPassword, name='newPassword'),
+
 ]

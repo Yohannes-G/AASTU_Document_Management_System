@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="widget_bottom" style="margin:10px">
+    <div class="" id="collapseOne">
+        <div class="banner-bottom-video-grid-left">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h4 class="panel-title asd">
+                            <div>
+                                <div class="header-from">
+                                    <h5>
+                                        <div>From: {{msg.reply_sender.office.office_type_name}}</div>
+                                    </h5>
+                                    <!-- <div><h5>Office: {{msg.message_sender.office}}</h5></div> -->
+                                </div>
+                            </div>
+                        </h4>
+                    </div>
+
+
+                    <div class="panel-body panel_text">
+                        <div class="custom-detail">
+                            <div class="custom-description">
+                                <p>{{msg.reply_description}}</p>
+                            </div>
+                            <div class="custom-img">
+                                <a href="{% get_media_prefix %}{{msg.reply_file}}" target="_blank">
+                                    <img class="custom-inner-img" src="{% static 'images/pdf.png' %}" alt=""
+                                        data-pdf-thumbnail-file="{% get_media_prefix %}{{msg.reply_file}}">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

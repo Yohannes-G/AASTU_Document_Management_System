@@ -1,98 +1,104 @@
 {% extends 'base.html' %}
 {% block title %}All message{% endblock title %}
 {% block content %}
+
 <div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>
-{% for message in messages %}
-    {% if message.message_sender == user %}
-     
-        <div class="widget_bottom" style="margin:10px">
-            
-            <div class="col-md-6 widget_bottom_right">
-            <div class="" id="collapseOne">
-                <div class="banner-bottom-video-grid-left">
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne">
-                              <h4 class="panel-title asd">
-                                <a class="pa_italic" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                  <span class="lnr lnr-chevron-down"></span><i class="lnr lnr-chevron-up"></i><label>{{message.message_description}}   {{message.message_time}} </label>
-                                </a>
-                              </h4>
-                            </div>
-
- 
-                              <div class="panel-body panel_text">
-                                <a href="{% url 'showmessage' message.message_id %}">
-                                    <div>
-                                      <div>{{message.message_receiver.office.office_type_name}}</div>
-                                      <div>{{message.message_receiver.office}}</div>  
-                                    </div>
-                                </a>
-                              </div>
-                             
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  {% for message in all_messages %}
+  {% if message.reply_id %}
+  {% if message.reply_sender == user %}
+  <div class="panel panel-default custom-conversation">
     {% else %}
-        <div class="widget_bottom" style="margin:10px">
-            <div class="col-md-6 widget_bottom_right">
-            <div class="" id="collapseOne">
-                <div class="banner-bottom-video-grid-left">
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                        
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne">
-                              <h4 class="panel-title asd">
-                                <a class="pa_italic" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                  <span class="lnr lnr-chevron-down"></span><i class="lnr lnr-chevron-up"></i><label>{{message.message_description}}   {{message.message_time}} </label>
-                                </a>
-                              </h4>
-                            </div>
-
- 
-                              <div class="panel-body panel_text">
-                                <a href="{% url 'showmessage' message.message_id %}">
-                                    <div>
-                                      <div>{{message.message_sender.office.office_type_name}}</div>
-                                      <div>{{message.message_sender.office}}</div>  
-                                    </div>
-                                </a>
-                              </div>
-                             {{message.message_receiver.office.office_type_name}}
-                        </div>
-
-                    </div>
-                </div>
+    <div class="panel panel-default custom-conversation receiver-custom">
+      {% endif %}
+      <div class="panel-heading" role="tab" id="heading{{message.reply_id}}">
+        <h4 class="panel-title asd full-width">
+          <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+            data-parent="#accordion" href="#collapse{{message.reply_id}}" aria-expanded="true"
+            aria-controls="collapse{{message.reply_id}}">
+            <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+            <div class="space-between full-width">
+              <div class="custom-flex">
+                <div class="text-danger">Reply: </div>{{message.reply_description|truncatechars:50}}
+              </div>
+              <div>{{message.reply_time}}</div>
             </div>
+          </a>
+        </h4>
+      </div>
+      <div id="collapse{{message.reply_id}}" class="panel-collapse collapse" role="tabpanel"
+        aria-labelledby="heading{{message.reply_id}}">
+        <div class="panel-body panel_text">
+          <p><span>Reply:</span>
+            <a
+              href="#collapse{{message.replyed_message.message_id}}">{{message.replyed_message.message_description}}</a>
+          </p>
+          <a href="{% url 'showreply' message.reply_id %}">
+            {% if message.reply_sender == user %}
+            <p><span>To: </span>
+              {% for receiver in message.reply_receiver.all %}
+              <span>
+                {% ifchanged receiver.user.office %}
+                {{receiver.user.office}}:
+                {% endifchanged %}
+                {{receiver.user}}</span>,
+              {% endfor %}
+            </p>
+            {% else %}
+            <p><span>From: </span>
+              {{message.reply_sender.office}}:
+              {{message.reply_sender}}</p>
+            {% endif %}
+            <p><span>Description: </span>{{message.reply_description}}</p>
         </div>
+        </a>
+      </div>
+    </div>
+    {% else %}
+    {% if message.message_sender == user %}
+    <div class="panel panel-default custom-conversation">
+      {% else %}
+      <div class="panel panel-default custom-conversation receiver-custom">
+        {% endif %}
+        <div class="panel-heading" role="tab" id="heading{{message.message_id}}">
+          <h4 class="panel-title asd full-width">
+            <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+              data-parent="#accordion" href="#collapse{{message.message_id}}" aria-expanded="true"
+              aria-controls="collapse{{message.message_id}}">
+              <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+              <div class="space-between full-width">
+                <div class="custom-flex">
+                  {{message.message_description|truncatechars:50}}</div>
+                <div>{{message.message_time}}</div>
+              </div>
+            </a>
+          </h4>
         </div>
-    {% endif %}
-{% endfor %}
-{% endblock content %}
- <!-- <div class="widget_bottom">
-                        <div class="col-md-6 widget_bottom_left">
-                            <div class="banner-bottom-video-grid-left">
-                                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                                      <div class="panel panel-default">
-                                        <div class="panel-heading" role="tab" id="headingOne">
-                                          <h4 class="panel-title asd">
-                                            <a class="pa_italic" role="button" data-toggle="collapse" data-parent="#accordion"   aria-expanded="true" aria-controls="collapseOne">
-                                              <span class="lnr lnr-chevron-down"></span><i class="lnr lnr-chevron-up"></i><label>assumenda est cliche reprehenderit</label>
-                                            </a>
-                                          </h4>
-                                        </div>
-                                        
-                                          <div class="panel-body panel_text">
-                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
-                                          </div>
-                                         
-                                      </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
+        <div id="collapse{{message.message_id}}" class="panel-collapse collapse" role="tabpanel"
+          aria-labelledby="heading{{message.message_id}}">
+          <a href="{% url 'showmessage' message.message_id %}">
+            <div class="panel-body panel_text">
+              {% if message.message_sender == user %}
+              <p><span>To: </span>
+                {% for receiver in message.message_receiver.all %}
+                <span>
+                  {% ifchanged receiver.user.office %}
+                  {{receiver.user.office}}:
+                  {% endifchanged %}
+                  {{receiver.user}}</span>,
+                {% endfor %}
+              </p>
+              {% else %}
+              <p><span>From: </span>
+                {{message.message_sender.office}}:
+                {{message.message_sender}}</p>
+              {% endif %}
+              <p><span>Description: </span>{{message.message_description}}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endblock content%}
