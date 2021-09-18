@@ -14,9 +14,9 @@ def formGenerator(tpe, cls='', placeholder='', value=''):
     }), label='')
 
 
-def get_type():
+def get_type(default='-----', value='---Select a Type---'):
     """ GET Type SELECTION """
-    all_countries = [('-----', '---Select a Type---')]
+    all_countries = [(value, default)]
     all_data = [type_name.type_name for type_name in Type.objects.all()]
     #print("all_data", all_data)
     for x in all_data:
@@ -105,6 +105,23 @@ class SendMessageForm(forms.Form):
     submit = formGenerator('submit', value="Send File")
 
     field_order = ['type_name', 'office']
+
+
+class MessageFilterForm(forms.Form):
+    type_name = forms.ChoiceField(choices=get_type(default="---All---", value="All"),
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control', 'id': 'id_type'})
+                                  )
+    action = forms.ChoiceField(choices=[("0", "Both"), ("1", "Receive"), ("2", "Send")], widget=forms.Select(
+        attrs={'class': 'form-control', 'id': 'id_type'}))
+
+
+class NotificationFilterForm(MessageFilterForm):
+    to_type_name = forms.ChoiceField(
+        choices=get_type(default="---All---", value="All"),
+        widget=forms.Select(
+            attrs={'class': 'form-control', 'id': 'id_to_type'})
+    )
 
 
 class ResetForm(forms.Form):

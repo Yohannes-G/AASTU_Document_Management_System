@@ -5,8 +5,9 @@ from django.contrib import auth
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
-from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
-                    SignUPForm, TypeForm)
+from .forms import (MessageFilterForm, NotificationFilterForm, OfficeForm,
+                    ReplyMessageForm, SendMessageForm, SignInForm, SignUPForm,
+                    TypeForm)
 from .models import (CC_User, Message, Office, ReceiverUser, ReplyMessage,
                      Type, User)
 
@@ -31,6 +32,11 @@ def detailed_messages(messages):
             pass
         try:
             for receiver in message.message_cc.all():
+                lst.append(receiver)
+        except:
+            pass
+        try:
+            for receiver in message.reply_cc.all():
                 lst.append(receiver)
         except:
             pass
@@ -93,7 +99,7 @@ def send_messages(request):
                     message_file=request.FILES['file'],
                     message_sender=request.user,
                 )
-                send.message_file.field.upload_to = f"{selected_office}/{request.user.username}/{category}"
+                send.message_file.field.upload_to = f"{request.user.office}/{request.user.username}/{category}"
                 send.save()
                 send.message_receiver.add(*receivers)
                 send.message_cc.add(*cc_users)
@@ -114,8 +120,8 @@ def reply_message(request, message_id):
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
         msg = Message.objects.get(message_id=message_id)
-        type_name = request.user.office.office_type_name
-        office = request.user.office
+        office = msg.message_sender.office
+        type_name = msg.message_sender.office.office_type_name
         form = ReplyMessageForm()
         if request.method == 'POST':
             form = ReplyMessageForm(request.POST, request.FILES)
@@ -145,7 +151,7 @@ def reply_message(request, message_id):
                     reply_sender=request.user,
                     replyed_message=msg
                 )
-                send.reply_file.field.upload_to = f"{office}/{request.user.username}/{category}"
+                send.reply_file.field.upload_to = f"{request.user.office}/{request.user.username}/{category}"
                 send.save()
                 send.reply_receiver.add(*receivers)
                 send.reply_cc.add(*cc_users)
@@ -190,6 +196,88 @@ def send_message(request):
     return list(chain(send_messages, reply_send_messages))
 
 
+def filter_message_type_receiver(receive_msgs, selected_type):
+    receive_msg = []
+    for msg in receive_msgs:
+        try:
+            if msg.message_sender.office.office_type_name.type_name == selected_type:
+                receive_msg.append(msg)
+        except:
+            if msg.reply_sender.office.office_type_name.type_name == selected_type:
+                receive_msg.append(msg)
+    return receive_msg
+
+
+def filter_message_office_receiver(receive_msgs, selected_office):
+    receive_msg = []
+    for msg in receive_msgs:
+        try:
+            if msg.message_sender.office.office_name == selected_office:
+                receive_msg.append(msg)
+        except:
+            if msg.reply_sender.office.office_name == selected_office:
+                receive_msg.append(msg)
+    return receive_msg
+
+
+def filter_message_type_sender(send_msgs, selected_type):
+    send_msg = []
+    for msg in send_msgs:
+        try:
+            for receiver in msg.message_receiver.all():
+                if receiver.user.office.office_type_name.type_name == selected_type:
+                    send_msg.append(msg)
+        except:
+            for receiver in msg.reply_receiver.all():
+                if receiver.user.office.office_type_name.type_name == selected_type:
+                    send_msg.append(msg)
+    return send_msg
+
+
+def filter_message_office_sender(send_msgs, selected_office):
+    send_msg = []
+    for msg in send_msgs:
+        try:
+            for receiver in msg.message_receiver.all():
+                if receiver.user.office.office_name == selected_office:
+                    send_msg.append(msg)
+        except:
+            for receiver in msg.reply_receiver.all():
+                if receiver.user.office.office_name == selected_office:
+                    send_msg.append(msg)
+    return send_msg
+
+
+def filter_notification_office(all_msgs, sender_office, receiver_office=False, send=True):
+    all_msg = []
+    if not send:
+        all_msg.extend(filter_message_office_sender(all_msgs, sender_office))
+
+        if receiver_office:
+            all_msg = filter_message_office_receiver(all_msg, receiver_office)
+    else:
+        all_msg.extend(
+            filter_message_office_receiver(all_msgs, sender_office))
+        if receiver_office:
+            all_msg = filter_message_office_sender(
+                all_msg, receiver_office)
+    return all_msg
+
+
+def filter_notification_type(all_msgs, sender_type, receiver_type=False, send=True):
+    all_msg = []
+    if not send:
+        all_msg.extend(
+            filter_message_type_sender(all_msgs, sender_type))
+        if receiver_type:
+            all_msg = filter_message_type_receiver(all_msg, receiver_type)
+    else:
+        all_msg.extend(filter_message_type_receiver(all_msgs, sender_type))
+        if receiver_type:
+            all_msg = filter_message_type_sender(all_msg, receiver_type)
+    return all_msg
+
+
 def show_all_message(request):
     if not request.user.is_authenticated:
         return redirect('signin')
@@ -202,9 +290,44 @@ def show_all_message(request):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
+        form = MessageFilterForm()
+        if request.method == "POST":
+            form = MessageFilterForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                selected_office = request.POST['state']
+                if cd['type_name'] != "All":
+                    if selected_office != "All":
+                        if (cd['action'] == "1" or cd['action'] == "0"):
+                            if cd['action'] == "1":
+                                send_msgs = []
+                            receive_msgs = filter_message_office_receiver(
+                                receive_msgs, selected_office)
+                        if (cd['action'] == "0" or cd['action'] == "2"):
+                            if cd['action'] == "2":
+                                receive_msgs = []
+                            send_msgs = filter_message_office_sender(
+                                send_msgs, selected_office)
+                    else:
+                        if (cd['action'] == "1" or cd['action'] == "0"):
+                            if cd['action'] == "1":
+                                send_msgs = []
+                            receive_msgs = filter_message_type_receiver(
+                                receive_msgs, cd['type_name'])
+                        if (cd['action'] == "2" or cd['action'] == "0"):
+                            if cd['action'] == "2":
+                                receive_msgs = []
+                            send_msgs = filter_message_type_sender(
+                                send_msgs, cd['type_name'])
+                else:
+                    if cd['action'] == "1":
+                        send_msgs = []
+                    elif cd['action'] == "2":
+                        receive_msgs = []
+                all_messages = list(chain(send_msgs, receive_msgs))
     return render(request, 'show_all_message.html', {'all_messages': all_messages, 'user': user,
-                                                     'notifications': notifications, 'messages': messages
-                                                     })
+                                                     'notifications': notifications, 'messages': messages,
+                                                     'form': form})
 
 
 def show_all_notifications(request):
@@ -216,9 +339,79 @@ def show_all_notifications(request):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
+        form = NotificationFilterForm()
+        if request.method == "POST":
+            form = NotificationFilterForm(request.POST)
+            if form.is_valid():
+                print("form validation")
+                cd = form.cleaned_data
+                selected_office = request.POST['state']
+                selected_to_office = request.POST['to_state']
+                all_msgs = []
+                if cd['type_name'] != "All":
+                    if selected_office != "All":
+                        if cd['to_type_name'] != "All":
+                            if selected_to_office != "All":
+                                if (cd['action'] == "1" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_office, selected_to_office, False))
+                                    print("Type of type")
+                                    print(all_msgs)
+                                if (cd["action"] == "2" or cd["action"] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_office, selected_to_office))
+                                    print("Office of office")
+                            else:
+                                if (cd['action'] == "1" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_office, send=False))
+                                    all_msgs.extend(filter_notification_type(
+                                        all_msgs, cd['type_name'], cd['to_type_name'], False))
+                                if (cd['action'] == "2" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_office))
+                                    all_msgs.extend(filter_notification_type(
+                                        all_msgs, cd['type_name'], cd['to_type_name']))
+                        else:
+                            if (cd['action'] == "1" or cd['action'] == "0"):
+                                all_msgs.extend(filter_notification_office(
+                                    all_messages, selected_office, send=False))
+                            if (cd['action'] == "2" or cd['action'] == "0"):
+                                all_msgs.extend(filter_notification_office(
+                                    all_messages, selected_office))
+                    else:
+                        if cd['to_type_name'] != "All":
+                            if selected_to_office != "All":
+                                if (cd['action'] == "1" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_to_office))
+                                    all_msgs.extend(filter_notification_type(
+                                        all_msgs, cd['type_name'], cd['to_type_name'], False))
+                                if (cd["action"] == "2" or cd["action"] == "0"):
+                                    all_msgs.extend(filter_notification_office(
+                                        all_messages, selected_to_office, send=False))
+                                    all_msgs.extend(filter_notification_type(
+                                        all_msgs, cd['type_name'], cd['to_type_name']))
+                            else:
+                                if (cd['action'] == "1" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_type(
+                                        all_messages, cd['type_name'], cd['to_type_name'], False))
+                                if (cd['action'] == "2" or cd['action'] == "0"):
+                                    all_msgs.extend(filter_notification_type(
+                                        all_messages, cd['type_name'], cd['to_type_name']))
+                        else:
+                            if (cd['action'] == "1" or cd['action'] == "0"):
+                                all_msgs.extend(filter_notification_type(
+                                    all_messages, cd['type_name'], send=False))
+                            if (cd['action'] == "2" or cd['action'] == "0"):
+                                all_msgs.extend(filter_notification_type(
+                                    all_messages, cd['type_name']))
+                else:
+                    all_msgs = all_messages
+                all_messages = all_msgs
     return render(request, 'show_all_notifications.html', {'all_messages': all_messages, 'user': user,
-                                                           'notifications': notifications, 'messages': messages
-                                                           })
+                                                           'notifications': notifications, 'messages': messages,
+                                                           'form': form})
 
 
 ################### Create Roles #############################
