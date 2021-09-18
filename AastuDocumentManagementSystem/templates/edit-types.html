@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+ 
+{% load static %} 
+<div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>
+
+<div class="col-md-8 inbox_right" style="margin-top: 20px;">
+    
+    <div class="Compose-Message">               
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Edit Type
+            </div>
+             
+             
+            <div class="panel-body panel-body-com-m">
+                <form action="" method="post" >
+                    {% csrf_token %}
+                    {% for form in forms %}
+                    <div class="log-input" value="{{typ}}" placeholder="{{typ}}">{{form}}
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+         </div>
+      </div>
+</div>
+
+{% endblock %}

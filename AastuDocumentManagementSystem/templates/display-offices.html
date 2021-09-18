@@ -12,6 +12,9 @@
 {% endif %}
    
  <body class="sticky-header left-side-collapsed scrollbar"  onload="initMap()">
+ 	<div>
+ 	<div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>	
+ 	
    <section>
 			<div id="page-wrapper">
 				<div class="graphs">
@@ -31,6 +34,8 @@
 										<tr class="primary">
 											<th>#</th>
 											<th>Offices</th>
+											<th>Edit</th>
+											<th>Delete</th>
 										</tr>
 									</thead>
 									{% for office in offices  %}
@@ -38,6 +43,8 @@
 										<tr>
 											<td>{{ office.office_id }}</td>
 											<td>{{ office.office_name }}</td>
+											<td><a href="{% url 'editoffices' office.office_id  %}"><button class="btn-primary btn">Edit</button></a> </td>
+											<td><a href="{% url 'deleteoffices' office.office_id  %}"><button class="btn-danger btn">Delete</button></a> </td>
 										</tr>
 									</tbody>
 									{% endfor %}

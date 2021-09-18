@@ -6,9 +6,9 @@ from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import (OfficeForm, ReplyMessageForm, SendMessageForm, SignInForm,
-                    SignUPForm, TypeForm, ProfileForm)
-from .models import Message, Office, ReplyMessage, Type, User, Profile
-
+                    SignUPForm, TypeForm, ProfileForm,UpdateUserForm, NewPasswordForm)
+from .models import Message, Office, ReplyMessage, Type, User, MyProfile
+from django.contrib.auth.hashers import make_password
 ######################## Drop Down ##############################
 
 # Functions for drop down menu
@@ -104,8 +104,13 @@ def send_messages(request):
                     send.message_file.field.upload_to = f"{selected_office}/{user.username}/{category}"
                     send.save()
                 return redirect('sendmessages')
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
         return render(request, 'create-send-message.html',
-                      {'forms': form, 'notifications': notifications, 'count': count})
+                      {'forms': form, 'notifications': notifications, 'count': count, 'profile':profile})
 
 ################### Reply Message for received message #############
 
@@ -145,8 +150,13 @@ def reply_message(request, message_id):
                     send.reply_file.field.upload_to = f"{office}/{user.username}/{category}"
                     send.save()
                 return redirect('showallmessage')
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
         return render(request, 'create-send-message.html',
-                      {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'count': count})
+                      {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'count': count, 'profile':profile})
 
 
 ################## Show Message ############################
@@ -158,7 +168,12 @@ def show_message(request, message_id):
             message_unread=True)
         msg = Message.objects.get(message_id=message_id)
         count = notifications.count()
-        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'count': count})
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'count': count, 'profile':profile})
 
 
 ################### Show all messages ########################
@@ -171,7 +186,12 @@ def show_all_message(request):
         messages = request.user.receiver.all()
         user = request.user
         count = notifications.count()
-    return render(request, 'show_all_message.html', {'messages': messages, 'user': user, 'notifications': notifications, 'count': count})
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'show_all_message.html', {'messages': messages, 'user': user,'profile':profile, 'notifications': notifications, 'count': count})
 
 
 ################### Create Roles #############################
@@ -189,9 +209,15 @@ def create_types(request):
                 cd = form.cleaned_data
 
                 role = Type.objects.create(type_name=cd['type_name'])
+                messages.success(request, 'Type is Created!')
                 role.save()
-
-    return render(request, 'create-role.html', {'forms': form, 'notifications': notifications, 'count': count})
+                return redirect('displaytypes')
+    user = User.objects.get(id=request.user.id)
+    if MyProfile.objects.filter(profile_user_id=user.id):
+        profile = MyProfile.objects.get(profile_user_id=user.id)
+    else:
+        profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'create-role.html', {'forms': form,'profile':profile, 'notifications': notifications, 'count': count})
 
 
 def display_types(request):
@@ -202,7 +228,45 @@ def display_types(request):
             message_unread=True)
         count = notifications.count()
         types = Type.objects.all()
-        return render(request, 'display-types.html', {'types': types, 'notifications': notifications, 'count': count})
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'display-types.html', {'types': types, 'profile':profile, 'notifications': notifications, 'count': count})
+
+
+def delete_types(request, type_id):
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        typ = Type.objects.get(type_id=type_id)
+        typ.delete()
+        messages.error(request, 'Type deleted.')
+        return redirect('displaytypes')
+
+def edit_types(request, type_id):
+    typ = Type.objects.get(type_id=type_id)
+    form = TypeForm()
+  
+    if request.method == 'POST':
+        form = TypeForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            if Type.objects.filter(type_name=cd['type_name']):
+                error = 'Type is already Created!'
+            else:
+                typ.type_name = cd['type_name']
+                typ.save()
+                return redirect('displaytypes')
+        else:
+            print(form.errors)
+    user = User.objects.get(id=request.user.id)
+    if MyProfile.objects.filter(profile_user_id=user.id):
+        profile = MyProfile.objects.get(profile_user_id=user.id)
+    else:
+        profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'edit-types.html', {'typ':typ,'forms':form, 'profile':profile})
 ################### Create Offices #############################
 
 
@@ -224,7 +288,13 @@ def create_offices(request, type_id):
                     office_type_name_id=type_id, 
                     office_name=cd['office'])
                 office.save()
-        return render(request, 'create-office.html', {'forms': form, 'notifications': notifications, 'count': count, 'type_id':type_id})
+                return redirect('displayoffices',type_id)
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'create-office.html', {'forms': form, 'profile':profile, 'notifications': notifications, 'count': count, 'type_id':type_id})
 
 def display_offices(request, type_id):
     if not request.user.is_staff:
@@ -233,35 +303,115 @@ def display_offices(request, type_id):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
-        office = Office.objects.all()
-        return render(request, 'display-offices.html', {'offices': office, 'notifications': notifications, 'count': count, 'type_id': type_id})
+        office = Office.objects.filter(office_type_name_id=type_id)
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'display-offices.html', {'offices': office,'profile':profile, 'notifications': notifications, 'count': count, 'type_id': type_id})
 
-################### User Management #############################
-def create_user_profile(request):
-    error=' '
-    form = ProfileForm()
-    user = User.objects.get(username=request.user.username)
-    if request.method == "POST":
-        form = ProfileForm(request.POST, request.FILES)
+def delete_offices(request, office_id):
+    office = Office.objects.get(office_id=office_id)
+    type_id = office.office_type_name_id
+    office.delete()
+
+    return redirect('displayoffices', type_id)
+
+
+def edit_offices(request, office_id):
+    off = Office.objects.get(office_id=office_id)
+
+    form = OfficeForm()
+  
+    if request.method == 'POST':
+        form = OfficeForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            print("Profile:", cd)
-            print("User:", request.user.last_name)
-            #request.user.username = cd['username']
-            request.user.first_name = cd['edit_first_name']
-            #request.user.last_name = cd['edit_last_name']
-            # if cd['new_password'] == cd['confirm_password']:
-            #     request.user.password = cd['new_password']
-            # else:
-            #     error = 'Please enter the correct password!'
-            print("User:", request.user.first_name)
-            profile = Profile.objects.create(
-                    profile_user = user.id,
-                    profile_image = cd['profile_image']
-                )
-            profile.save()
+            if Office.objects.filter(office_name=cd['office']):
+                error = 'Office is already Created!'
+            else:
+                off.office_name = cd['office']
+                off.save()
+                return redirect('displayoffices', off.office_type_name_id)
+        else:
+            print(form.errors)
+    user = User.objects.get(id=request.user.id)
+    if MyProfile.objects.filter(profile_user_id=user.id):
+        profile = MyProfile.objects.get(profile_user_id=user.id)
+    else:
+        profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'edit-offices.html', {'off':off, 'forms':form, 'profile':profile})
+################### User Management #############################
+def create_user_profile(request, user_id):
+    error=' '
+    
+    my_user = User.objects.get(id=user_id)
+    print("Office:", my_user.office)
+    if request.method == "POST":
+        user_form = UpdateUserForm(request.POST)
 
-    return render(request, 'create-user-profile.html', {'forms':form, 'error':error, 'user':user})
+        # #to check field have no error
+        # for field in prof_form:
+        #     print("Field Error:", field.name,  field.errors)
+        if user_form.is_valid():
+            cd = user_form.cleaned_data
+            my_user.username=cd['username']
+            my_user.save()
+             
+        else:
+            print(user_form.errors)
+    else:
+        user_form = UpdateUserForm(instance=request.user)
+       
+
+    user = User.objects.get(id=user_id)
+    if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+    else:
+        profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'create-user-profile.html', {'user_form':user_form,'profile':profile,'user':user,'error':error})
+
+def change_user_profile(request, user_id):
+    
+    if MyProfile.objects.filter(profile_user_id=user_id):
+        profile = MyProfile.objects.get(profile_user_id=user_id)
+        form = ProfileForm()
+        my_user = User.objects.get(id=user_id)
+        print("Profile:")
+        if request.method == "POST":
+            prof_form = ProfileForm(request.POST, request.FILES)
+            if prof_form.is_valid():
+                cd_prof = prof_form.cleaned_data
+                if request.FILES and MyProfile.objects.filter(profile_user_id=my_user.id):
+                    print("Image:", MyProfile.objects.filter(profile_user_id=my_user.id))
+                    img=MyProfile.objects.filter(profile_user_id=my_user.id)
+                    img.delete()
+                else:
+                    prof_form = MyProfile.objects.create(profile_user_id=my_user.id, profile_image=cd_prof['profile_image'])
+                    prof_form.save()
+                return redirect('signin')
+            else:
+               print(prof_form.errors) 
+        else:
+            prof_form = ProfileForm(instance=request.user)
+        return render(request, 'create-user-profile.html', {'prof_form':prof_form, 'profile':profile })
+    else:
+        form = ProfileForm()
+        my_user = User.objects.get(id=user_id)
+        print("Profile:")
+        if request.method == "POST":
+            prof_form = ProfileForm(request.POST, request.FILES)
+            if prof_form.is_valid():
+                cd_prof = prof_form.cleaned_data
+                prof_form = MyProfile.objects.create(profile_user_id=my_user.id, profile_image=cd_prof['profile_image'])
+                prof_form.save()
+                return redirect('index')
+            else:
+               print(prof_form.errors) 
+        else:
+            prof_form = ProfileForm(instance=request.user)
+        return render(request, 'create-user-profile.html', {'prof_form':prof_form })
 
 def users(request):
     if not request.user.is_staff:
@@ -270,13 +420,21 @@ def users(request):
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
-        user = User.objects.all()
-        return render(request, 'tables.html', {'user': user, 'notifications': notifications, 'count': count})
+        admin = User.objects.filter(username=request.user.username)
+        user = User.objects.get(id=request.user.id)
+        users = User.objects.all()
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+
+        return render(request, 'tables.html', {'users': users,'user':user,'profile':profile, 'notifications': notifications, 'count': count, 'admin':admin})
 
 
 def create_users(request):
     ty = Type.objects.all()
     off = Office.objects.all()
+
 
     if not request.user.is_staff:
         return redirect('signin')
@@ -292,6 +450,7 @@ def create_users(request):
             if form.is_valid():
                 #--------------------------------------------------------------
                 off_id = Office.objects.get(office_name=request.POST['state'])
+                print(off_id)
                 selected_office = request.POST['state']
 
                 cd = form.cleaned_data
@@ -307,11 +466,113 @@ def create_users(request):
                     del cd['type_name']
                     u = User.objects.create_user(**{i: cd[i] for i in cd})
                     u.save()
-                    return redirect('createusers')
+                
+                    return redirect('user')
             else:
                 error = 'Please enter valid information'
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'create-users.html', {'forms': form,'profile':profile, 'error': error, 'notifications': notifications, 'count': count})
 
-        return render(request, 'create-users.html', {'forms': form, 'error': error, 'notifications': notifications, 'count': count})
+def delete_user(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.delete()
+    
+    return redirect('user')
+
+
+def change_user_password(request, user_id):
+    
+    form = NewPasswordForm()
+    error = ''
+    if request.method == "POST":
+        form = NewPasswordForm(request.POST)
+        print("form:", form)
+
+        if form.is_valid():
+            cd = form.cleaned_data
+
+            if cd['password'] == cd['conf_password']:
+                u = User.objects.get(id=user_id)
+                 
+                u.password = make_password(cd['password'])
+                u.save()
+                
+                return redirect('user')
+            else:
+                error = "Password doesn't match"
+        else:
+            error = "Please enter valid information"
+    user = User.objects.get(id=request.user.id)
+    if MyProfile.objects.filter(profile_user_id=user.id):
+        profile = MyProfile.objects.get(profile_user_id=user.id)
+    else:
+        profile = MyProfile.objects.filter(profile_user_id=user.id)
+    return render(request, 'reset_password.html', {'forms': form, 'profile':profile,'error': error})
+
+def reset_user_password(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.username = f"{user.first_name}.{user.last_name}"
+    user.password=make_password(user.username)
+    messages.success('Password is Correctly Reseted!')
+    user.save()
+    return redirect('user')
+
+def edit_users(request, user_id):
+    
+    off = Office.objects.all()
+    use = User.objects.get(id=user_id)
+    
+    #print("User ME:", use.office.office_type_name)
+
+    if not request.user.is_staff:
+        return redirect('signin')
+    else:
+        notifications = request.user.receiver.filter(
+            message_unread=True)
+        count = notifications.count()
+        error = ""
+
+        form = SignUPForm()
+        if request.method == "POST":
+            form = SignUPForm(request.POST)
+            if form.is_valid():
+                #--------------------------------------------------------------
+                off_id = Office.objects.get(office_name=use.office)
+                selected_office = request.POST['state']
+                 
+                cd = form.cleaned_data
+                ty = Type.objects.get(type_name=use.office.office_type_name)
+
+                cd['username'] = f"{cd['first_name']}.{cd['last_name']}"
+                #cd['password'] = cd['username']
+                # ---------------------------------------------------------------
+                if User.objects.filter(username=cd['username']):
+                    error = 'Username is already taken!'
+                else:
+
+                    use.first_name=cd['first_name']
+                    use.last_name=cd['last_name']
+                    use.username=cd['username']
+
+                    ty.type_name=cd['type_name']
+                    off_id.office_name=selected_office
+
+                    ty.save()
+                    off_id.save()
+                    use.save()
+                    return redirect('user')
+            else:
+                error = 'Please enter valid information'
+        user = User.objects.get(id=request.user.id)
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+        return render(request, 'edit-users.html', {'forms': form, 'error': error,'profile':profile, 'notifications': notifications, 'count': count})
 ############# Index User Dashboard###############################
 
 
@@ -321,10 +582,16 @@ def index(request):
     else:
         print("User:", request.user.id)
         user = User.objects.get(id=request.user.id)
+        
+        if MyProfile.objects.filter(profile_user_id=user.id):
+            profile = MyProfile.objects.get(profile_user_id=user.id)
+        else:
+            profile = MyProfile.objects.filter(profile_user_id=user.id)
+
         notifications = request.user.receiver.filter(
             message_unread=True)
         count = notifications.count()
-        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'count': count})
+        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'count': count, 'profile':profile})
 
 
 def signup(request):

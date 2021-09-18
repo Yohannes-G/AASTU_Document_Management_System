@@ -66,7 +66,7 @@ class ReplyMessage(models.Model):
     reply_unread = models.BooleanField(default=True)
 
 
-
-class Profile(models.Model):
-    profile_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='images/')
+class MyProfile(models.Model):
+    prof_id = models.BigAutoField(primary_key=True)
+    profile_user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='images/', default='Space3.jpg')

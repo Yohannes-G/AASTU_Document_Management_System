@@ -4903,13 +4903,13 @@ span.badge1 {
 .sign-in-form-top {
 	background: url(../images/3.jpg) no-repeat 0px -55px;
 	display: block;
-	min-height: 150px;
+	min-height: 15px;
 	padding: 3em 0 0;
 	text-align: center;
 }
 .sign-in-form-top p {
-	color: #fff;
-	margin: 0;
+	color: #000;
+	margin: 10;
 	font-size: 2em;
 	font-weight: 300;
 	text-decoration: none;
@@ -5332,7 +5332,7 @@ p.creating {
 		width: 39%;
 	}
 	.signin:after {
-		background: url(../images/6.png) no-repeat 0px 0px;
+		background: url(../images/3.jpg) no-repeat 0px 0px;
 		width: 590px;
 		background-size: 100%;
 	}
@@ -6464,7 +6464,7 @@ p.creating {
 	}
 	.sign-in-form-top {
 		background: url(../images/3.jpg) no-repeat 0px -80px;
-		min-height: 115px;
+		min-height: 11px;
 	}
 	.sign-in-form {
 		width: 66%;
@@ -7099,7 +7099,7 @@ p.creating {
 		padding: 0.5em 1em 0.5em 1em;
 	}
 	.signin:after {
-		background: url(../images/6.png) no-repeat 0px 0px;
+		background: url(../images/3.jpg) no-repeat 0px 0px;
 		width: 405px;
 		background-size: 100%;
 	}
@@ -7657,7 +7657,7 @@ p.creating {
 		margin-bottom: 10px;
 	}
 	.signin:after {
-		background: url(../images/6.png) no-repeat 0px 0px;
+		background: url(../images/3.jpg) no-repeat 0px 0px;
 		width: 305px;
 		background-size: 100%;
 	}
@@ -8086,10 +8086,8 @@ input[type="submit"]:hover {
 	display: flex;
 }
 
-.badge-number {
-	position: relative;
-	left: 7px;
-	bottom: 4px;
+.icon-number {
+ 
 	display: flex;
 	align-items: center;
 	justify-content: center;

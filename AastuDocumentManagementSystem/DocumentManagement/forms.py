@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import Address, Office, Type, User
+from .models import Address, Office, Type, User,MyProfile
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -106,16 +106,6 @@ class SendMessageForm(forms.Form):
 
     field_order = ['type_name', 'office']
 
-class ResetForm(forms.Form):
-    email = formGenerator('email', 'email', 'Email Address')
-    submit = formGenerator('submit', value="Reset")
-
-
-class ConfirmationForm(forms.Form):
-    confirmation = formGenerator('text', 'lock', 'Confirmation')
-    submit = formGenerator('submit', value="Confirm")
-
-
 class NewPasswordForm(forms.Form):
     password = formGenerator('password', 'lock', 'Password')
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
@@ -135,15 +125,25 @@ class SignUPForm(forms.Form, forms.ModelForm):
         model = User
         fields = ['type_name']
 
-class ProfileForm(forms.Form, forms.ModelForm):
-    edit_first_name = formGenerator('text', 'user', 'First Name')
-    edit_last_name = formGenerator('text', 'user', 'Last Name')
-    edit_username = formGenerator('text', 'user', 'Username')
-    new_password = formGenerator('password', 'lock', 'Password')
-    confirm_password = formGenerator('password', 'lock', 'Confirm Password')
-    profile_image = forms.ImageField()
-    submit = formGenerator('submit', value="Save all")
-
+class UpdateUserForm(forms.Form, forms.ModelForm):
+    username = formGenerator('text', 'user', 'Username')
+    # password = formGenerator('password', 'lock', 'Password')
+    # first_name = formGenerator('text', 'user', 'First Name')
+    # last_name = formGenerator('text', 'user', 'Last Name')
+    submit = formGenerator('submit', value="Save")
     class Meta:
         model = User
-        fields = ['edit_last_name']
+        fields = ['username']
+
+class ProfileForm(forms.Form, forms.ModelForm):
+    # edit_first_name = formGenerator('text', 'user', 'First Name')
+    # edit_last_name = formGenerator('text', 'user', 'Last Name')
+    # edit_username = formGenerator('text', 'user', 'Username')
+    # new_password = formGenerator('password', 'lock', 'Password')
+    # confirm_password = formGenerator('password', 'lock', 'Confirm Password')
+    profile_image = forms.ImageField()
+    submit = formGenerator('submit', value="Save")
+
+    class Meta:
+        model = MyProfile
+        fields = ['profile_image']

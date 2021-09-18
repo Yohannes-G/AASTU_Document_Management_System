@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+<div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>
+<div class="col-md-8 inbox_right" style="margin-top: 20px;">
+    <div class="Compose-Message">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+               Edit Office
+            </div>
+
+            <div class="panel-body panel-body-com-m">
+                <h2>{{type_name}}</h2>
+                <form action="" method="post">
+                    {% csrf_token %}
+
+                    {% for form in forms %}
+                    <div class="log-input">{{form}}
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

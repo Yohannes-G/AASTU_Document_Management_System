@@ -1,9 +1,4 @@
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -72,14 +67,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
 
 
-	    <!-- for user profile styles -->
-	    <link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
-
-	    <!-- Notyf -->
-	    <link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/notyf/notyf.min.css" rel="stylesheet">
-
-	    <!-- Volt CSS -->
-	    <link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/css/volt.css" rel="stylesheet">
 
 	    
 	</head>
@@ -90,7 +77,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!--logo and iconic logo start-->
 			<div class="logo">
 				<h1>
-					<a href="{% url 'index' %}">Doc<span>Management</span></a>
+					<span style="background:url(images/aastu.jpg) no-repeat center"><a href="{% url 'index' %}">Doc<span>Management</span></a> </span> 
+					
 				</h1>
 			</div>
 			<div class="logo-icon text-center">
@@ -105,14 +93,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a
 					>
 				</li>
+
 				{% if user.is_staff %}
+ 	
 				<li class="menu-list">
 					<a href="#"
 						><i class="lnr lnr-book"></i> <span>User Management</span></a
 					>
 					<ul class="sub-menu-list">
 						<li><a href="{% url 'createusers' %}">Create User</a></li>
-						<li><a href="#">Update User</a></li>
+						<!-- <li><a href="#">Update User</a></li> -->
 						<li><a href="{% url 'user' %}">View Users</a></li>
 					</ul>
 				</li>
@@ -123,34 +113,32 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</li>
 
 				{% endif %}
+				{% if user.id %}
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-cog"></i> <span>User Profile</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'userprofile' %}">Setting</a> </li>
-						<li><a href="widgets.html">Edit Profile</a></li>
+						<li><a href="{% url 'userprofile' user.id %}">Change Username</a> </li>
+						<li><a href="{% url 'changeprofile' user.id %}">Change Photo</a></li>
+						<li><a href="{% url 'changepassword' user.id %}">Change Password</a></li>
+						
 					</ul>
 				</li>
-
+				{% endif %}
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'sendmessages' %}">Send Message</a></li>
-						<li><a href="{% url 'sendmessages' %}">Send Email</a></li>
+						<li><a href="{% url 'sendmessages' %}">Send Document</a></li>
+						<!-- <li><a href="{% url 'sendmessages' %}">Send Email</a></li> -->
 					</ul>
 				</li>
-				<li>
+				<!-- <li>
 					<a href="codes.html"
 						><i class="lnr lnr-pencil"></i> <span>Notification</span></a
 					>
-				</li>
+				</li> -->
 			</ul>
 			<!--sidebar nav end-->
-		</div>
-		<!-- left side end-->
-
-		<!-- main content start-->
-
-		<!-- header-starts -->
+				<!-- header-starts -->
 		<div class="header-section">
 			<!--toggle button start-->
 			<div class="left-nav-bar">
@@ -167,7 +155,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					>
 						<div class="badge-container">
 							{% if count %}
-							<div class="badge-number"><p>{{count}}</p></div>
+							<div class="icon-number"><p>{{count}}</p></div>
 							{% else %} {% endif %}
 							<div class="badge-icon">
 								<i class="fa fa-envelope"></i>
@@ -226,19 +214,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				{% endcomment %}
 				<!-- //search-scripts -->
 			</div>
-
+			<div class="left-nav-bar">
 			<!--notification menu start -->
 			<div class="dropdown">
 				<div class="profile_details">
 					<ul>
 						<li class="dropdown profile_details_drop">
-							<a
-								href="#"
-								class="dropdown-toggle"
-								data-toggle="dropdown"
-								aria-expanded="false"
-							>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 								<div class="profile_img">
+									<span> <img src="{{profile.profile_image.url}}"
+                                                     class=""
+                                                     style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;" 
+                                                     alt="Neil Portrait"></span> 
 									<div class="user-name">
 										<p>{{ user.first_name }}</p>
 									</div>
@@ -249,11 +236,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>
 							</a>
 							<ul class="dropdown-menu drp-mnu">
+
 								<li>
-									<a href="#"><i class="fa fa-cog"></i> Settings</a>
+									<a href="{% url 'changepassword' user.id %}"><i class="fa fa-cog"></i>change password</a>
 								</li>
 								<li>
-									<a href="#"><i class="fa fa-user"></i>Profile</a>
+									<a href="{% url 'changeprofile' user.id %}"><i class="fa fa-user"></i>change username</a>
 								</li>
 								<li>
 									<a href="{% url 'signout' %}"
@@ -266,6 +254,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</div>
 			</div>
 		</div>
+		</div>
+		</div>
+		<!-- left side end-->
+
+		<!-- main content start-->
+
+	
 		<div class="main-content">
 			<div class="container">{% block content %} {% endblock %}</div>
 		</div>
