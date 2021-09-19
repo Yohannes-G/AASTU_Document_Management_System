@@ -1,8 +1,102 @@
 {% extends 'base.html' %}
-{% block title %}All message{% endblock title %}
+{% block title %}All Notification{% endblock title %}
 {% block content %}
+
+<button class="filter-button btn btn-primary" type="button" data-toggle="modal" data-target="#exampleModal"><i
+        class="fa fa-filter"></i> Filter</button>
+
+{% comment %} Modal {% endcomment %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" arial-labelledby="exampleModalLabel"
+    arial-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header space-between">
+                <h5 class="modal-title" id="exampleModalLabel">Filter</h5>
+                <button type="button" class="close" data-dismiss="modal" arial-label="Close">
+                    <span arial-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body custom-padding filter-button">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="log-input">{{form.type_name}}
+                        </div>
+                        <!--  <div class="log-input">{{forms.cc_office}}
+                        </div> -->
+
+                        <div class="form-group">
+                            <label>Select Office</label>
+                            <select id="id_office" class="form-control" name="state">
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                        <div class="log-input">{{form.to_type_name}}
+                        </div>
+                        <!--  <div class="log-input">{{forms.cc_office}}
+                        </div> -->
+
+                        <div class="form-group">
+                            <label>Select Office</label>
+                            <select id="id_to_office" class="form-control" name="to_state">
+                                <option value="All">All</option>
+                            </select>
+                        </div>
+                        <div class="log-input">{{form.action}}
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     {% for message in all_messages %}
+    {% if message.reply_id %}
+    <div class="panel panel-default custom-conversation">
+        <div class="panel-heading" role="tab" id="heading{{message.reply_id}}">
+            <h4 class="panel-title asd full-width">
+                <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+                    data-parent="#accordion" href="#collapse{{message.reply_id}}" aria-expanded="true"
+                    aria-controls="collapse{{message.reply_id}}">
+                    <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+                    <div class="space-between full-width">
+                        <div class="custom-flex">
+                            {% if message.reply_id %}
+                            <div class="text-danger">Reply: </div>
+                            {% endif %}
+                            {{message.reply_description|truncatechars:50}}</div>
+                        <div>{{message.reply_time}}</div>
+                    </div>
+                </a>
+            </h4>
+        </div>
+        <div id="collapse{{message.reply_id}}" class="panel-collapse collapse" role="tabpanel"
+            aria-labelledby="heading{{message.reply_id}}">
+            <a href="{% url 'showmessage' message.reply_id %}">
+                <div class="panel-body panel_text">
+                    <p><span>From: </span>
+                        {{message.reply_sender.office}}:
+                        {{message.reply_sender}}</p>
+                    <p><span>To: </span>
+                        {% for receiver in message.reply_receiver.all %}
+                        <span>
+                            {% ifchanged receiver.user.office %}
+                            {{receiver.user.office}}:
+                            {% endifchanged %}
+                            {{receiver.user}}</span>,
+                        {% endfor %}
+                    </p>
+                    <p><span>Description: </span>{{message.reply_description}}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% else %}
     <div class="panel panel-default custom-conversation">
         <div class="panel-heading" role="tab" id="heading{{message.message_id}}">
             <h4 class="panel-title asd full-width">
@@ -12,6 +106,9 @@
                     <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
                     <div class="space-between full-width">
                         <div class="custom-flex">
+                            {% if message.reply_id %}
+                            <div class="text-danger">Reply: </div>
+                            {% endif %}
                             {{message.message_description|truncatechars:50}}</div>
                         <div>{{message.message_time}}</div>
                     </div>
@@ -39,6 +136,70 @@
             </a>
         </div>
     </div>
+    {% endif %}
+    {%empty%}
+    <div>No notification available</div>
     {% endfor %}
 </div>
+<script>
+    $( "#id_type" ).change( function () {
+
+        var typeName = $( this ).val();
+
+        console.log( typeName )
+
+        $.ajax( {
+
+            type: "POST",
+            url: "{% url 'get-offices' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'type_name': typeName
+            },
+
+            success: function ( response ) {
+
+
+                let html_data = '<option value="All">All</option>';
+                console.log( "hello message" )
+                console.log( "message:", response )
+                response.forEach( function ( response ) {
+                    html_data += `<option value="${response}">${response}</option>`
+                } );
+
+                $( "#id_office" ).html( html_data );
+            }
+        } );
+    } );
+    $( "#id_to_type" ).change( function () {
+
+        var typeName = $( this ).val();
+
+        console.log( typeName )
+
+        $.ajax( {
+
+            type: "POST",
+            url: "{% url 'get-offices' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'type_name': typeName
+            },
+
+            success: function ( response ) {
+
+
+                let html_data = '<option value="All">All</option>';
+                console.log( "hello message" )
+                console.log( "message:", response )
+                response.forEach( function ( response ) {
+                    html_data += `<option value="${response}">${response}</option>`
+                } );
+
+                $( "#id_to_office" ).html( html_data );
+            }
+        } );
+    } );
+
+</script>
 {% endblock content%}

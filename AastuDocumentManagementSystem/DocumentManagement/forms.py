@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import  Office, Type, User,MyProfile
+from .models import MyProfile, Office, Type, User
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -60,14 +60,6 @@ class ReplyMessageForm(forms.Form):
                                      widget=forms.Select(
         attrs={'class': 'form-control', 'id': 'id_cc_type'})
     )
-
-    # cc_office = forms.ChoiceField(
-    #     choices=(('Electrical Engineering', 'Electrical Engineering'),
-    #              (' Mechanical Engineering', 'Mechanical Engineering')),
-    #     widget=forms.Select(attrs={
-    #         'class': 'form-control1',
-    #     }, ), label=''
-    # )
     description = forms.CharField(widget=forms.Textarea(attrs={
         'class': 'user',
         'placeholder': 'description',
@@ -106,6 +98,34 @@ class SendMessageForm(forms.Form):
 
     field_order = ['type_name', 'office']
 
+
+class MessageFilterForm(forms.Form):
+    type_name = forms.ChoiceField(choices=get_type(default="---All---", value="All"),
+                                  widget=forms.Select(
+                                      attrs={'class': 'form-control', 'id': 'id_type'})
+                                  )
+    action = forms.ChoiceField(choices=[("0", "Both"), ("1", "Receive"), ("2", "Send")], widget=forms.Select(
+        attrs={'class': 'form-control', 'id': 'id_type'}))
+
+
+class NotificationFilterForm(MessageFilterForm):
+    to_type_name = forms.ChoiceField(
+        choices=get_type(default="---All---", value="All"),
+        widget=forms.Select(
+            attrs={'class': 'form-control', 'id': 'id_to_type'})
+    )
+
+
+class ResetForm(forms.Form):
+    email = formGenerator('email', 'email', 'Email Address')
+    submit = formGenerator('submit', value="Reset")
+
+
+class ConfirmationForm(forms.Form):
+    confirmation = formGenerator('text', 'lock', 'Confirmation')
+    submit = formGenerator('submit', value="Confirm")
+
+
 class NewPasswordForm(forms.Form):
     password = formGenerator('password', 'lock', 'Password')
     conf_password = formGenerator('password', 'lock', 'Confirm Password')
@@ -122,16 +142,14 @@ class SignUPForm(forms.Form, forms.ModelForm):
                                   )
     submit = formGenerator('submit', value="Save User")
 
-    class Meta:
-        model = User
-        fields = ['type_name']
-
 class UpdateUserForm(forms.Form, forms.ModelForm):
     username = formGenerator('text', 'user', 'Username')
     submit = formGenerator('submit', value="Save")
+
     class Meta:
         model = User
         fields = ['username']
+
 
 class ProfileForm(forms.Form, forms.ModelForm):
     profile_image = forms.ImageField()

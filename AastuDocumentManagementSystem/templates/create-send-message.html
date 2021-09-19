@@ -14,18 +14,18 @@
         </div>
       </div>
       <div class="panel-body panel-body-com-m">
-        {% if type_name %}
-        <div class="panel panel-default">
-          <div class="reply">
-            Reply to: {{type_name}}
-          </div>
+        {% if office %}
+            <div class="panel panel-default">
+              <div class="reply">
+                Reply to: {{office}}
+              </div>
 
-        </div>
-        {% endif %}
+              </div>
+              {% endif %}
 
-        <form action="" method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          <!-- {% for form in forms %}
+              <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <!-- {% for form in forms %}
                 <div class="log-input">{{form}}
                 </div>
                 {% endfor %} -->
@@ -53,21 +53,21 @@
                        </select>
                    </div>
 
-                
+                <div class="log-input">{{forms.description}}
+                </div>
 
-              <div class="log-input">{{forms.description}}
-              </div>
+                <div class="log-input">{{forms.file}}
+                </div>
 
-              <div class="log-input">{{forms.file}}
-              </div>
-
-              <div class="log-input-btn">{{forms.submit}}
-              </div>
+                <div class="log-input">{{forms.submit}}
+                </div>
             </div>
-        </form>
-      </div>
-    </div>
-  </div>
+
+
+            </form>
+          </div>
+        </div>
+</div>
 
 </div>
 
@@ -114,6 +114,7 @@
   $( "#id_cc_type" ).change( function () {
 
     var typeName = $( this ).val();
+    var officeName = $( "#id_office" ).val();
 
     console.log( typeName )
 
@@ -123,7 +124,8 @@
       url: "{% url 'get-offices' %}",
       data: {
         'csrfmiddlewaretoken': '{{ csrf_token }}',
-        'type_name': typeName
+        'type_name': typeName,
+        'office_name': officeName
       },
 
       success: function ( response ) {

@@ -6310,7 +6310,7 @@ p.creating {
 		margin: 1em 0 1em 1em;
 	}
 	.sticky-header .main-content {
-		padding-top: 100px;
+		padding-top: 50px;
 	}
 	.grow {
 		left: 43%;
@@ -8060,7 +8060,6 @@ input[type="submit"]:hover {
 }
 
 .icon-number {
- 
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -8123,3 +8122,29 @@ input[type="submit"]:hover {
 	padding: 1rem;
 }
 
+.filter-button {
+	margin: 1rem;
+}
+
+.custom-padding {
+	padding: 1rem;
+}
+
+.center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* .higher {
+	z-index: 10000;
+} */
+
+.full-height {
+	padding-top: 5vh;
+	height: 100vh;
+}
+
+.height {
+	height: 100%;
+}
