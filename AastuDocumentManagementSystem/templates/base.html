@@ -37,7 +37,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
 
-		 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
 	</head>
 
 	<body class="sticky-header left-side-collapsed higher">
@@ -110,29 +110,29 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					</div>
 					<!--toggle button end-->
 
-				{% comment %} new message{% endcomment %}
-				<div class="dropdown message">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<div class="badge-container">
-							{% if message_msgs %}
-							<div class="badge-number">
-								<p>{{message_msgs|length}}</p>
+					{% comment %} new message{% endcomment %}
+					<div class="dropdown message">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<div class="badge-container">
+								{% if messages %}
+								<div class="badge-number">
+									<p>{{messages|length}}</p>
+								</div>
+								{% else %} {% endif %}
+								<div class="badge-icon">
+									<i class="fa fa-envelope"></i>
+								</div>
 							</div>
-							{% else %} {% endif %}
-							<div class="badge-icon">
-								<i class="fa fa-envelope"></i>
-							</div>
-						</div>
-					</a>
-					<ul class="dropdown-menu">
-						<li>
-							<div class="notification_header">
-								<h3>You have {{message_msgs|length}} new message{{message_msgs|pluralize}}</h3>
-							</div>
-						</li>
-						{% if message_msgs %}
-						<ul class="scrollable-menu">
-							{% for message in message_msgs %}
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<div class="notification_header">
+									<h3>You have {{messages|length}} new message{{messages|pluralize}}</h3>
+								</div>
+							</li>
+							{% if messages %}
+							<ul class="scrollable-menu">
+								{% for message in messages %}
 								{% if message.reply_id %}
 								<li>
 									<a href="{% url 'showreply' message.reply_id %}">
@@ -263,29 +263,16 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 										<div class="profile_img">
 
-				</script>
-				{% endcomment %}
-				<!-- //search-scripts -->
-			</div>
-			<div class="left-nav-bar">
-			<!--notification menu start -->
-			<div class="dropdown">
-				<div class="profile_details">
-					<ul>
-						<li class="dropdown profile_details_drop">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-								<div class="profile_img">
-                         
-                                     {% if profile.profile_image %}           
-									<span>
-									 <img src="{{profile.profile_image.url}}"
-                                                     class=""
-                                                      style="vertical-align: middle;width: 50px; height: 50px; border-radius: 50%;" 
-                                                     alt="Neil Portrait"></span> 
-                                     {% else %}
-                                   <span> <img src="{% static 'images/space.jpg' %}" 
-                                   			  style="vertical-align: middle;width: 50px; height: 50px; border-radius: 50%;"  alt="Neil Portrait" ></span>
-                                    {%endif%}
+											{% if profile.profile_image %}
+											<span>
+												<img src="{{profile.profile_image.url}}" class=""
+													style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;"
+													alt="Neil Portrait"></span>
+											{% else %}
+											<span> <img src="{% static 'images/space.jpg' %}"
+													style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;"
+													alt="Neil Portrait"></span>
+											{%endif%}
 
 											<div class="user-name">
 												<p>{{ user.first_name }}</p>

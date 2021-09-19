@@ -5,13 +5,13 @@ from urllib.request import urlopen
 import requests
 from bs4 import BeautifulSoup
 from django.contrib import auth
+from django.contrib import messages
 from django.contrib import messages as toast_msgs
 from django.contrib.auth.hashers import make_password
+from django.contrib.messages import get_messages
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth.hashers import make_password
-from django.contrib import messages
-from django.contrib.messages import get_messages
+
 from .forms import (MessageFilterForm, NewPasswordForm, NotificationFilterForm,
                     OfficeForm, ProfileForm, ReplyMessageForm, SendMessageForm,
                     SignInForm, SignUPForm, TypeForm, UpdateUserForm)
@@ -58,8 +58,7 @@ def message_notification(request):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return {'notifications': notifications, 'message_msgs': message_msgs, 'profile':profile}
-
+    return {'notifications': notifications, 'message_msgs': message_msgs, 'profile': profile}
 
 
 def send_messages(request):
@@ -67,8 +66,8 @@ def send_messages(request):
         return redirect('signin')
     else:
         form = SendMessageForm()
-        form.fields['type_name'].choices=get_type()
-        form.fields['cc_type_name'].choices=get_type()
+        form.fields['type_name'].choices = get_type()
+        form.fields['cc_type_name'].choices = get_type()
 
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
@@ -113,7 +112,7 @@ def send_messages(request):
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
         return render(request, 'create-send-message.html',
-                      {'forms': form, 'notifications': notifications, 'profile':profile, 'message_msgs': message_msgs, 'user':user})
+                      {'forms': form, 'notifications': notifications, 'profile': profile, 'message_msgs': message_msgs, 'user': user})
 
 
 ################### Reply Message for received message #############
@@ -130,7 +129,7 @@ def reply_message(request, message_id):
         office = msg.message_sender.office
         type_name = msg.message_sender.office.office_type_name
         form = ReplyMessageForm()
-        form.fields['type_name'].choices=get_type()
+        form.fields['type_name'].choices = get_type()
 
         if request.method == 'POST':
             form = ReplyMessageForm(request.POST, request.FILES)
@@ -172,7 +171,7 @@ def reply_message(request, message_id):
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
         return render(request, 'create-send-message.html',
-                      {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'message_msgs': message_msgs, 'profile':profile})
+                      {'forms': form, 'type_name': type_name, 'office': office, 'notifications': notifications, 'message_msgs': message_msgs, 'profile': profile})
 
 
 ################## Show Message ############################
@@ -203,8 +202,7 @@ def show_message(request, message_id):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'message_msgs': message_msgs, 'carbon_copy': carbon_copy, 'profile':profile})
-
+        return render(request, 'show_message.html', {'msg': msg, 'notifications': notifications, 'message_msgs': message_msgs, 'carbon_copy': carbon_copy, 'profile': profile})
 
 
 ################## Show Reply ############################
@@ -230,7 +228,7 @@ def show_reply(request, reply_id):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-        return render(request, 'show_reply.html', {'msg': msg, 'notifications': notifications,'profile':profile, 'message_msgs': message_msgs})
+        return render(request, 'show_reply.html', {'msg': msg, 'notifications': notifications, 'profile': profile, 'message_msgs': message_msgs})
 
 
 ################### Show all message_msgs ########################
@@ -379,7 +377,7 @@ def show_all_message(request):
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
     return render(request, 'show_all_message.html', {'all_messages': all_messages, 'user': user,
-                                                     'notifications': notifications, 'message_msgs': message_msgs,'profile':profile,
+                                                     'notifications': notifications, 'message_msgs': message_msgs, 'profile': profile,
                                                      })
 
 
@@ -468,13 +466,13 @@ def show_all_notifications(request):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'show_all_notifications.htm', {'all_messages': all_messages, 'message_msgs': message_msgs, 'user': user,'profile':profile, 'notifications': notifications, 'count': count})
+    return render(request, 'show_all_notifications.htm', {'all_messages': all_messages, 'message_msgs': message_msgs, 'user': user, 'profile': profile, 'notifications': notifications})
 
 
 ################### Create Roles #############################
 
 def create_types(request):
-    print("Create Types:",request._messages)
+    print("Create Types:", request._messages)
     if not request.user.is_staff:
         return redirect('signin')
     else:
@@ -500,7 +498,7 @@ def create_types(request):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'create-role.html', {'forms': form,'profile':profile,'message_msgs': message_msgs})
+    return render(request, 'create-role.html', {'forms': form, 'profile': profile, 'message_msgs': message_msgs})
 
 
 def display_types(request):
@@ -516,7 +514,7 @@ def display_types(request):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-        return render(request, 'display-types.html', {'types': types, 'profile':profile,'message_msgs': message_msgs})
+        return render(request, 'display-types.html', {'types': types, 'profile': profile, 'message_msgs': message_msgs})
 
 
 def delete_types(request, type_id):
@@ -527,8 +525,6 @@ def delete_types(request, type_id):
         typ.delete()
         messages.error(request, 'Type is Successfully deleted.')
         return redirect('displaytypes')
-    
-
 
 
 def edit_types(request, type_id):
@@ -556,7 +552,7 @@ def edit_types(request, type_id):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'edit-types.html', {'typ':typ,'forms':form, 'profile':profile,'message_msgs': message_msgs})
+    return render(request, 'edit-types.html', {'typ': typ, 'forms': form, 'profile': profile, 'message_msgs': message_msgs})
 ################### Create Offices #############################
 
 
@@ -591,7 +587,7 @@ def create_offices(request, type_id):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-        return render(request, 'create-office.html', {'forms': form, 'profile':profile, 'type_id':type_id,'message_msgs': message_msgs, 'type_name':type_name})
+        return render(request, 'create-office.html', {'forms': form, 'profile': profile, 'type_id': type_id, 'message_msgs': message_msgs, 'type_name': type_name})
 
 
 def display_offices(request, type_id):
@@ -601,7 +597,7 @@ def display_offices(request, type_id):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         message_msgs = msg_ntf['message_msgs']
-        type_name=Type.objects.get(type_id=type_id)
+        type_name = Type.objects.get(type_id=type_id)
         office = Office.objects.filter(office_type_name_id=type_id)
         user = User.objects.get(id=request.user.id)
         if MyProfile.objects.filter(profile_user_id=user.id):
@@ -609,7 +605,8 @@ def display_offices(request, type_id):
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
 
-        return render(request, 'display-offices.html', {'offices': office,'message_msgs': message_msgs,'profile':profile, 'type_id': type_id,'type_name':type_name})
+        return render(request, 'display-offices.html', {'offices': office, 'message_msgs': message_msgs, 'profile': profile, 'type_id': type_id, 'type_name': type_name})
+
 
 def delete_offices(request, office_id):
     office = Office.objects.get(office_id=office_id)
@@ -645,7 +642,7 @@ def edit_offices(request, office_id):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'edit-offices.html', {'off':off, 'forms':form, 'profile':profile,'message_msgs': message_msgs})
+    return render(request, 'edit-offices.html', {'off': off, 'forms': form, 'profile': profile, 'message_msgs': message_msgs})
 ################### User Management #############################
 
 
@@ -669,7 +666,7 @@ def create_user_profile(request, user_id):
             print(user_form.errors)
     else:
         user_form = UpdateUserForm(instance=request.user)
-       
+
     msg_ntf = message_notification(request)
     notifications = msg_ntf['notifications']
     message_msgs = msg_ntf['message_msgs']
@@ -678,7 +675,8 @@ def create_user_profile(request, user_id):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'create-user-profile.html', {'user_form':user_form,'profile':profile,'user':user,'error':error,'message_msgs': message_msgs})
+    return render(request, 'create-user-profile.html', {'user_form': user_form, 'profile': profile, 'user': user, 'error': error, 'message_msgs': message_msgs})
+
 
 def change_user_profile(request, user_id):
 
@@ -700,7 +698,8 @@ def change_user_profile(request, user_id):
                     prof_form = MyProfile.objects.create(
                         profile_user_id=my_user.id, profile_image=cd_prof['profile_image'])
                     prof_form.save()
-                    messages.success(request, 'Profile is Successfully Changed!')
+                    messages.success(
+                        request, 'Profile is Successfully Changed!')
                 return redirect('signin')
             else:
                 print(prof_form.errors)
@@ -709,7 +708,7 @@ def change_user_profile(request, user_id):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         message_msgs = msg_ntf['message_msgs']
-        return render(request, 'create-user-profile.html', {'prof_form':prof_form, 'profile':profile ,'message_msgs': message_msgs})
+        return render(request, 'create-user-profile.html', {'prof_form': prof_form, 'profile': profile, 'message_msgs': message_msgs})
     else:
         form = ProfileForm()
         my_user = User.objects.get(id=user_id)
@@ -729,12 +728,14 @@ def change_user_profile(request, user_id):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         message_msgs = msg_ntf['message_msgs']
-        return render(request, 'create-user-profile.html', {'prof_form':prof_form ,'message_msgs': message_msgs})
+        return render(request, 'create-user-profile.html', {'prof_form': prof_form, 'message_msgs': message_msgs})
+
 
 def get_type():
     """ GET Type SELECTION """
     all_countries = [('-----', '---Select a Type---')]
-    all_data = [type_name.type_name for type_name in Type.objects.all().exclude(type_name='admin')]
+    all_data = [type_name.type_name for type_name in Type.objects.all().exclude(
+        type_name='admin')]
     #print("all_data", all_data)
     for x in all_data:
         y = (x, x)
@@ -751,7 +752,7 @@ def return_office_by_type(type_name):
     #print("return:", typeId)
 
     for x in all_data:
-        #print(x)
+        # print(x)
         if x == type_name:
             office_list = Office.objects.filter(
                 office_type_name_id=typeId.type_id)
@@ -793,22 +794,22 @@ def users(request):
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
 
-        return render(request, 'tables.html', {'users': users,'user':user,'profile':profile, 'admin':admin,'message_msgs': message_msgs})
+        return render(request, 'tables.html', {'users': users, 'user': user, 'profile': profile, 'admin': admin, 'message_msgs': message_msgs})
 
 
 def create_users(request):
     ty = Type.objects.all()
     off = Office.objects.all()
     user = User.objects.all()
-    
+
     if not request.user.is_staff:
         return redirect('signin')
     else:
         error = ""
 
         form = SignUPForm()
-        form.fields['type_name'].choices=get_type()
-         
+        form.fields['type_name'].choices = get_type()
+
         if request.method == "POST":
             form = SignUPForm(request.POST)
             if form.is_valid():
@@ -843,11 +844,12 @@ def create_users(request):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         message_msgs = msg_ntf['message_msgs']
-        return render(request, 'create-users.html', {'forms': form,'profile':profile, 'error': error,'message_msgs': message_msgs})
+        return render(request, 'create-users.html', {'forms': form, 'profile': profile, 'error': error, 'message_msgs': message_msgs})
+
 
 def delete_user(request, user_id):
     user = User.objects.get(id=user_id)
-    message_msgs.error(request, 'User Is Deleted!!')
+    messages.error(request, 'User Is Deleted!!')
     user.delete()
     messages.error(request, 'User is Successfully Deleted!')
     return redirect('user')
@@ -882,12 +884,13 @@ def change_user_password(request, user_id):
         profile = MyProfile.objects.get(profile_user_id=user.id)
     else:
         profile = MyProfile.objects.filter(profile_user_id=user.id)
-    return render(request, 'reset_password.html', {'forms': form, 'profile':profile,'error': error,'message_msgs': message_msgs})
+    return render(request, 'reset_password.html', {'forms': form, 'profile': profile, 'error': error, 'message_msgs': message_msgs})
+
 
 def reset_user_password(request, user_id):
     user = User.objects.get(id=user_id)
     user.username = f"{user.first_name}.{user.last_name}"
-    user.password=make_password(user.username)
+    user.password = make_password(user.username)
     messages.success('Password is Successfully Reseted!')
     user.save()
     return redirect('user')
@@ -945,7 +948,7 @@ def edit_users(request, user_id):
             profile = MyProfile.objects.get(profile_user_id=user.id)
         else:
             profile = MyProfile.objects.filter(profile_user_id=user.id)
-        return render(request, 'edit-users.html', {'forms': form, 'error': error,'profile':profile,'message_msgs': message_msgs})
+        return render(request, 'edit-users.html', {'forms': form, 'error': error, 'profile': profile, 'message_msgs': message_msgs})
 ############# Index User Dashboard###############################
 
 
@@ -968,7 +971,7 @@ def index(request):
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         message_msgs = msg_ntf['message_msgs']
-        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'message_msgs': message_msgs, 'profile':profile})
+        return render(request, 'index.html', {'user': user, 'notifications': notifications, 'message_msgs': message_msgs, 'profile': profile})
 
 
 def signup(request):
@@ -977,7 +980,7 @@ def signup(request):
     if request.method == "POST":
         form = SignUPForm(request.POST)
         form.type_name.choices = get_type()
-        print("Get Type",form)
+        print("Get Type", form)
         if form.is_valid():
             cd = form.cleaned_data
             if cd['password'] == cd['conf_password']:
