@@ -2,14 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Address(models.Model):
-    country = models.CharField(null=True, blank=True, max_length=100)
-    state = models.CharField(null=True, blank=True, max_length=100)
-
-    def __str__(self):
-        return '{} {}'.format(self.country, self.state)
-
-
 class Type(models.Model):
     type_id = models.BigAutoField(primary_key=True)
     type_name = models.CharField(max_length=50)
@@ -75,7 +67,7 @@ class ReplyMessage(models.Model):
     replyed_message = models.ForeignKey(
         Message, on_delete=models.CASCADE, related_name='replyed_message')
 
-
-class Profile(models.Model):
-    profile_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    profile_image = models.ImageField(upload_to='images/')
+class MyProfile(models.Model):
+    prof_id = models.BigAutoField(primary_key=True)
+    profile_user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_image = models.ImageField(upload_to='images/', default='Space3.jpg')

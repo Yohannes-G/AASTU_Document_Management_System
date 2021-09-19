@@ -70,6 +70,7 @@ REST_FRAMEWORK = {
     ]
 }
 LOGIN_URL = '/signin'
+AUTH_PROFILE_MODULE = '/userprofile'
 # use our own user model
 #AUTH_USER_MODEL = "user.User"
 

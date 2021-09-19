@@ -44,164 +44,167 @@
 </div>
 
 {% comment %} Messages {% endcomment %}
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  {% for message in all_messages %}
-  {% if message.reply_id %}
-  {% if message.reply_sender == user %}
-  <div class="panel panel-default custom-conversation">
-    {% else %}
-    <div class="panel panel-default custom-conversation receiver-custom">
-      {% endif %}
-      <div class="panel-heading" role="tab" id="heading{{message.reply_id}}">
-        <h4 class="panel-title asd full-width">
-          <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
-            data-parent="#accordion" href="#collapse{{message.reply_id}}" aria-expanded="true"
-            aria-controls="collapse{{message.reply_id}}">
-            <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
-            <div class="space-between full-width">
-              <div class="custom-flex">
-                <div class="text-danger">Reply: </div>{{message.reply_description|truncatechars:50}}
-              </div>
-              <div>{{message.reply_time}}</div>
-            </div>
-          </a>
-        </h4>
-      </div>
-      <div id="collapse{{message.reply_id}}" class="panel-collapse collapse" role="tabpanel"
-        aria-labelledby="heading{{message.reply_id}}">
-        <div class="panel-body panel_text">
-          <p><span>Reply:</span>
-            <a
-              href="#collapse{{message.replyed_message.message_id}}">{{message.replyed_message.message_description}}</a>
-          </p>
-          <a href="{% url 'showreply' message.reply_id %}">
-            {% if message.reply_sender == user %}
-            <p><span>To: </span>
-              {% for receiver in message.reply_receiver.all %}
-              <span>
-                {% ifchanged receiver.user.office %}
-                {{receiver.user.office}}:
-                {% endifchanged %}
-                {{receiver.user}}</span>,
-              {% endfor %}
-            </p>
-            {% else %}
-            <p><span>From: </span>
-              {{message.reply_sender.office}}:
-              {{message.reply_sender}}</p>
+
+<div><a href="{% url 'index' %}"><button type="button" class="btn btn-default">
+      <- Back to Home</button> </a> </div> <div class="panel-group" id="accordion" role="tablist"
+        aria-multiselectable="true">
+        {% for message in all_messages %}
+        {% if message.reply_id %}
+        {% if message.reply_sender == user %}
+        <div class="panel panel-default custom-conversation">
+          {% else %}
+          <div class="panel panel-default custom-conversation receiver-custom">
             {% endif %}
-            <p><span>Description: </span>{{message.reply_description}}</p>
-        </div>
-        </a>
-      </div>
-    </div>
-    {% else %}
-    {% if message.message_sender == user %}
-    <div class="panel panel-default custom-conversation">
-      {% else %}
-      <div class="panel panel-default custom-conversation receiver-custom">
-        {% endif %}
-        <div class="panel-heading" role="tab" id="heading{{message.message_id}}">
-          <h4 class="panel-title asd full-width">
-            <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
-              data-parent="#accordion" href="#collapse{{message.message_id}}" aria-expanded="true"
-              aria-controls="collapse{{message.message_id}}">
-              <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
-              <div class="space-between full-width">
-                <div class="custom-flex">
-                  {{message.message_description|truncatechars:50}}</div>
-                <div>{{message.message_time}}</div>
-              </div>
-            </a>
-          </h4>
-        </div>
-        <div id="collapse{{message.message_id}}" class="panel-collapse collapse" role="tabpanel"
-          aria-labelledby="heading{{message.message_id}}">
-          <a href="{% url 'showmessage' message.message_id %}">
-            <div class="panel-body panel_text">
-              {% if message.message_sender == user %}
-              <p><span>To: </span>
-                {% for receiver in message.message_receiver.all %}
-                <span>
-                  {% ifchanged receiver.user.office %}
-                  {{receiver.user.office}}:
-                  {% endifchanged %}
-                  {{receiver.user}}</span>,
-                {% endfor %}
-              </p>
-              {% else %}
-              <p><span>From: </span>
-                {{message.message_sender.office}}:
-                {{message.message_sender}}</p>
-              {% endif %}
-              <p><span>Description: </span>{{message.message_description}}</p>
+            <div class="panel-heading" role="tab" id="heading{{message.reply_id}}">
+              <h4 class="panel-title asd full-width">
+                <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+                  data-parent="#accordion" href="#collapse{{message.reply_id}}" aria-expanded="true"
+                  aria-controls="collapse{{message.reply_id}}">
+                  <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+                  <div class="space-between full-width">
+                    <div class="custom-flex">
+                      <div class="text-danger">Reply: </div>{{message.reply_description|truncatechars:50}}
+                    </div>
+                    <div>{{message.reply_time}}</div>
+                  </div>
+                </a>
+              </h4>
             </div>
-          </a>
-        </div>
-      </div>
-      {% endif %}
-      {% empty %}
-      <div>No message available</div>
-      {% endfor %}
+            <div id="collapse{{message.reply_id}}" class="panel-collapse collapse" role="tabpanel"
+              aria-labelledby="heading{{message.reply_id}}">
+              <div class="panel-body panel_text">
+                <p><span>Reply:</span>
+                  <a
+                    href="#collapse{{message.replyed_message.message_id}}">{{message.replyed_message.message_description}}</a>
+                </p>
+                <a href="{% url 'showreply' message.reply_id %}">
+                  {% if message.reply_sender == user %}
+                  <p><span>To: </span>
+                    {% for receiver in message.reply_receiver.all %}
+                    <span>
+                      {% ifchanged receiver.user.office %}
+                      {{receiver.user.office}}:
+                      {% endifchanged %}
+                      {{receiver.user}}</span>,
+                    {% endfor %}
+                  </p>
+                  {% else %}
+                  <p><span>From: </span>
+                    {{message.reply_sender.office}}:
+                    {{message.reply_sender}}</p>
+                  {% endif %}
+                  <p><span>Description: </span>{{message.reply_description}}</p>
+              </div>
+  </a>
+</div>
+</div>
+{% else %}
+{% if message.message_sender == user %}
+<div class="panel panel-default custom-conversation">
+  {% else %}
+  <div class="panel panel-default custom-conversation receiver-custom">
+    {% endif %}
+    <div class="panel-heading" role="tab" id="heading{{message.message_id}}">
+      <h4 class="panel-title asd full-width">
+        <a class="pa_italic collapsed custom-flex full-width" role="button" data-toggle="collapse"
+          data-parent="#accordion" href="#collapse{{message.message_id}}" aria-expanded="true"
+          aria-controls="collapse{{message.message_id}}">
+          <span class="lnr lnr-chevron-down margin-r-1"></span><i class="lnr lnr-chevron-up margin-r-1"></i>
+          <div class="space-between full-width">
+            <div class="custom-flex">
+              {{message.message_description|truncatechars:50}}</div>
+            <div>{{message.message_time}}</div>
+          </div>
+        </a>
+      </h4>
     </div>
-    <script>
-      $( document ).ready( function () {
-        var typeName = $( "#id_type" ).val();
+    <div id="collapse{{message.message_id}}" class="panel-collapse collapse" role="tabpanel"
+      aria-labelledby="heading{{message.message_id}}">
+      <a href="{% url 'showmessage' message.message_id %}">
+        <div class="panel-body panel_text">
+          {% if message.message_sender == user %}
+          <p><span>To: </span>
+            {% for receiver in message.message_receiver.all %}
+            <span>
+              {% ifchanged receiver.user.office %}
+              {{receiver.user.office}}:
+              {% endifchanged %}
+              {{receiver.user}}</span>,
+            {% endfor %}
+          </p>
+          {% else %}
+          <p><span>From: </span>
+            {{message.message_sender.office}}:
+            {{message.message_sender}}</p>
+          {% endif %}
+          <p><span>Description: </span>{{message.message_description}}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+  {% endif %}
+  {% empty %}
+  <div>No message available</div>
+  {% endfor %}
+</div>
+<script>
+  $( document ).ready( function () {
+    var typeName = $( "#id_type" ).val();
 
-        console.log( typeName )
+    console.log( typeName )
 
-        $.ajax( {
+    $.ajax( {
 
-          type: "POST",
-          url: "{% url 'get-offices' %}",
-          data: {
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
-            'type_name': typeName
-          },
+      type: "POST",
+      url: "{% url 'get-offices' %}",
+      data: {
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+        'type_name': typeName
+      },
 
-          success: function ( response ) {
+      success: function ( response ) {
 
 
-            let html_data = '<option value="All">All</option>';
-            console.log( "hello message" )
-            console.log( "message:", response )
-            response.forEach( function ( response ) {
-              html_data += `<option value="${response}">${response}</option>`
-            } );
-
-            $( "#id_office" ).html( html_data );
-          }
+        let html_data = '<option value="All">All</option>';
+        console.log( "hello message" )
+        console.log( "message:", response )
+        response.forEach( function ( response ) {
+          html_data += `<option value="${response}">${response}</option>`
         } );
-        $( "#id_type" ).change( function () {
 
-          var typeName = $( this ).val();
+        $( "#id_office" ).html( html_data );
+      }
+    } );
+    $( "#id_type" ).change( function () {
 
-          console.log( typeName )
+      var typeName = $( this ).val();
 
-          $.ajax( {
+      console.log( typeName )
 
-            type: "POST",
-            url: "{% url 'get-offices' %}",
-            data: {
-              'csrfmiddlewaretoken': '{{ csrf_token }}',
-              'type_name': typeName
-            },
+      $.ajax( {
 
-            success: function ( response ) {
+        type: "POST",
+        url: "{% url 'get-offices' %}",
+        data: {
+          'csrfmiddlewaretoken': '{{ csrf_token }}',
+          'type_name': typeName
+        },
+
+        success: function ( response ) {
 
 
-              let html_data = '<option value="All">All</option>';
-              console.log( "hello message" )
-              console.log( "message:", response )
-              response.forEach( function ( response ) {
-                html_data += `<option value="${response}">${response}</option>`
-              } );
-
-              $( "#id_office" ).html( html_data );
-            }
+          let html_data = '<option value="All">All</option>';
+          console.log( "hello message" )
+          console.log( "message:", response )
+          response.forEach( function ( response ) {
+            html_data += `<option value="${response}">${response}</option>`
           } );
-        } );
-      } );
 
-    </script>
-    {% endblock content%}
+          $( "#id_office" ).html( html_data );
+        }
+      } );
+    } );
+  } );
+
+</script>
+{% endblock content%}

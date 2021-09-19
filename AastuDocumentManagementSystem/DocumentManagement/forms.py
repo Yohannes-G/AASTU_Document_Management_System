@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 # from bootstrap_daterangepicker import widgets, fields
-from .models import Address, Office, Type, User
+from .models import MyProfile, Office, Type, User
 
 
 def formGenerator(tpe, cls='', placeholder='', value=''):
@@ -145,7 +145,8 @@ class SignUPForm(forms.Form, forms.ModelForm):
     last_name = formGenerator('text', 'user', 'Last Name')
     type_name = forms.ChoiceField(choices=get_type(),
                                   widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_type'})
+                                      attrs={'class': 'form-control', 'id': 'id_type'}),
+                                  label='Select User Type'
                                   )
     submit = formGenerator('submit', value="Create User")
 
@@ -154,15 +155,19 @@ class SignUPForm(forms.Form, forms.ModelForm):
         fields = ['type_name']
 
 
-class ProfileForm(forms.Form, forms.ModelForm):
-    edit_first_name = formGenerator('text', 'user', 'First Name')
-    edit_last_name = formGenerator('text', 'user', 'Last Name')
-    edit_username = formGenerator('text', 'user', 'Username')
-    new_password = formGenerator('password', 'lock', 'Password')
-    confirm_password = formGenerator('password', 'lock', 'Confirm Password')
-    profile_image = forms.ImageField()
-    submit = formGenerator('submit', value="Save all")
+class UpdateUserForm(forms.Form, forms.ModelForm):
+    username = formGenerator('text', 'user', 'Username')
+    submit = formGenerator('submit', value="Save")
 
     class Meta:
         model = User
-        fields = ['edit_last_name']
+        fields = ['username']
+
+
+class ProfileForm(forms.Form, forms.ModelForm):
+    profile_image = forms.ImageField()
+    submit = formGenerator('submit', value="Save")
+
+    class Meta:
+        model = MyProfile
+        fields = ['profile_image']

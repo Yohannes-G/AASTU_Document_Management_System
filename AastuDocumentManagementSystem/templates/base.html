@@ -38,21 +38,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
 
 
-		<!-- for user profile styles -->
-		{% comment %}
-		<link type="text/css"
-			href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/@fortawesome/fontawesome-free/css/all.min.css"
-			rel="stylesheet">
-
-		<!-- Notyf -->
-		<link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/vendor/notyf/notyf.min.css"
-			rel="stylesheet">
-
-		<!-- Volt CSS -->
-		<link type="text/css" href="https://appsrv1-147a1.kxcdn.com/volt-dashboard/css/volt.css" rel="stylesheet">
-		{% endcomment %}
-
-
 	</head>
 
 	<body class="sticky-header left-side-collapsed">
@@ -61,7 +46,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			<!--logo and iconic logo start-->
 			<div class="logo">
 				<h1>
-					<a href="{% url 'index' %}">Doc<span>Management</span></a>
+					<span style="background:url(images/aastu.jpg) no-repeat center"><a
+							href="{% url 'index' %}">Doc<span>Management</span></a> </span>
+
 				</h1>
 			</div>
 			<div class="logo-icon text-center">
@@ -74,12 +61,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<li class="active">
 					<a href="{% url 'index' %}"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a>
 				</li>
+
 				{% if user.is_staff %}
+
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-book"></i> <span>User Management</span></a>
 					<ul class="sub-menu-list">
 						<li><a href="{% url 'createusers' %}">Create User</a></li>
-						<li><a href="#">Update User</a></li>
+						<!-- <li><a href="#">Update User</a></li> -->
 						<li><a href="{% url 'user' %}">View Users</a></li>
 					</ul>
 				</li>
@@ -88,19 +77,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</li>
 
 				{% endif %}
-				{% comment %} <li class="menu-list">
+
+				{% if user.id %}
+				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-cog"></i> <span>User Profile</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'userprofile' %}">Setting</a> </li>
-						<li><a href="widgets.html">Edit Profile</a></li>
-					</ul>
-				</li> {% endcomment %}
+						<li><a href="{% url 'userprofile' user.id %}">Change Username</a> </li>
+						<li><a href="{% url 'changeprofile' user.id %}">Change Photo</a></li>
+						<li><a href="{% url 'changepassword' user.id %}">Change Password</a></li>
 
+					</ul>
+				</li>
+				{% endif %}
 				<li class="menu-list">
 					<a href="#"><i class="lnr lnr-envelope"></i> <span>Messages</span></a>
 					<ul class="sub-menu-list">
-						<li><a href="{% url 'sendmessages' %}">Send Message</a></li>
-						<li><a href="{% url 'sendmessages' %}">Send Email</a></li>
+						<li><a href="{% url 'sendmessages' %}">Send Document</a></li>
+						<!-- <li><a href="{% url 'sendmessages' %}">Send Email</a></li> -->
 					</ul>
 				</li>
 				<li>
@@ -108,197 +101,214 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</li>
 			</ul>
 			<!--sidebar nav end-->
+			<!-- header-starts -->
+			<div class="header-section">
+				<!--toggle button start-->
+				<div class="left-nav-bar">
+					<div class="toggle-container">
+						<a class="toggle-btn menu-collapsed"><i class="fa fa-bars"></i></a>
+					</div>
+					<!--toggle button end-->
+
+					{% comment %} new message{% endcomment %}
+					<div class="dropdown message">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<div class="badge-container">
+								{% if messages %}
+								<div class="badge-number">
+									<p>{{messages|length}}</p>
+								</div>
+								{% else %} {% endif %}
+								<div class="badge-icon">
+									<i class="fa fa-envelope"></i>
+								</div>
+							</div>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<div class="notification_header">
+									<h3>You have {{messages|length}} new message{{messages|pluralize}}</h3>
+								</div>
+							</li>
+							{% if messages %}
+							<ul class="scrollable-menu">
+								{% for message in messages %}
+								{% if message.reply_id %}
+								<li>
+									<a href="{% url 'showreply' message.reply_id %}">
+										<div class="notification_desc">
+											<div class="space-between">
+												<p>{{message.reply_description|truncatechars:20}}</p>
+												<p>Replyed</p>
+											</div>
+											<p>
+												<span>{{message.reply_time|timesince}}</span>
+											</p>
+										</div>
+										<div class="clearfix"></div>
+									</a>
+								</li>
+								{% else %}
+								<li>
+									<a href="{% url 'showmessage' message.message_id %}">
+										<div class="notification_desc">
+											<p>{{message.message_description|truncatechars:20}}</p>
+											<p>
+												<span>{{message.message_time|timesince}}</span>
+											</p>
+										</div>
+										<div class="clearfix"></div>
+									</a>
+								</li>
+								{% endif %}
+								{% endfor %}
+							</ul>
+							{% else %} {% endif %}
+							<li>
+								<div class="notification_bottom">
+									<a href="{% url 'showallmessage' %}">See all messages</a>
+								</div>
+							</li>
+						</ul>
+
+					</div>
+					{% comment %} new notification {% endcomment %}
+					<div class="dropdown notification">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<div class="badge-container">
+								{% if notifications %}
+								<div class="badge-number">
+									<p>{{notifications|length}}</p>
+								</div>
+								{% else %} {% endif %}
+								<div class="badge-icon">
+									<i class="fa fa-bell"></i>
+								</div>
+							</div>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<div class="notification_header">
+									<h3>You have {{notifications|length}} new notification{{notifications|pluralize}}
+									</h3>
+								</div>
+							</li>
+							{% if notifications %}
+							<ul class="scrollable-menu">
+								{% for notification in notifications %}
+								{% if notification.reply_id %}
+								<li>
+									<a href="{% url 'showreply' notification.reply_id %}">
+										<div class="notification_desc">
+											<div class="space-between">
+												<p>{{notification.reply_description|truncatechars:20}}</p>
+												<p>Replyed</p>
+											</div>
+											<p>
+												<span>{{notification.reply_time|timesince}}</span>
+											</p>
+
+										</div>
+										<div class="clearfix"></div>
+									</a>
+								</li>
+								{% else %}
+								<li>
+									<a href="{% url 'showmessage' notification.message_id %}">
+										<div class="notification_desc">
+											<p>{{notification.message_description|truncatechars:20}}</p>
+											<p>
+												<span>{{notification.message_time|timesince}}</span>
+											</p>
+										</div>
+										<div class="clearfix"></div>
+									</a>
+								</li>
+								{% endif %}
+								{% endfor %}
+							</ul>
+							{% else %} {% endif %}
+							<li>
+								<div class="notification_bottom">
+									<a href="{% url 'showallnotification' %}">See all Notification</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+					{% comment %}
+					<div id="sb-search" class="sb-search">
+						<form>
+							<input class="sb-search-input" placeholder="Enter your search term..." type="search"
+								id="search" />
+							<input class="sb-search-submit" type="submit" value="" />
+							<span class="sb-icon-search"> </span>
+						</form>
+					</div>
+					<!-- search-scripts -->
+					<script src="{% static 'js/classie.js' %}"></script>
+					<script src="{% static 'js/uisearch.js' %}"></script>
+					<script>
+						new UISearch( document.getElementById( "sb-search" ) );
+
+					</script>
+					{% endcomment %}
+					<!-- //search-scripts -->
+				</div>
+				<div class="left-nav-bar">
+					<!--notification menu start -->
+					<div class="dropdown">
+						<div class="profile_details">
+							<ul>
+								<li class="dropdown profile_details_drop">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+										<div class="profile_img">
+
+											{% if profile.profile_image %}
+											<span>
+												<img src="{{profile.profile_image.url}}" class=""
+													style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;"
+													alt="Neil Portrait"></span>
+											{% else %}
+											<span> <img src="{% static 'images/space.jpg' %}"
+													style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;"
+													alt="Neil Portrait"></span>
+											{%endif%}
+
+											<div class="user-name">
+												<p>{{ user.first_name }}</p>
+											</div>
+											<div class="custom-position">
+												<i class="lnr lnr-chevron-down"></i>
+												<i class="lnr lnr-chevron-up"></i>
+											</div>
+										</div>
+									</a>
+									<ul class="dropdown-menu drp-mnu">
+
+										<li>
+											<a href="{% url 'changepassword' user.id %}"><i class="fa fa-cog"></i>change
+												password</a>
+										</li>
+										<li>
+											<a href="{% url 'changeprofile' user.id %}"><i class="fa fa-user"></i>change
+												username</a>
+										</li>
+										<li>
+											<a href="{% url 'signout' %}"><i class="fa fa-sign-out"></i> Logout</a>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<!-- left side end-->
 
 		<!-- main content start-->
 
-		<!-- header-starts -->
-		<div class="header-section">
-			<!--toggle button start-->
-			<div class="left-nav-bar">
-				<div class="toggle-container">
-					<a class="toggle-btn menu-collapsed"><i class="fa fa-bars"></i></a>
-				</div>
-				<!--toggle button end-->
 
-				{% comment %} new message{% endcomment %}
-				<div class="dropdown message">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<div class="badge-container">
-							{% if messages %}
-							<div class="badge-number">
-								<p>{{messages|length}}</p>
-							</div>
-							{% else %} {% endif %}
-							<div class="badge-icon">
-								<i class="fa fa-envelope"></i>
-							</div>
-						</div>
-					</a>
-					<ul class="dropdown-menu">
-						<li>
-							<div class="notification_header">
-								<h3>You have {{messages|length}} new message{{messages|pluralize}}</h3>
-							</div>
-						</li>
-						{% if messages %}
-						<ul class="scrollable-menu">
-							{% for message in messages %}
-							{% if message.reply_id %}
-							<li>
-								<a href="{% url 'showreply' message.reply_id %}">
-									<div class="notification_desc">
-										<div class="space-between">
-											<p>{{message.reply_description|truncatechars:20}}</p>
-											<p>Replyed</p>
-										</div>
-										<p>
-											<span>{{message.reply_time|timesince}}</span>
-										</p>
-									</div>
-									<div class="clearfix"></div>
-								</a>
-							</li>
-							{% else %}
-							<li>
-								<a href="{% url 'showmessage' message.message_id %}">
-									<div class="notification_desc">
-										<p>{{message.message_description|truncatechars:20}}</p>
-										<p>
-											<span>{{message.message_time|timesince}}</span>
-										</p>
-									</div>
-									<div class="clearfix"></div>
-								</a>
-							</li>
-							{% endif %}
-							{% endfor %}
-						</ul>
-						{% else %} {% endif %}
-						<li>
-							<div class="notification_bottom">
-								<a href="{% url 'showallmessage' %}">See all messages</a>
-							</div>
-						</li>
-					</ul>
-
-				</div>
-				{% comment %} new notification {% endcomment %}
-				<div class="dropdown notification">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<div class="badge-container">
-							{% if notifications %}
-							<div class="badge-number">
-								<p>{{notifications|length}}</p>
-							</div>
-							{% else %} {% endif %}
-							<div class="badge-icon">
-								<i class="fa fa-bell"></i>
-							</div>
-						</div>
-					</a>
-					<ul class="dropdown-menu">
-						<li>
-							<div class="notification_header">
-								<h3>You have {{notifications|length}} new notification{{notifications|pluralize}}
-								</h3>
-							</div>
-						</li>
-						{% if notifications %}
-						<ul class="scrollable-menu">
-							{% for notification in notifications %}
-							{% if notification.reply_id %}
-							<li>
-								<a href="{% url 'showreply' notification.reply_id %}">
-									<div class="notification_desc">
-										<div class="space-between">
-											<p>{{notification.reply_description|truncatechars:20}}</p>
-											<p>Replyed</p>
-										</div>
-										<p>
-											<span>{{notification.reply_time|timesince}}</span>
-										</p>
-
-									</div>
-									<div class="clearfix"></div>
-								</a>
-							</li>
-							{% else %}
-							<li>
-								<a href="{% url 'showmessage' notification.message_id %}">
-									<div class="notification_desc">
-										<p>{{notification.message_description|truncatechars:20}}</p>
-										<p>
-											<span>{{notification.message_time|timesince}}</span>
-										</p>
-									</div>
-									<div class="clearfix"></div>
-								</a>
-							</li>
-							{% endif %}
-							{% endfor %}
-						</ul>
-						{% else %} {% endif %}
-						<li>
-							<div class="notification_bottom">
-								<a href="{% url 'showallnotification' %}">See all Notification</a>
-							</div>
-						</li>
-					</ul>
-				</div>
-				{% comment %}
-				<div id="sb-search" class="sb-search">
-					<form>
-						<input class="sb-search-input" placeholder="Enter your search term..." type="search"
-							id="search" />
-						<input class="sb-search-submit" type="submit" value="" />
-						<span class="sb-icon-search"> </span>
-					</form>
-				</div>
-				<!-- search-scripts -->
-				<script src="{% static 'js/classie.js' %}"></script>
-				<script src="{% static 'js/uisearch.js' %}"></script>
-				<script>
-					new UISearch( document.getElementById( "sb-search" ) );
-
-				</script>
-				{% endcomment %}
-				<!-- //search-scripts -->
-			</div>
-
-			<!--notification menu start -->
-			<div class="dropdown">
-				<div class="profile_details">
-					<ul>
-						<li class="dropdown profile_details_drop">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-								<div class="profile_img">
-									<div class="user-name">
-										<p>{{ user.first_name }}</p>
-									</div>
-									<div class="custom-position">
-										<i class="lnr lnr-chevron-down"></i>
-										<i class="lnr lnr-chevron-up"></i>
-									</div>
-								</div>
-							</a>
-							<ul class="dropdown-menu drp-mnu">
-								<li>
-									<a href="#"><i class="fa fa-cog"></i> Settings</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-user"></i>Profile</a>
-								</li>
-								<li>
-									<a href="{% url 'signout' %}"><i class="fa fa-sign-out"></i> Logout</a>
-								</li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
 		<div class="main-content">
 			<div class="container">
 				{% if error %}
