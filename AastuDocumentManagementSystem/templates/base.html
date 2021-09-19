@@ -40,7 +40,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 	</head>
 
-	<body class="sticky-header left-side-collapsed">
+	<body class="sticky-header left-side-collapsed higher">
 		<!-- left side start-->
 		<div class="left-side sticky-left-side">
 			<!--logo and iconic logo start-->
@@ -309,13 +309,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<!-- main content start-->
 
 
-		<div class="main-content">
-			<div class="container">
-				{% if error %}
-				<p class="text-danger">{{error}}</p>
-				{% endif %}
-				{% block content %}
-				{% endblock %}</div>
+		<div class="main-content" style="padding-top: 50px">
+			{% if error %}
+			<p class="text-danger">{{error}}</p>
+			{% endif %}
+			{% block content %}
+			{% endblock %}
 		</div>
 
 		<script src="{% static 'js/jquery.nicescroll.js' %}"></script>

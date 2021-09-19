@@ -14,15 +14,15 @@ def formGenerator(tpe, cls='', placeholder='', value=''):
     }), label='')
 
 
-def get_type(default='-----', value='---Select a Type---'):
-    """ GET Type SELECTION """
-    all_countries = [(value, default)]
-    all_data = [type_name.type_name for type_name in Type.objects.all()]
-    #print("all_data", all_data)
-    for x in all_data:
-        y = (x, x)
-        all_countries.append(y)
-    return all_countries
+# def get_type(default='-----', value='---Select a Type---'):
+#     """ GET Type SELECTION """
+#     all_countries = [(value, default)]
+#     all_data = [type_name.type_name for type_name in Type.objects.all()]
+#     #print("all_data", all_data)
+#     for x in all_data:
+#         y = (x, x)
+#         all_countries.append(y)
+#     return all_countries
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -56,72 +56,68 @@ class OfficeForm(forms.Form):
 
 
 class ReplyMessageForm(forms.Form):
-    cc_type_name = forms.ChoiceField(choices=get_type(),
-                                     widget=forms.Select(
-        attrs={'class': 'form-control', 'id': 'id_cc_type'})
-    )
-
-    # cc_office = forms.ChoiceField(
-    #     choices=(('Electrical Engineering', 'Electrical Engineering'),
-    #              (' Mechanical Engineering', 'Mechanical Engineering')),
-    #     widget=forms.Select(attrs={
-    #         'class': 'form-control1',
-    #     }, ), label=''
+    pass
+    # cc_type_name = forms.ChoiceField(choices=get_type(),
+    #                                  widget=forms.Select(
+    #     attrs={'class': 'form-control', 'id': 'id_cc_type'})
     # )
-    description = forms.CharField(widget=forms.Textarea(attrs={
-        'class': 'user',
-        'placeholder': 'description',
-    }), label='')
+    # description = forms.CharField(widget=forms.Textarea(attrs={
+    #     'class': 'user',
+    #     'placeholder': 'description',
+    # }), label='')
 
-    file = forms.FileField(required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'file',
-    }
-    ), label='')
+    # file = forms.FileField(required=False, widget=forms.TextInput(attrs={
+    #     'class': 'form-control',
+    #     'type': 'file',
+    # }
+    # ), label='')
 
-    submit = formGenerator('submit', value="Send File")
+    # submit = formGenerator('submit', value="Send File")
 
 
 class SendMessageForm(forms.Form):
-    type_name = forms.ChoiceField(choices=get_type(),
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_type'})
-                                  )
-    cc_type_name = forms.ChoiceField(choices=get_type(),
-                                     widget=forms.Select(
-        attrs={'class': 'form-control', 'id': 'id_cc_type'})
-    )
-    description = forms.CharField(widget=forms.Textarea(attrs={
-        'class': 'user',
-        'placeholder': 'description',
-    }), label='')
+    pass
+    # type_name = forms.ChoiceField(choices=get_type(),
+    #                               widget=forms.Select(
+    #                                   attrs={'class': 'form-control', 'id': 'id_type'})
+    #                               )
+    # cc_type_name = forms.ChoiceField(choices=get_type(),
+    #                                  widget=forms.Select(
+    #     attrs={'class': 'form-control', 'id': 'id_cc_type'})
+    # )
+    # description = forms.CharField(widget=forms.Textarea(attrs={
+    #     'class': 'user',
+    #     'placeholder': 'description',
+    # }), label='')
 
-    file = forms.FileField(required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control',
-        'type': 'file',
-    }
-    ), label='')
+    # file = forms.FileField(required=False, widget=forms.TextInput(attrs={
+    #     'class': 'form-control',
+    #     'type': 'file',
+    # }
+    # ), label='')
 
-    submit = formGenerator('submit', value="Send File")
+    # submit = formGenerator('submit', value="Send File")
 
-    field_order = ['type_name', 'office']
+    # field_order = ['type_name', 'office']
 
 
 class MessageFilterForm(forms.Form):
-    type_name = forms.ChoiceField(choices=get_type(default="---All---", value="All"),
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_type'})
-                                  )
-    action = forms.ChoiceField(choices=[("0", "Both"), ("1", "Receive"), ("2", "Send")], widget=forms.Select(
-        attrs={'class': 'form-control', 'id': 'id_type'}))
+    pass
+    # type_name = forms.ChoiceField(choices=get_type(default="---All---", value="All"),
+    #                               widget=forms.Select(
+    #                                   attrs={'class': 'form-control', 'id': 'id_type'})
+    #                               )
+    # action = forms.ChoiceField(choices=[("0", "Both"), ("1", "Receive"), ("2", "Send")], widget=forms.Select(
+    #     attrs={'class': 'form-control', 'id': 'id_type'}))
 
 
 class NotificationFilterForm(MessageFilterForm):
-    to_type_name = forms.ChoiceField(
-        choices=get_type(default="---All---", value="All"),
-        widget=forms.Select(
-            attrs={'class': 'form-control', 'id': 'id_to_type'})
-    )
+    pass
+    # to_type_name = forms.ChoiceField(
+    #     choices=get_type(default="---All---", value="All"),
+    #     widget=forms.Select(
+    #         attrs={'class': 'form-control', 'id': 'id_to_type'})
+    # )
 
 
 class ResetForm(forms.Form):
@@ -141,18 +137,19 @@ class NewPasswordForm(forms.Form):
 
 
 class SignUPForm(forms.Form, forms.ModelForm):
-    first_name = formGenerator('text', 'user', 'First Name')
-    last_name = formGenerator('text', 'user', 'Last Name')
-    type_name = forms.ChoiceField(choices=get_type(),
-                                  widget=forms.Select(
-                                      attrs={'class': 'form-control', 'id': 'id_type'}),
-                                  label='Select User Type'
-                                  )
-    submit = formGenerator('submit', value="Create User")
+    pass
+    # first_name = formGenerator('text', 'user', 'First Name')
+    # last_name = formGenerator('text', 'user', 'Last Name')
+    # type_name = forms.ChoiceField(choices=get_type(),
+    #                               widget=forms.Select(
+    #                                   attrs={'class': 'form-control', 'id': 'id_type'}),
+    #                               label='Select User Type'
+    #                               )
+    # submit = formGenerator('submit', value="Create User")
 
-    class Meta:
-        model = User
-        fields = ['type_name']
+    # class Meta:
+    #     model = User
+    #     fields = ['type_name']
 
 
 class UpdateUserForm(forms.Form, forms.ModelForm):

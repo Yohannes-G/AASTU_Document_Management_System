@@ -1,6 +1,9 @@
 import os
 from itertools import chain
+from urllib.request import urlopen
 
+import requests
+from bs4 import BeautifulSoup
 from django.contrib import auth
 from django.contrib import messages as toast_msgs
 from django.contrib.auth.hashers import make_password
@@ -911,6 +914,12 @@ def index(request):
     if not request.user.is_authenticated:
         return redirect('signin')
     else:
+        url = "http://www.aastu.edu.et/category/newsevents/"
+        page = requests.get(url)
+        text = page.content
+        soup = BeautifulSoup(text, 'html.parser')
+        with open('templates/news.html', 'w', encoding='utf-8') as aastu:
+            aastu.write(str(soup.prettify()))
         user = User.objects.get(id=request.user.id)
         if MyProfile.objects.filter(profile_user_id=user.id):
             profile = MyProfile.objects.get(profile_user_id=user.id)
