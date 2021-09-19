@@ -4,6 +4,7 @@
 
 {% load static %}
 <div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>  
+    {% include 'includes/messages.html' %}
 <div class="col-md-8 inbox_right">
     <div class="Compose-Message">
         <div class="panel panel-default">

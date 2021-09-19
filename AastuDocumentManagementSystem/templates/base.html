@@ -37,7 +37,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 		<script src="{% static 'js/pdfThumbnails.js' %}" data-pdfjs-src="{% static 'js/pdfRender/pdf.js' %}"></script>
 
-
+		 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	</head>
 
 	<body class="sticky-header left-side-collapsed">
@@ -113,9 +113,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="dropdown message">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 						<div class="badge-container">
-							{% if messages %}
+							{% if message_msgs %}
 							<div class="badge-number">
-								<p>{{messages|length}}</p>
+								<p>{{message_msgs|length}}</p>
 							</div>
 							{% else %} {% endif %}
 							<div class="badge-icon">
@@ -126,12 +126,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<ul class="dropdown-menu">
 						<li>
 							<div class="notification_header">
-								<h3>You have {{messages|length}} new message{{messages|pluralize}}</h3>
+								<h3>You have {{message_msgs|length}} new message{{message_msgs|pluralize}}</h3>
 							</div>
 						</li>
-						{% if messages %}
+						{% if message_msgs %}
 						<ul class="scrollable-menu">
-							{% for message in messages %}
+							{% for message in message_msgs %}
 							{% if message.reply_id %}
 							<li>
 								<a href="{% url 'showreply' message.reply_id %}">
@@ -266,10 +266,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<span>
 									 <img src="{{profile.profile_image.url}}"
                                                      class=""
-                                                     style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;" 
+                                                      style="vertical-align: middle;width: 50px; height: 50px; border-radius: 50%;" 
                                                      alt="Neil Portrait"></span> 
                                      {% else %}
-                                   <span> <img src="{% static 'images/space.jpg' %}" style="border-radius: 100px; height:30px; border-bottom-right-radius: 10px;"  alt="Neil Portrait" ></span>
+                                   <span> <img src="{% static 'images/space.jpg' %}" 
+                                   			  style="vertical-align: middle;width: 50px; height: 50px; border-radius: 50%;"  alt="Neil Portrait" ></span>
                                     {%endif%}
 
 									<div class="user-name">

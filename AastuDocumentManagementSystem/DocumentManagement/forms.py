@@ -17,7 +17,7 @@ def formGenerator(tpe, cls='', placeholder='', value=''):
 def get_type():
     """ GET Type SELECTION """
     all_countries = [('-----', 'Select a Type')]
-    all_data = [type_name.type_name for type_name in Type.objects.all()]
+    all_data = [type_name.type_name for type_name in Type.objects.all().exclude(type_name='admin')]
     #print("all_data", all_data)
     for x in all_data:
         y = (x, x)
@@ -120,7 +120,7 @@ class SignUPForm(forms.Form, forms.ModelForm):
                                       attrs={'class': 'form-control', 'id': 'id_type'}),
                                   label='Select User Type'
                                   )
-    submit = formGenerator('submit', value="Create User")
+    submit = formGenerator('submit', value="Save User")
 
     class Meta:
         model = User

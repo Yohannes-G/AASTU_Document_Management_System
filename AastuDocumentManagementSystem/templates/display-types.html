@@ -10,7 +10,8 @@
 <br/>
 <br/>
 {% endif %}
-   
+
+ {% include 'includes/messages.html' %}
  <body class="sticky-header left-side-collapsed scrollbar"  onload="initMap()">
  	<div><a href="{% url 'index' %}"><button type="button" class="btn btn-default"> <- Back to Home</button></a></div>
    <section>
@@ -18,11 +19,6 @@
 				<div class="graphs">
 					<h3 class="blank1">List of Types</h3>
 					 <div class="xs tabls">
-						<div class="panel panel-success" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
-							<div class="panel-heading">
-
-							</div>
-							</div>
 							<div class=" ">
 								<a href="{% url 'createtypes' %}"><button class="btn-primary btn">Create Type</button></a> 
 							</div>
