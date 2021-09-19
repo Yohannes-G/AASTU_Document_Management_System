@@ -8,13 +8,24 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingOne">
-                        <h4 class="panel-title asd">
+                        <h4 class="panel-title asd full-width">
                             <div>
-                                <div class="header-from">
+                                <div class="header-from space-between full-width">
                                     <h5>
-                                        <div>From: {{msg.reply_sender.office.office_type_name}}</div>
+                                        <div><a href="{% url 'showmessage' msg.replyed_message.message_id %}"><span
+                                                    class="text-danger">Reply </span></a>From:
+                                            {{msg.reply_sender.office}}
+                                        </div>
                                     </h5>
-                                    <!-- <div><h5>Office: {{msg.message_sender.office}}</h5></div> -->
+                                    {% if carbon_copy %}
+                                    <div>
+                                        <h5>To: {% for  m in msg.reply_receiver.all  %}
+                                            {% ifchanged m %}
+                                            {{m.user.office.office_name}},
+                                            {% endifchanged %}
+                                            {% endfor %} </h5>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </h4>

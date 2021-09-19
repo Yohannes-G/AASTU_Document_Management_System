@@ -140,12 +140,13 @@
         </div>
       </div>
       {% endif %}
+      {% empty %}
+      <div>No message available</div>
       {% endfor %}
     </div>
     <script>
-      $( "#id_type" ).change( function () {
-
-        var typeName = $( this ).val();
+      $( document ).ready( function () {
+        var typeName = $( "#id_type" ).val();
 
         console.log( typeName )
 
@@ -170,6 +171,35 @@
 
             $( "#id_office" ).html( html_data );
           }
+        } );
+        $( "#id_type" ).change( function () {
+
+          var typeName = $( this ).val();
+
+          console.log( typeName )
+
+          $.ajax( {
+
+            type: "POST",
+            url: "{% url 'get-offices' %}",
+            data: {
+              'csrfmiddlewaretoken': '{{ csrf_token }}',
+              'type_name': typeName
+            },
+
+            success: function ( response ) {
+
+
+              let html_data = '<option value="All">All</option>';
+              console.log( "hello message" )
+              console.log( "message:", response )
+              response.forEach( function ( response ) {
+                html_data += `<option value="${response}">${response}</option>`
+              } );
+
+              $( "#id_office" ).html( html_data );
+            }
+          } );
         } );
       } );
 

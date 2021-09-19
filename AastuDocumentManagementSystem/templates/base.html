@@ -239,13 +239,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							{% endif %}
 							{% endfor %}
 						</ul>
+						{% else %} {% endif %}
 						<li>
 							<div class="notification_bottom">
 								<a href="{% url 'showallnotification' %}">See all Notification</a>
 							</div>
 						</li>
 					</ul>
-					{% else %} {% endif %}
 				</div>
 				{% comment %}
 				<div id="sb-search" class="sb-search">
@@ -300,7 +300,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 		</div>
 		<div class="main-content">
-			<div class="container">{% block content %}
+			<div class="container">
+				{% if error %}
+				<p class="text-danger">{{error}}</p>
+				{% endif %}
+				{% block content %}
 				{% endblock %}</div>
 		</div>
 

@@ -2,6 +2,7 @@ import os
 from itertools import chain
 
 from django.contrib import auth
+from django.contrib import messages as toast_msgs
 from django.http import FileResponse, JsonResponse
 from django.shortcuts import redirect, render
 
@@ -166,10 +167,17 @@ def show_message(request, message_id):
         return redirect('signin')
     else:
         msg = Message.objects.get(message_id=message_id)
+        try:
+            unread = msg.message_receiver.get(user=request.user)
+            unread.unread = False
+            unread.save()
+        except:
+            unread = msg.message_cc.get(user=request.user)
+            unread.unread = False
+            unread.save()
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
-        print("Filteration", msg.message_cc.filter(user=request.user))
         carbon_copy = bool(msg.message_cc.filter(user=request.user))
         return render(request, 'show_message.html', {'msg': msg,
                                                      'notifications': notifications, 'messages': messages, 'carbon_copy': carbon_copy
@@ -182,10 +190,19 @@ def show_reply(request, reply_id):
         return redirect('signin')
     else:
         msg = ReplyMessage.objects.get(reply_id=reply_id)
+        try:
+            unread = msg.reply_receiver.get(user=request.user)
+            unread.unread = False
+            unread.save()
+        except:
+            unread = msg.reply_cc.get(user=request.user)
+            unread.unread = False
+            unread.save()
         msg_ntf = message_notification(request)
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
-        return render(request, 'show_reply.html', {'msg': msg, 'notifications': notifications, 'messages': messages})
+        carbon_copy = bool(msg.reply_cc.filter(user=request.user))
+        return render(request, 'show_reply.html', {'msg': msg, 'notifications': notifications, 'messages': messages, 'carbon_copy': carbon_copy})
 
 ################### Show all messages ########################
 
@@ -291,6 +308,7 @@ def show_all_message(request):
         notifications = msg_ntf['notifications']
         messages = msg_ntf['messages']
         form = MessageFilterForm()
+        form.fields['type_name'].choices = get_type()
         if request.method == "POST":
             form = MessageFilterForm(request.POST)
             if form.is_valid():
@@ -419,6 +437,9 @@ def create_types(request):
     if not request.user.is_staff:
         return redirect('signin')
     else:
+        error = ""
+        messages = ""
+        notifications = ""
         # message_notification = request.user.receiver.filter(
         #     message_unread=True)
         # notifications = message_notification.filter(message_cc=True)
@@ -428,26 +449,32 @@ def create_types(request):
             form = TypeForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
-
-                role = Type.objects.create(type_name=cd['type_name'])
-                role.save()
+                try:
+                    Type.objects.get(type_name=cd['type_name'])
+                except:
+                    role = Type.objects.create(type_name=cd['type_name'])
+                    role.save()
+                    redirect('displytypes')
+                error = f"{cd['type_name']} is already registered"
 
     return render(request, 'create-role.html', {'forms': form,
-                                                # 'notifications': notifications, 'messages': messages
-                                                })
+                                                'notifications': notifications, 'messages': messages,
+                                                'error': error})
 
 
 def display_types(request):
     if not request.user.is_staff:
         return redirect('signin')
     else:
+        messages = ""
+        notifications = ""
         # message_notification = request.user.receiver.filter(
         #     message_unread=True)
         # notifications = message_notification.filter(message_cc=True)
         # messages = message_notification.filter(message_cc=False)
         types = Type.objects.all()
         return render(request, 'display-types.html', {'types': types,
-                                                      # 'notifications': notifications, 'messages': messages
+                                                      'notifications': notifications, 'messages': messages
                                                       })
 ################### Create Offices #############################
 
@@ -457,6 +484,9 @@ def create_offices(request, type_id):
     if not request.user.is_staff:
         return redirect('signin')
     else:
+        error = ""
+        messages = ""
+        notifications = ""
         # message_notification = request.user.receiver.filter(
         #     message_unread=True)
         # notifications = message_notification.filter(message_cc=True)
@@ -467,29 +497,39 @@ def create_offices(request, type_id):
             form = OfficeForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
-                office = Office.objects.create(
-                    office_type_name_id=type_id, office_name=cd['office'])
-                office.save()
+                try:
+                    Office.objects.get(
+                        office_name=cd['office'])
+                except:
+                    office = Office.objects.create(
+                        office_type_name_id=type_id, office_name=cd['office'])
+                    office.save()
+                    redirect('displayoffices', type_id=type_id)
+                error = f"{cd['office']} is already registered"
 
         return render(request, 'create-office.html', {
-            # 'forms': form, 'notifications': notifications,
-            # 'messages': messages,
-            'type_name': type_name})
+            'forms': form,
+            'notifications': notifications,
+            'messages': messages,
+            'type_name': type_name,
+            "error": error})
 
 
 def display_offices(request, type_id):
     if not request.user.is_staff:
         return redirect('signin')
     else:
+        messages = ""
+        notifications = ""
         # message_notification = request.user.receiver.filter(
         #     message_unread=True)
         # notifications = message_notification.filter(message_cc=True)
         # messages = message_notification.filter(message_cc=False)
-        # office = Office.objects.all()
+        office = Office.objects.all()
         return render(request, 'display-offices.html', {
-            # 'offices': office,
-            # 'notifications': notifications,
-            # 'messages': messages,
+            'offices': office,
+            'notifications': notifications,
+            'messages': messages,
             'type_id': type_id})
 
 ################### User Management #############################
@@ -530,10 +570,13 @@ def return_office_by_type(type_name):
 
 def getOffices(request):
     office_type_name = request.POST.get('type_name')
+    office_name = request.POST.get('office_name')
+    print("officename", office_name)
     #office_type_name = 'Director'
     print("getOffices: ", office_type_name)
     offices = return_office_by_type(office_type_name)
-    office = [office.office_name for office in offices]
+    office = [
+        office.office_name for office in offices if office.office_name != office_name and request.user.office != office]
 
     return JsonResponse(office,  safe=False)
 
@@ -657,6 +700,8 @@ def signin(request):
                 request, username=cd['username'], password=cd['password'])
             if user:
                 auth.login(request, user)
+                toast_msgs.success(
+                    request, f"You are now logged in as {cd['username']}.")
                 # messages.info(
                 #     request, f"You are now logged in as {cd['username']}.")
                 return redirect('index')

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}All Notification{% endblock title %}
 {% block content %}
+
 <button class="filter-button btn btn-primary" type="button" data-toggle="modal" data-target="#exampleModal"><i
         class="fa fa-filter"></i> Filter</button>
 
@@ -136,6 +137,8 @@
         </div>
     </div>
     {% endif %}
+    {%empty%}
+    <div>No notification available</div>
     {% endfor %}
 </div>
 <script>
